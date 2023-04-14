@@ -1,0 +1,13 @@
+{
+    "layout": {
+        "menu": {
+            "dashboard": "Dashboard",
+            "account-settings": "Account Settings"
+        }
+    },
+    "pages": {
+        "dashboard": {
+            "hello": "Hello, world!"
+        }
+    }
+}
