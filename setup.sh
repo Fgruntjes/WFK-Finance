@@ -4,7 +4,7 @@ set -e
 
 cd "$(dirname "$(realpath "$0")")";
 
-# TODO ensure required cli tools are installed / configured: gcloud (google), gh (github), atlas (mongodb)
+# TODO ensure required cli tools are installed / configured: gcloud (google), gh (github)
 
 # Load env variables
 set -a
@@ -134,7 +134,7 @@ if ! gcloud storage buckets describe --project="${GOOGLE_PROJECT_SLUG}" "gs://${
         
     gcloud storage buckets update "gs://${GOOGLE_PROJECT_SLUG}-pulumi" \
       --versioning \
-      --lifecycle-file=pulumi-state-bucket-lifecycle.json
+      --lifecycle-file=App.Deploy/pulumi-state-bucket-lifecycle.json
 else
     echo "Pulumi state bucket already created"
 fi
@@ -171,5 +171,8 @@ storeSecret PULUMI_CONFIG_PASSPHRASE true
 storeSecret AUTH0_DOMAIN
 storeSecret AUTH0_CLIENT_ID
 storeSecret AUTH0_CLIENT_SECRET true
+storeSecret MONGODB_PROJECT_ID
 storeSecret MONGODB_ATLAS_PUBLIC_KEY
 storeSecret MONGODB_ATLAS_PRIVATE_KEY true
+storeSecret NORDIGEN_SECRET_ID
+storeSecret NORDIGEN_SECRET_KEY true

@@ -1,4 +1,4 @@
 .local.env
 .deploy.env
 
-.Pulumi.*.yaml
+Pulumi.*.yaml
