@@ -1,6 +1,6 @@
-# vue
+# Theme
 
-This template should help get you started developing with Vue 3 in Vite.
+Theme is based on https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free
 
 ## Recommended IDE Setup
 
