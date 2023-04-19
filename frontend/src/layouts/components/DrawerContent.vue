@@ -30,13 +30,6 @@ import { VerticalNavLink } from '@layouts';
         icon: { icon: 'mdi-home-outline' }
       }"
     />
-    <VerticalNavLink
-      :item="{
-        title: $t('layout.menu.account-settings'),
-        to: 'account-settings',
-        icon: { icon: 'mdi-account-cog-outline' }
-      }"
-    />
     <!-- 👉 Pages
     <VerticalNavSectionTitle :item="{ heading: 'Pages' }" />
     <VerticalNavLink

@@ -22,9 +22,11 @@ pulumi up \
     --config "backend.url=gs://${GOOGLE_PROJECT_SLUG}-pulumi" \
     --config "gcp:project=${GOOGLE_PROJECT_SLUG}" \
     --config "gcp:region=${GOOGLE_REGION}" \
+    --config "app:auth_domain=${MONGODB_PROJECT_ID}" \
     --config "app:mongodb_project_id=${MONGODB_PROJECT_ID}" \
     --config "app:google_region=${GOOGLE_REGION}" \
     --config "app:environment=${APP_ENVIRONMENT}" \
+    --config "app:auth0_domain=${AUTH0_DOMAIN}" \
     --yes \
     --show-full-output \
     --show-config \

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using App.Deploy.Stacks;
+using App.Deploy;
 using Pulumi;
 
 bool.TryParse(Environment.GetEnvironmentVariable("PULUMI_DEBUG"), out var debug);

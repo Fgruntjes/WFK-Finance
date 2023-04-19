@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Anchor } from 'vuetify/lib/components'
-import avatar1 from '@/assets/images/avatars/avatar-1.png'
+import { useAuth0 } from '@auth0/auth0-vue';
+import type { Anchor } from 'vuetify/lib/components';
 
+const auth0 = useAuth0();
 const avatarBadgeProps = {
   dot: true,
   location: 'bottom right' as Anchor,
@@ -10,16 +11,18 @@ const avatarBadgeProps = {
   color: 'success',
   bordered: true,
 }
+
+const user = auth0.user.value;
 </script>
 
 <template>
-  <VBadge v-bind="avatarBadgeProps">
+  <VBadge v-bind="avatarBadgeProps" v-if="user">
     <VAvatar
       style="cursor: pointer;"
       color="primary"
       variant="tonal"
     >
-      <VImg :src="avatar1" />
+      <VImg :src="user.picture" />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -39,79 +42,22 @@ const avatarBadgeProps = {
                     size="40"
                     variant="tonal"
                   >
-                    <VImg :src="avatar1" />
+                    <VImg :src="user.picture" />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{ user.name }}
             </VListItemTitle>
-            <VListItemSubtitle class="text-disabled">
-              Admin
-            </VListItemSubtitle>
-          </VListItem>
-
-          <VDivider class="my-2" />
-
-          <!-- 👉 Profile -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="mdi-account-outline"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Profile</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 Settings -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="mdi-cog-outline"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Settings</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 Pricing -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="mdi-currency-usd"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 FAQ -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="mdi-help-circle-outline"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>FAQ</VListItemTitle>
           </VListItem>
 
           <!-- Divider -->
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem @click="auth0.logout">
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -120,7 +66,7 @@ const avatarBadgeProps = {
               />
             </template>
 
-            <VListItemTitle>Logout</VListItemTitle>
+            <VListItemTitle>{{ $t('layout.logout') }}</VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>

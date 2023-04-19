@@ -1,5 +1,6 @@
 {
     "layout": {
+        "logout": "Logout",
         "menu": {
             "dashboard": "Dashboard",
             "account-settings": "Account Settings"
