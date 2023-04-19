@@ -1,12 +1,13 @@
+import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import DefineOptions from 'unplugin-vue-define-options/vite'
+import autoImport from 'unplugin-auto-import/vite'
+import components from 'unplugin-vue-components/vite'
+import defineOptions from 'unplugin-vue-define-options/vite'
 import { fileURLToPath } from 'url'
 import { defineConfig, loadEnv } from 'vite'
-import Pages from 'vite-plugin-pages'
-import Layouts from 'vite-plugin-vue-layouts'
+import pages from 'vite-plugin-pages'
+import layouts from 'vite-plugin-vue-layouts'
 import vuetify from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
@@ -28,17 +29,18 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           configFile: 'src/styles/variables/_vuetify.scss',
         },
       }),
-      Pages(),
-      Layouts(),
-      Components({
+      pages(),
+      layouts(),
+      components({
         dirs: ['src/@core/components'],
         dts: true,
       }),
-      AutoImport({
+      autoImport({
         imports: ['vue', 'vue-router', '@vueuse/core', 'vue-i18n', 'pinia'],
         vueTemplate: true,
       }),
-      DefineOptions(),
+      defineOptions(),
+      vueI18nPlugin({}),
     ],
     define: {
       __VUE_I18N_FULL_INSTALL__: true,

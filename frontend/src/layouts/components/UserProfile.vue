@@ -1,22 +1,20 @@
 <script setup lang="ts">
 import { useAuth0 } from '@auth0/auth0-vue';
-import type { Anchor } from 'vuetify/lib/components';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n({ useScope: 'local' })
 
 const auth0 = useAuth0();
-const avatarBadgeProps = {
-  dot: true,
-  location: 'bottom right' as Anchor,
-  offsetX: 3,
-  offsetY: 3,
-  color: 'success',
-  bordered: true,
-}
-
 const user = auth0.user.value;
 </script>
 
+<i18n lang="yaml">
+en:
+  logout: Logout
+</i18n>
+
 <template>
-  <VBadge v-bind="avatarBadgeProps" v-if="user">
+  <VBadge location="bottom right" dot bordered offset-x="3" offset-y="3" color="success" v-if="user">
     <VAvatar
       style="cursor: pointer;"
       color="primary"
@@ -36,7 +34,7 @@ const user = auth0.user.value;
           <VListItem>
             <template #prepend>
               <VListItemAction start>
-                <VBadge v-bind="avatarBadgeProps">
+                <VBadge dot bordered offset-x="3" offset-y="3" color="success" location="bottom right">
                   <VAvatar
                     color="primary"
                     size="40"
@@ -66,7 +64,7 @@ const user = auth0.user.value;
               />
             </template>
 
-            <VListItemTitle>{{ $t('layout.logout') }}</VListItemTitle>
+            <VListItemTitle>{{ t('logout') }}</VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>
