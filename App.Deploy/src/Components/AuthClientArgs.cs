@@ -6,5 +6,5 @@ namespace App.Deploy.Components;
 public class AuthClientArgs
 {
     public Input<string>? FrontendUrl { get; init; }
-    public Input<string> Environment { get; internal set; }
+    public Input<string> Environment { get; internal set; } = null!;
 }
