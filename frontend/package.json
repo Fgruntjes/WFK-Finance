@@ -47,7 +47,6 @@
     "@iconify-json/mdi": "^1.1.50",
     "@iconify/tools": "^2.2.6",
     "@iconify/vue": "^3.2.1",
-    "@intlify/unplugin-vue-i18n": "^0.10.0",
     "@intlify/vite-plugin-vue-i18n": "^5.0.1",
     "@types/node": "^18.15.11",
     "@types/webfontloader": "^1.6.35",

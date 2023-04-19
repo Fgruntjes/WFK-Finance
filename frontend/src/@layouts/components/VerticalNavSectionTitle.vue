@@ -11,12 +11,7 @@ defineProps<{ item: NavSectionTitle }>()
         name="vertical-nav-section-title"
         mode="out-in"
       >
-        <!-- eslint-disable vue/no-v-text-v-html-on-component -->
-        <span
-          class="title-text"
-          v-text="item.heading"
-        />
-        <!-- eslint-enable vue/no-v-text-v-html-on-component -->
+        <span class="title-text">{{ item.heading }}</span>
       </Transition>
     </div>
   </li>

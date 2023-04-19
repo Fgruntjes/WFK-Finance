@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import logo from '@/assets/logo.svg?raw';
-import { VerticalNavLink } from '@layouts';
+import { VerticalNavLink, VerticalNavSectionTitle } from '@layouts';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const routes = useRouter()
+  .getRoutes()
+  .filter((route) => route.meta?.includeInMenu);
+
 </script>
 
 <i18n lang="yaml">
   en:
-    dashboard: Dashboard
+    header:
+      configuration: Configuration
+    link:
+      dashboard: Dashboard
+      bank_accounts: Bank accounts
 </i18n>
-  
 
 <template>
   <!-- 👉 Nav header -->
@@ -34,13 +41,23 @@ const { t } = useI18n();
   <ul>
     <VerticalNavLink
       :item="{
-        title: t('dashboard'),
+        title: t('link.dashboard'),
         to: 'index',
         icon: { icon: 'mdi-home-outline' }
       }"
     />
+
+    <VerticalNavSectionTitle :item="{ heading: t('header.configuration') }" />
+    <VerticalNavLink
+      v-for="route in routes"
+      :item="{
+        title: t(`link.${String(route.name)}`),
+        to: route.name as string,
+        icon: { icon: route.meta?.menuIcon }
+      }"
+    /> 
     <!-- 👉 Pages
-    <VerticalNavSectionTitle :item="{ heading: 'Pages' }" />
+    
     <VerticalNavLink
       :item="{
         title: 'Login',

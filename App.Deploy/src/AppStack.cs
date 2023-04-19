@@ -12,8 +12,9 @@ internal class AppStack : Stack
     {
         var config = new AppConfig();
         var authScopes = new Dictionary<string, string>() {
-            {"integrations", "Manage connections to external systems"}
+            {"bankacounts:read", "Read bankaccounts"}
         };
+        var authScopeString = authScopes.Select(kvp => kvp.Key).Aggregate((a, b) => $"{a} {b}");
 
         var auth = new AuthComponent(
             $"{config.Environment}-auth",
@@ -34,6 +35,17 @@ internal class AppStack : Stack
             },
             new ComponentResourceOptions { Parent = this });
 
+        new BackendComponent(
+            $"{config.Environment}-backend",
+            new()
+            {
+                Environment = config.Environment,
+                AuthDomain = config.Auth0Domain,
+                AuthAudience = auth.PublicApiAudience,
+                AuthScope = authScopeString,
+            },
+            new ComponentResourceOptions { Parent = this });
+
         new FrontendComponent(
             $"{config.Environment}-frontend",
             new()
@@ -41,7 +53,7 @@ internal class AppStack : Stack
                 Environment = config.Environment,
                 AuthDomain = config.Auth0Domain,
                 AuthAudience = auth.PublicApiAudience,
-                AuthScope = authScopes.Select(kvp => kvp.Key).Aggregate((a, b) => $"{a} {b}"),
+                AuthScope = authScopeString,
             },
             new ComponentResourceOptions { Parent = this });
     }
