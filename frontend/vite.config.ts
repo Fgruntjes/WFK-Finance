@@ -36,8 +36,23 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         dts: true,
       }),
       autoImport({
-        imports: ['vue', 'vue-router', '@vueuse/core', 'vue-i18n', 'pinia'],
+        imports: [
+          'vue',
+          'vue-router',
+          '@vueuse/core',
+          'vue-i18n',
+          'pinia',
+          {
+            'vue-request':
+            [
+              'useRequest',
+              'usePagination',
+              'useLoadMore',
+            ]
+          },
+        ],
         vueTemplate: true,
+        eslintrc: { enabled: true }
       }),
       defineOptions(),
       vueI18nPlugin({}),
@@ -49,7 +64,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       'import.meta.env.AUTH0_DOMAIN': JSON.stringify(process.env.AUTH0_DOMAIN),
       'import.meta.env.AUTH0_AUDIENCE': JSON.stringify(process.env.AUTH0_AUDIENCE),
       'import.meta.env.AUTH0_SCOPE': JSON.stringify(process.env.AUTH0_SCOPE),
-      'import.meta.env.AUTH0_CLIENT_ID': JSON.stringify(process.env.AUTH0_CLIENT_ID)
+      'import.meta.env.AUTH0_CLIENT_ID': JSON.stringify(process.env.AUTH0_CLIENT_ID),
+      'import.meta.env.APP_API_BASE_PATH': JSON.stringify(process.env.APP_API_BASE_PATH),
      },
     resolve: {
       alias: {
@@ -57,7 +73,6 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         '@core': fileURLToPath(new URL('./src/@core', import.meta.url)),
         '@layouts': fileURLToPath(new URL('./src/@layouts', import.meta.url)),
         '@configured-variables': fileURLToPath(new URL('./src/styles/variables/_template.scss', import.meta.url)),
-        '@axios': fileURLToPath(new URL('./src/plugins/axios', import.meta.url)),
         'apexcharts': fileURLToPath(new URL('node_modules/apexcharts-clevision', import.meta.url)),
       },
     },

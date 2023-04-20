@@ -8,4 +8,5 @@ public class FrontendComponentArgs
     public Input<string> AuthDomain { get; init; } = null!;
     public Input<string> AuthAudience { get; init; } = null!;
     public Input<string> AuthScope { get; init; } = null!;
+    public Input<string> ApiUrl { get; init; } = null!;
 }

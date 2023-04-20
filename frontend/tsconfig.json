@@ -29,9 +29,6 @@
       "@core": [
         "src/@core"
       ],
-      "@axios": [
-        "src/plugins/axios"
-      ]
     },
     "lib": [
       "esnext",

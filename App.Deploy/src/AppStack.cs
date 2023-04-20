@@ -12,7 +12,7 @@ internal class AppStack : Stack
     {
         var config = new AppConfig();
         var authScopes = new Dictionary<string, string>() {
-            {"bankacounts:read", "Read bankaccounts"}
+            {"bankacounts:read", "Read bankaccounts"},
         };
         var authScopeString = authScopes.Select(kvp => kvp.Key).Aggregate((a, b) => $"{a} {b}");
 
@@ -35,7 +35,7 @@ internal class AppStack : Stack
             },
             new ComponentResourceOptions { Parent = this });
 
-        new BackendComponent(
+        var backend = new BackendComponent(
             $"{config.Environment}-backend",
             new()
             {
@@ -54,6 +54,7 @@ internal class AppStack : Stack
                 AuthDomain = config.Auth0Domain,
                 AuthAudience = auth.PublicApiAudience,
                 AuthScope = authScopeString,
+                ApiUrl = backend.BaseUrl,
             },
             new ComponentResourceOptions { Parent = this });
     }

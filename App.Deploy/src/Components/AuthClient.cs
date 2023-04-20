@@ -15,10 +15,7 @@ class AuthClient : ComponentResource
     public AuthClient(string name, AuthClientArgs args, ComponentResourceOptions? options = null)
         : base("app:auth0", name, options)
     {
-        var isFrontend = args.FrontendUrl != null;
-        var appUrls = args.FrontendUrl != null
-            ? new[] { args.FrontendUrl }
-            : new InputList<string>();
+        var isFrontend = args.FrontendUrls != null;
 
         var client = new Client(
             $"{name}-authclient",
@@ -27,9 +24,9 @@ class AuthClient : ComponentResource
                 AppType = isFrontend ? "spa" : "non_interactive",
                 TokenEndpointAuthMethod = "none",
                 CrossOriginAuth = false,
-                WebOrigins = appUrls,
-                Callbacks = appUrls,
-                AllowedLogoutUrls = appUrls,
+                Callbacks = args.CallbackUrls ?? args.FrontendUrls ?? Array.Empty<string>(),
+                WebOrigins = args.FrontendUrls ?? Array.Empty<string>(),
+                AllowedLogoutUrls = args.FrontendUrls ?? Array.Empty<string>(),
                 JwtConfiguration = new ClientJwtConfigurationArgs()
                 {
                     Alg = "RS256",

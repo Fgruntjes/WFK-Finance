@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using App.Deploy.Components;
 using App.Deploy.Utils;
@@ -7,6 +8,8 @@ namespace App.Deploy.Component;
 
 public class BackendComponent : ComponentResource
 {
+    public Output<string> BaseUrl { get; private set; }
+
     public BackendComponent(
         string name,
         BackendComponentArgs args,
@@ -19,6 +22,8 @@ public class BackendComponent : ComponentResource
             {"AUTH0__AUDIENCE", args.AuthAudience},
             {"AUTH0__SCOPE", args.AuthScope},
         });
+
+        BaseUrl = Output.Create("http://localhost:5000");
         RegisterOutputs();
     }
 }

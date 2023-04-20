@@ -11,6 +11,7 @@ module.exports = {
     'plugin:promise/recommended',
     'plugin:sonarjs/recommended',
     'plugin:@typescript-eslint/recommended',
+    './.eslintrc-auto-import.json',
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {

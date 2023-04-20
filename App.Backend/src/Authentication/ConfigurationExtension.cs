@@ -1,6 +1,5 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App.Backend.Authentication;
 
@@ -9,16 +8,13 @@ public static class ConfigurationExtension
     public static void AddAuth0(this WebApplicationBuilder builder)
     {
         var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-        {
-
-            options.Authority = domain;
-            options.Audience = builder.Configuration["Auth0:Audience"];
-            options.TokenValidationParameters = new TokenValidationParameters
+        builder.Services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                NameClaimType = ClaimTypes.NameIdentifier
-            };
-        });
+                options.Authority = domain;
+                options.Audience = builder.Configuration["Auth0:Audience"];
+            });
         builder.Services.AddAuthorization(options =>
         {
             var scopes = builder.Configuration["Auth0:Scope"]?.Split(' ');
@@ -29,5 +25,7 @@ public static class ConfigurationExtension
                 options.AddPolicy(scope, policy => policy.Requirements.Add(new HasScopeRequirement(scope, domain)));
             }
         });
+
+        builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
     }
 }

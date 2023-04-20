@@ -9,6 +9,20 @@
             "processName": "App.Deploy",
             "type": "coreclr",
             "request": "attach"
+        },
+        {
+            "name": "App.Backend Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "App.Backend build",
+            "program": "${workspaceFolder}/App.Backend/bin/Debug/net7.0/App.Backend.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/App.Backend",
+            "stopAtEntry": false,
+            "requireExactSource": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     ]
 }

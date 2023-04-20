@@ -18,10 +18,24 @@ public class FrontendComponent : ComponentResource
             new()
             {
                 Environment = args.Environment,
-                FrontendUrl = args.Environment
+                FrontendUrls = args.Environment
                     .Apply(environment => environment == "dev"
-                        ? "http://localhost:3000"
-                        : "https://app.example.com"),
+                        ? new string[] {
+                            "http://localhost:3000",
+                            "http://localhost:5000",
+                        }
+                        : new string[] {
+                            "https://example.com",
+                        }),
+                CallbackUrls = args.Environment
+                    .Apply(environment => environment == "dev"
+                        ? new string[] {
+                            "http://localhost:3000",
+                            "http://localhost:5000/swagger/oauth2-redirect.html",
+                        }
+                        : new string[] {
+                            "https://example.com",
+                        }),
             },
             new ComponentResourceOptions { Parent = this });
 
@@ -31,6 +45,7 @@ public class FrontendComponent : ComponentResource
             {"AUTH0_AUDIENCE", args.AuthAudience},
             {"AUTH0_SCOPE", args.AuthScope},
             {"AUTH0_CLIENT_ID", authClient.ClientId},
+            {"APP_API_BASE_PATH", args.ApiUrl},
         });
         RegisterOutputs();
     }
