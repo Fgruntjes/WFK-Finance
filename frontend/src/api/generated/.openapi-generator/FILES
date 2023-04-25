@@ -1,7 +1,8 @@
 .openapi-generator-ignore
-apis/BankAccountListApi.ts
+apis/BankAccountsApi.ts
 apis/index.ts
 index.ts
+models/Bank.ts
 models/BankAccount.ts
 models/index.ts
 runtime.ts

@@ -43,6 +43,8 @@ internal class AppStack : Stack
                 AuthDomain = config.Auth0Domain,
                 AuthAudience = auth.PublicApiAudience,
                 AuthScope = authScopeString,
+                NordigenSecretId = config.NordigenSecretId,
+                NordigenSecretKey = config.NordigenSecretKey,
             },
             new ComponentResourceOptions { Parent = this });
 

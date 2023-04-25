@@ -10,6 +10,8 @@ internal class AppConfig
     public string MongoDbProjectId => _config.Require("mongodb_project_id");
     public string GoogleRegion => _config.Require("google_region");
     public string Auth0Domain => _config.Require("auth0_domain");
+    public string NordigenSecretId => _config.Require("nordigen_secret_id");
+    public string NordigenSecretKey => _config.Require("nordigen_secret_key");
 
     public AppConfig()
     {

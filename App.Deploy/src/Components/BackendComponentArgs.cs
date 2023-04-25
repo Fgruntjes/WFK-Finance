@@ -8,4 +8,6 @@ public class BackendComponentArgs
     public Input<string> AuthDomain { get; init; } = null!;
     public Input<string> AuthAudience { get; init; } = null!;
     public Input<string> AuthScope { get; init; } = null!;
+    public Input<string> NordigenSecretId { get; init; } = null!;
+    public Input<string> NordigenSecretKey { get; init; } = null!;
 }

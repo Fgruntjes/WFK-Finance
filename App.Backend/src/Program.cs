@@ -1,7 +1,9 @@
 using App.Backend.Authentication;
 using App.Backend.Authorization;
+using App.Backend.Nordigen;
 using App.Backend.SwaggerGen;
 using DotNetEnv.Configuration;
+using NodaTime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +11,13 @@ builder.Configuration.AddDotNetEnv(".local.env");
 
 builder.Services.AddControllers();
 builder.Services.AddCors();
+
+builder.Services.AddSingleton<IClock>(SystemClock.Instance);
+builder.Services.AddSingleton(DateTimeZoneProviders.Tzdb);
+
 builder.AddAuth0();
 builder.AddSwagger();
+builder.AddNordigenClient();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

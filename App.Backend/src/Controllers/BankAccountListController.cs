@@ -5,16 +5,10 @@ namespace App.Backend.Controllers;
 
 [ApiController]
 [Route("BankAccount")]
+[Tags("Bank accounts")]
 [Produces("application/json")]
 public class BankAccountListController : ControllerBase
 {
-    private readonly ILogger<BankAccountListController> _logger;
-
-    public BankAccountListController(ILogger<BankAccountListController> logger)
-    {
-        _logger = logger;
-    }
-
     [HttpGet(Name = "GetBankAccounts")]
     [Authorize("bankacounts:read")]
     public IEnumerable<BankAccount> Get()

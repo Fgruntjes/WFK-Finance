@@ -21,6 +21,8 @@ public class BackendComponent : ComponentResource
             {"AUTH0__DOMAIN", args.AuthDomain},
             {"AUTH0__AUDIENCE", args.AuthAudience},
             {"AUTH0__SCOPE", args.AuthScope},
+            {"NORDIGEN__SECRET_ID", args.NordigenSecretId},
+            {"NORDIGEN__SECRET_KEY", args.NordigenSecretKey},
         });
 
         BaseUrl = Output.Create("http://localhost:5000");

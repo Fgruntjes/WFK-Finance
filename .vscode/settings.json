@@ -21,19 +21,7 @@
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
-    // Vue
-    "[vue]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    },
-    // Extension: Volar
-    "volar.preview.port": 3000,
-    "volar.completion.preferredTagNameCase": "pascal",
     // Extension: ESLint
-    "eslint.options": {
-        "rulePaths": [
-            "eslint-internal-rules"
-        ]
-    },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true,
         "source.fixAll.stylelint": true,
@@ -41,13 +29,12 @@
     },
     "eslint.alwaysShowStatus": true,
     "eslint.format.enable": true,
-    "eslint.packageManager": "yarn",
+    "eslint.packageManager": "npm",
     // Extension: Stylelint
-    "stylelint.packageManager": "yarn",
+    "stylelint.packageManager": "npm",
     "stylelint.validate": [
         "css",
         "scss",
-        "vue"
     ],
     // Extension: Spell Checker
     "cSpell.words": [

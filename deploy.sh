@@ -27,6 +27,8 @@ pulumi up \
     --config "app:google_region=${GOOGLE_REGION}" \
     --config "app:environment=${APP_ENVIRONMENT}" \
     --config "app:auth0_domain=${AUTH0_DOMAIN}" \
+    --config "app:nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
+    --config "app:nordigen_secret_key=${NORDIGEN_SECRET_KEY}" \
     --yes \
     --show-full-output \
     --show-config \
