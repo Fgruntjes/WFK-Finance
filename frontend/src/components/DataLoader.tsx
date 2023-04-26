@@ -12,7 +12,11 @@ function DataLoaderSkeleton({isLoading, error, children}: DataLoaderProps) {
         return <ErrorElement error={error} />;
     }
 
-    return <SkeletonText mt='4' noOfLines={4} spacing='4' skeletonHeight='2' isLoaded={!isLoading}>{children}</SkeletonText>;
+    return (
+        <SkeletonText noOfLines={4} skeletonHeight='2' isLoaded={!isLoading}>
+            {children}
+        </SkeletonText>
+    );
 }
 
 export default DataLoaderSkeleton;

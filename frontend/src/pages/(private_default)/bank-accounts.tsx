@@ -15,7 +15,7 @@ function BankAccountsPage() {
     return (
         <AppPanel fullWidht title="Fkae title">
             <DataLoaderSkeleton isLoading={isLoading} error={error}>
-                <div>{JSON.stringify(data)}</div>
+                {data?.length === 0 ? <FormattedMessage id="page.bank-accounts.no-accounts" defaultMessage="No bank accounts configured."/> : null}
             </DataLoaderSkeleton>
         </AppPanel>
     )
