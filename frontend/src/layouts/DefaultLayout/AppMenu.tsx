@@ -1,6 +1,6 @@
 import { BankAccountsPageIcon, BankAccountsPageTitle } from "@/pages/(private_default)/bank-accounts";
 import { DashboardPageIcon, DashboardPageTitle } from "@/pages/(private_default)/dashboard";
-import { LogoutPageIcon, LogoutPageTitle } from "@/pages/(public_notification)/logout";
+import { LogoutPageIcon, LogoutPageTitle } from "@/pages/(private_notification)/logout";
 import { Card, CardBody, Divider, VStack } from "@chakra-ui/react";
 import styles from './AppMenu.module.scss';
 import AppMenuItem from "./AppMenuItem";

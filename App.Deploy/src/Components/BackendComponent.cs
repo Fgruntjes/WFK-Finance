@@ -18,11 +18,13 @@ public class BackendComponent : ComponentResource
     {
         // So "npm run dev" use the deploy values
         EnvFileWriter.Write("../App.Backend/.local.env", new InputMap<string>() {
-            {"AUTH0__DOMAIN", args.AuthDomain},
-            {"AUTH0__AUDIENCE", args.AuthAudience},
-            {"AUTH0__SCOPE", args.AuthScope},
-            {"NORDIGEN__SECRET_ID", args.NordigenSecretId},
-            {"NORDIGEN__SECRET_KEY", args.NordigenSecretKey},
+            {"Auth0__Domain", args.AuthDomain},
+            {"Auth0__Audience", args.AuthAudience},
+            {"Auth0__Scope", args.AuthScope},
+            {"Nordigen__SecretId", args.NordigenSecretId},
+            {"Nordigen__SecretKey", args.NordigenSecretKey},
+            {"Database__ConnectionString", args.DatabaseConnectionString},
+            {"Database__Name", args.DatabaseName},
         });
 
         BaseUrl = Output.Create("http://localhost:5000");

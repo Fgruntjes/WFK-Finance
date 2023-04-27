@@ -17,15 +17,23 @@ import * as runtime from '../runtime';
 import type {
   Bank,
   BankAccount,
+  BankConnectResponse,
 } from '../models';
 import {
     BankFromJSON,
     BankToJSON,
     BankAccountFromJSON,
     BankAccountToJSON,
+    BankConnectResponseFromJSON,
+    BankConnectResponseToJSON,
 } from '../models';
 
-export interface GetBanksRequest {
+export interface BankConnectRequest {
+    bankId?: string;
+    returnUrl?: string;
+}
+
+export interface BankListRequest {
     countryCode?: string;
 }
 
@@ -36,7 +44,7 @@ export class BankAccountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async getBankAccountsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<BankAccount>>> {
+    async bankAccountListRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<BankAccount>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -50,7 +58,7 @@ export class BankAccountsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/BankAccount`,
+            path: `/Bank/Account`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -61,14 +69,54 @@ export class BankAccountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async getBankAccounts(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<BankAccount>> {
-        const response = await this.getBankAccountsRaw(initOverrides);
+    async bankAccountList(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<BankAccount>> {
+        const response = await this.bankAccountListRaw(initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async getBanksRaw(requestParameters: GetBanksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Bank>>> {
+    async bankConnectRaw(requestParameters: BankConnectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BankConnectResponse>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.bankId !== undefined) {
+            queryParameters['bankId'] = requestParameters.bankId;
+        }
+
+        if (requestParameters.returnUrl !== undefined) {
+            queryParameters['returnUrl'] = requestParameters.returnUrl;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/Bank/Connect`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => BankConnectResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async bankConnect(requestParameters: BankConnectRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<BankConnectResponse> {
+        const response = await this.bankConnectRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async bankListRaw(requestParameters: BankListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Bank>>> {
         const queryParameters: any = {};
 
         if (requestParameters.countryCode !== undefined) {
@@ -97,8 +145,8 @@ export class BankAccountsApi extends runtime.BaseAPI {
 
     /**
      */
-    async getBanks(requestParameters: GetBanksRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Bank>> {
-        const response = await this.getBanksRaw(requestParameters, initOverrides);
+    async bankList(requestParameters: BankListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Bank>> {
+        const response = await this.bankListRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

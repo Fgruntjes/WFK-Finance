@@ -16,7 +16,7 @@ export function AuthGuard({ children }: AuthWrapperProps) {
     useEffect(() => {
         if (!isAuthenticated && !isLoading) {
             loginWithRedirect({
-                appState: { returnTo: window.location.pathname },
+                appState: { returnTo: window.location.pathname.replace("/logout", "") },
             });
         }
     }, [isLoading, isAuthenticated, loginWithRedirect]);

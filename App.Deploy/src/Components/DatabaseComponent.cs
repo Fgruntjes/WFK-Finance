@@ -14,6 +14,8 @@ public class DatabaseComponent : ComponentResource
     };
 
     [Output]
+    public Output<string> DatabaseName { get; internal set; } = null!;
+    [Output]
     public Output<string> ConnectionString { get; internal set; } = null!;
 
     public DatabaseComponent(
@@ -71,6 +73,7 @@ public class DatabaseComponent : ComponentResource
             Password = password.Result,
         }, new CustomResourceOptions { Parent = this });
 
+        DatabaseName = args.Environment;
         ConnectionString = server.ConnectionStringsStandardSrv
             .Apply(str => user.Username
                 .Apply(username => user.Password

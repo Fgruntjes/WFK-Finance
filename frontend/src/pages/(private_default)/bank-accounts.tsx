@@ -1,22 +1,17 @@
-import { BankAccountsApi } from "@/api/generated";
-import useServiceQuery from "@/api/useServiceQuery";
 import AppPanel from "@/components/AppPanel";
-import DataLoaderSkeleton from "@/components/DataLoader";
-import { Icon } from "@chakra-ui/react";
+import { Divider, Icon } from "@chakra-ui/react";
 import { TbBuildingBank } from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
+import AccountAddButton from "./_bank-accounts/AccountAddButton";
+import AccountList from "./_bank-accounts/AccountList";
+import styles from './bank-accounts.module.scss';
 
 function BankAccountsPage() {
-    const { data, isLoading, error } = useServiceQuery(BankAccountsApi, {
-        queryKey: ["BankAccountsApi.getBankAccounts"],
-        queryFn: (service) => service.getBankAccounts(),
-    });
-    
     return (
         <AppPanel fullWidht title="Fkae title">
-            <DataLoaderSkeleton isLoading={isLoading} error={error}>
-                {data?.length === 0 ? <FormattedMessage id="page.bank-accounts.no-accounts" defaultMessage="No bank accounts configured."/> : null}
-            </DataLoaderSkeleton>
+            <AccountList />
+            <Divider className={styles['button-divider']}/>
+            <AccountAddButton />
         </AppPanel>
     )
 }

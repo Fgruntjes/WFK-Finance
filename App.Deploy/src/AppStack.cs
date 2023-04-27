@@ -13,6 +13,7 @@ internal class AppStack : Stack
         var config = new AppConfig();
         var authScopes = new Dictionary<string, string>() {
             {"bankacounts:read", "Read bankaccounts"},
+            {"bankacounts:connect", "Connect bankaccount"},
         };
         var authScopeString = authScopes.Select(kvp => kvp.Key).Aggregate((a, b) => $"{a} {b}");
 
@@ -25,7 +26,7 @@ internal class AppStack : Stack
             },
             new ComponentResourceOptions { Parent = this });
 
-        new DatabaseComponent(
+        var database = new DatabaseComponent(
             $"{config.Environment}-database",
             new()
             {
@@ -45,6 +46,8 @@ internal class AppStack : Stack
                 AuthScope = authScopeString,
                 NordigenSecretId = config.NordigenSecretId,
                 NordigenSecretKey = config.NordigenSecretKey,
+                DatabaseConnectionString = database.ConnectionString,
+                DatabaseName = database.DatabaseName,
             },
             new ComponentResourceOptions { Parent = this });
 

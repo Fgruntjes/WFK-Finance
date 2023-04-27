@@ -15,18 +15,22 @@
     "@chakra-ui/react": "^2.5.5",
     "@generouted/react-router": "^1.12.6",
     "@tanstack/react-query": "^4.29.5",
+    "chakra-react-select": "^4.6.0",
     "classnames": "^2.3.2",
+    "country-data": "^0.0.31",
     "framer-motion": "^10.12.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-intl": "^6.4.1",
-    "react-router-dom": "^6.10.0"
+    "react-router-dom": "^6.10.0",
+    "remove": "^0.1.5"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.6.0",
     "@tanstack/react-query-devtools": "^4.29.5",
     "@types/classnames": "^2.3.1",
+    "@types/country-data": "^0.0.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",

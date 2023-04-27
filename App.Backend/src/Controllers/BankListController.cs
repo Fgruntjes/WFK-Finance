@@ -18,7 +18,7 @@ public class BankListController : ControllerBase
         _nordigenClient = nordigenClient;
     }
 
-    [HttpGet(Name = "GetBanks")]
+    [HttpGet(Name = "BankList")]
     [Authorize("bankacounts:read")]
     public async IAsyncEnumerable<Bank> Get(string countryCode, [EnumeratorCancellation] CancellationToken ct = default)
     {

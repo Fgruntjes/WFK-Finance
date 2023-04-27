@@ -15,7 +15,6 @@ public static class ConfigurationExtension
           .Or<TimeoutRejectedException>()
           .RetryAsync(3);
         var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(10);
-
         builder.Services
             .AddNordigenDotNet(builder.Configuration)
             .AddPolicyHandler(retryPolicy)
