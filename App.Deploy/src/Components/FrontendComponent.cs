@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using App.Deploy.Components;
 using App.Deploy.Utils;
 using Pulumi;
@@ -45,7 +44,7 @@ public class FrontendComponent : ComponentResource
             {"AUTH0_AUDIENCE", args.AuthAudience},
             {"AUTH0_SCOPE", args.AuthScope},
             {"AUTH0_CLIENT_ID", authClient.ClientId},
-            {"APP_API_BASE_PATH", args.ApiUrl},
+            {"APP_API_URI", args.ApiUrl},
         });
         RegisterOutputs();
     }

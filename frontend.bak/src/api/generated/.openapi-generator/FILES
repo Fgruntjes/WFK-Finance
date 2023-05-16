@@ -1,0 +1,11 @@
+.openapi-generator-ignore
+apis/BankAccountsApi.ts
+apis/index.ts
+index.ts
+models/Bank.ts
+models/BankAccount.ts
+models/BankConnectRequest.ts
+models/BankConnectResponse.ts
+models/ObjectId.ts
+models/index.ts
+runtime.ts

@@ -56,7 +56,7 @@ public class DatabaseComponent : ComponentResource
             {
                 new DatabaseUserScopeArgs
                 {
-                    Name = args.Environment,
+                    Name = server.Name,
                     Type = "CLUSTER",
                 }
             },
@@ -75,9 +75,8 @@ public class DatabaseComponent : ComponentResource
 
         DatabaseName = args.Environment;
         ConnectionString = server.ConnectionStringsStandardSrv
-            .Apply(str => user.Username
-                .Apply(username => user.Password
-                    .Apply(password => str.Replace("mongodb+srv://", $"mongodb+srv://{username}:{password}@"))));
+            .Apply(str => user.Username.Apply(username => user.Password.Apply(password =>
+                str.Replace("mongodb+srv://", $"mongodb+srv://{username}:{password}@") + "?retryWrites=true&w=majority")));
 
         RegisterOutputs();
     }

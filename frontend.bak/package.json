@@ -1,0 +1,59 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:api": "rm -Rvf src/api/generated && openapi-generator-cli generate -g typescript-fetch -i http://localhost:5000/swagger/v1/swagger.json -o src/api/generated --additional-properties=supportsES6=true,npmVersion=9.6.5",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "^2.0.1",
+    "@chakra-ui/react": "^2.5.5",
+    "@generouted/react-router": "^1.12.6",
+    "@tanstack/react-query": "^4.29.5",
+    "chakra-react-select": "^4.6.0",
+    "classnames": "^2.3.2",
+    "country-data": "^0.0.31",
+    "framer-motion": "^10.12.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
+    "react-intl": "^6.4.1",
+    "react-router-dom": "^6.10.0",
+    "react-toastify": "^9.1.2",
+    "recoil": "^0.7.7",
+    "remove": "^0.1.5",
+    "throttle-debounce": "^5.0.0"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.6.0",
+    "@tanstack/react-query-devtools": "^4.29.5",
+    "@types/classnames": "^2.3.1",
+    "@types/country-data": "^0.0.2",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/react-toastify": "^4.1.0",
+    "@types/recoil": "^0.0.9",
+    "@types/throttle-debounce": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.39.0",
+    "eslint-plugin-formatjs": "^4.10.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "postcss": "^8.4.23",
+    "sass": "^1.62.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.0"
+  },
+  "browserslist": [
+    "defaults"
+  ]
+}

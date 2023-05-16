@@ -22,24 +22,6 @@ class AuthComponent : ComponentResource
             },
             new CustomResourceOptions { Parent = this });
 
-        // Add tenants claim 
-        new Rule(
-            $"{name}-tenant-claim-and-default-role",
-            new()
-            {
-                Script = args.Environment.Apply(environment => $@"
-					function (user, context, callback) {{
-						if (context.clientMetadata['environment'] != '{environment}') {{
-                            return callback(null, user, context);
-						}}
-
-                        context.accessToken['app/tenants'] = user?.app_metadata?.tenants || [];
-
-                        return callback(null, user, context);
-                    }}")
-            },
-            new CustomResourceOptions { Parent = this });
-
         PublicApiAudience = publicApi.Identifier;
         RegisterOutputs();
     }
