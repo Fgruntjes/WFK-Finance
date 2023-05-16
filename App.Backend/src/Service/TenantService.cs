@@ -43,7 +43,7 @@ public class TenantService
     {
         await Task.WhenAll(
             _databaseContext.Tenants.DeleteManyAsync((e) => e.Id == tenantId, cancellationToken),
-            _databaseContext.BankConnections.DeleteManyAsync((e) => e.TenantId == tenantId, cancellationToken)
+            _databaseContext.InstitutionConnections.DeleteManyAsync((e) => e.TenantId == tenantId, cancellationToken)
         );
     }
 }

@@ -1,5 +1,6 @@
 using System.Security.Authentication;
 using System.Security.Claims;
+using App.Backend.DTO;
 using App.Backend.Service;
 using MongoDB.Bson;
 

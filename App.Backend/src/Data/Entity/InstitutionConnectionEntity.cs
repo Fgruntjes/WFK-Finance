@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace App.Backend.Data.Entity;
 
-public class BankConnectionEntity
+public class InstitutionConnectionEntity
 {
     [BsonId]
     public ObjectId Id { get; set; }
@@ -13,10 +13,10 @@ public class BankConnectionEntity
     public string BankId { get; set; } = null!;
     public Uri ConnectUrl { get; set; } = null!;
 
-    internal static void EnsureIndexes(IMongoCollection<BankConnectionEntity> collection)
+    internal static void EnsureIndexes(IMongoCollection<InstitutionConnectionEntity> collection)
     {
-        collection.Indexes.CreateOneAsync(new CreateIndexModel<BankConnectionEntity>(
-            Builders<BankConnectionEntity>.IndexKeys
+        collection.Indexes.CreateOneAsync(new CreateIndexModel<InstitutionConnectionEntity>(
+            Builders<InstitutionConnectionEntity>.IndexKeys
                 .Ascending(e => e.TenantId)
                 .Ascending(e => e.BankId),
             new CreateIndexOptions { Unique = true }));

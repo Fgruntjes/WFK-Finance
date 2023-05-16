@@ -1,6 +1,7 @@
 using App.Backend.Auth;
 using App.Backend.Data;
 using App.Backend.Data.Entity;
+using App.Backend.DTO;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using VMelnalksnis.NordigenDotNet;
@@ -43,8 +44,8 @@ public class BankAccountListService
     public async Task Refresh(CancellationToken cancellationToken = default)
     {
         var currentTenant = await _authContext.GetTenant();
-        var connectionsCursor = await _databaseContext.BankConnections.FindAsync(
-            Builders<BankConnectionEntity>.Filter.Eq(c => c.TenantId, new ObjectId(currentTenant.Id)),
+        var connectionsCursor = await _databaseContext.InstitutionConnections.FindAsync(
+            Builders<InstitutionConnectionEntity>.Filter.Eq(c => c.TenantId, new ObjectId(currentTenant.Id)),
             cancellationToken: cancellationToken);
         var connectionsList = await connectionsCursor.ToListAsync(cancellationToken);
 
@@ -67,7 +68,7 @@ public class BankAccountListService
         }));
     }
 
-    private async Task Upsert(BankAccountEntity accountInfo, BankConnectionEntity connection)
+    private async Task Upsert(BankAccountEntity accountInfo, InstitutionConnectionEntity connection)
     {
         var filter = Builders<BankAccountEntity>.Filter.And(
             Builders<BankAccountEntity>.Filter.Eq(c => c.Connection.TenantId, connection.TenantId),

@@ -26,14 +26,14 @@ public class BankConnectionService
         _nordigenClient = nordigenClient;
     }
 
-    public async Task<IEnumerable<BankConnection>> List(ListRequest request)
+    public async Task<IEnumerable<InstitutionConnection>> List(ListRequest request)
     {
         var tenant = await _authContext.GetTenant();
-        return _databaseContext.BankConnections.AsQueryable()
+        return _databaseContext.InstitutionConnections.AsQueryable()
             .Where(c => c.TenantId == new ObjectId(tenant.Id))
             .Skip(request.Start)
             .Take(request.Limit)
-            .Select(c => new BankConnection
+            .Select(c => new InstitutionConnection
             {
                 Id = c.Id.ToString(),
                 ExternalId = c.ExternalId,
@@ -42,43 +42,37 @@ public class BankConnectionService
             });
     }
 
-    public async Task<BankConnectResponse> Connect(BankConnectRequest request, CancellationToken cancellationToken = default)
+    public async Task<Uri> Connect(string bankId, Uri returnUrl, CancellationToken cancellationToken = default)
     {
-        var connectEntity = await GetConnectUrl(request.BankId, cancellationToken);
+        var connectEntity = await GetConnectUrl(bankId, cancellationToken);
         if (connectEntity != null)
         {
-            return new BankConnectResponse
-            {
-                Url = connectEntity.ConnectUrl
-            };
+            return connectEntity.ConnectUrl;
         }
 
-        var requisitionResponse = await _nordigenClient.Requisitions.Post(new RequisitionCreation(request.ReturnUrl, request.BankId)
+        var requisitionResponse = await _nordigenClient.Requisitions.Post(new RequisitionCreation(returnUrl, bankId)
         {
             AccountSelection = true
         });
 
-        await StoreConnectUrl(request.BankId, requisitionResponse.Link, requisitionResponse.Id.ToString(), cancellationToken);
-        return new BankConnectResponse
-        {
-            Url = requisitionResponse.Link
-        };
+        await StoreConnectUrl(bankId, requisitionResponse.Link, requisitionResponse.Id.ToString(), cancellationToken);
+        return requisitionResponse.Link;
     }
 
-    private async Task<BankConnectionEntity?> GetConnectUrl(string bankId, CancellationToken cancellationToken = default)
+    private async Task<InstitutionConnectionEntity?> GetConnectUrl(string bankId, CancellationToken cancellationToken = default)
     {
         var tenant = await _authContext.GetTenant(cancellationToken);
 
-        var result = await _databaseContext.BankConnections.FindAsync(
+        var result = await _databaseContext.InstitutionConnections.FindAsync(
             c => c.TenantId == new ObjectId(tenant.Id) && c.BankId == bankId,
             new() { Limit = 1 },
             cancellationToken);
         return await result.FirstOrDefaultAsync(cancellationToken);
     }
 
-    private async Task<BankConnectionEntity> StoreConnectUrl(string bankId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
+    private async Task<InstitutionConnectionEntity> StoreConnectUrl(string bankId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var connection = new BankConnectionEntity
+        var connection = new InstitutionConnectionEntity
         {
             TenantId = new ObjectId((await _authContext.GetTenant(cancellationToken)).Id),
             BankId = bankId,
@@ -86,13 +80,13 @@ public class BankConnectionService
             ExternalId = connectionId
         };
 
-        var filter = Builders<BankConnectionEntity>.Filter.And(
-            Builders<BankConnectionEntity>.Filter.Eq(c => c.TenantId, connection.TenantId),
-            Builders<BankConnectionEntity>.Filter.Eq(c => c.BankId, connection.BankId));
-        var update = Builders<BankConnectionEntity>.Update
+        var filter = Builders<InstitutionConnectionEntity>.Filter.And(
+            Builders<InstitutionConnectionEntity>.Filter.Eq(c => c.TenantId, connection.TenantId),
+            Builders<InstitutionConnectionEntity>.Filter.Eq(c => c.BankId, connection.BankId));
+        var update = Builders<InstitutionConnectionEntity>.Update
             .Set(c => c.ConnectUrl, connection.ConnectUrl)
             .Set(c => c.ExternalId, connection.ExternalId);
-        await _databaseContext.BankConnections.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);
+        await _databaseContext.InstitutionConnections.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);
 
         return connection;
     }

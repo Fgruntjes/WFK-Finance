@@ -1,4 +1,4 @@
-namespace App.Backend;
+namespace App.Backend.DTO;
 
 public class Tenant
 {

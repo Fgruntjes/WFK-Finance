@@ -1,8 +1,8 @@
 using System;
 
-namespace App.Backend;
+namespace App.Backend.DTO;
 
-public class Bank
+public class Institution
 {
     public string Id { get; init; } = null!;
     public string Name { get; init; } = null!;

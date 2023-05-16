@@ -67,7 +67,7 @@ public class BankConnectControllerTest : TestFixture<Program>
         var requisitionUrl = new Uri("https://example.com/requisition");
         var institutionId = "SomeInstitute";
 
-        await DatabaseContext.BankConnections.InsertOneAsync(new BankConnectionEntity
+        await DatabaseContext.InstitutionConnections.InsertOneAsync(new InstitutionConnectionEntity
         {
             TenantId = new ObjectId((await AuthContext.GetTenant(TestAuthenticationHandler.DefaultExternalUserId)).Id),
             BankId = institutionId,

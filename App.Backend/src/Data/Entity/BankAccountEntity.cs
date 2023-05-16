@@ -8,7 +8,7 @@ public class BankAccountEntity
 {
     [BsonId]
     public ObjectId Id { get; set; }
-    public BankConnectionEntity Connection { get; set; } = null!;
+    public InstitutionConnectionEntity Connection { get; set; } = null!;
     public string ExternalId { get; set; } = null!;
     public string BankName { get; init; } = null!;
     public string? AccountName { get; init; }

@@ -20,15 +20,19 @@
     "@refinedev/simple-rest": "^4.5.0",
     "@tabler/icons": "^1.1.0",
     "axios": "^0.26.1",
+    "country-data": "^0.0.31",
     "i18next": "^20.1.0",
     "i18next-browser-languagedetector": "^6.1.1",
     "i18next-xhr-backend": "^3.2.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-i18next": "^11.8.11",
-    "react-router-dom": "^6.8.1"
+    "react-router-dom": "^6.8.1",
+    "use-local-storage-state": "^18.3.2"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.6.0",
+    "@types/country-data": "^0.0.2",
     "@types/node": "^18.16.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -44,6 +48,7 @@
   "scripts": {
     "dev": "refine dev",
     "build": "tsc && refine build",
+    "build:api": "rm -Rvf src/api/generated && openapi-generator-cli generate -g typescript-axios -i http://localhost:5000/swagger/v1/swagger.json -o src/api/generated --additional-properties=supportsES6=true,npmVersion=9.6.5",
     "preview": "refine start",
     "refine": "refine"
   },

@@ -1,6 +1,4 @@
-using MongoDB.Bson;
-
-namespace App.Backend;
+namespace App.Backend.DTO;
 
 public class User
 {

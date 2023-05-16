@@ -1,6 +1,6 @@
-namespace App.Backend;
+namespace App.Backend.DTO;
 
-public class BankConnection
+public class InstitutionConnection
 {
     public string Id { get; init; } = null!;
     public string ExternalId { get; set; } = null!;
