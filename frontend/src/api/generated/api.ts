@@ -81,116 +81,6 @@ export interface InstitutionConnection {
 }
 
 /**
- * BankConnectionApi - axios parameter creator
- * @export
- */
-export const BankConnectionApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @param {number} [start] 
-         * @param {number} [end] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        institutionConnectionList: async (start?: number, end?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/BankConnection`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            if (start !== undefined) {
-                localVarQueryParameter['start'] = start;
-            }
-
-            if (end !== undefined) {
-                localVarQueryParameter['end'] = end;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * BankConnectionApi - functional programming interface
- * @export
- */
-export const BankConnectionApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = BankConnectionApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @param {number} [start] 
-         * @param {number} [end] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async institutionConnectionList(start?: number, end?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<InstitutionConnection>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.institutionConnectionList(start, end, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-    }
-};
-
-/**
- * BankConnectionApi - factory interface
- * @export
- */
-export const BankConnectionApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = BankConnectionApiFp(configuration)
-    return {
-        /**
-         * 
-         * @param {number} [start] 
-         * @param {number} [end] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        institutionConnectionList(start?: number, end?: number, options?: any): AxiosPromise<Array<InstitutionConnection>> {
-            return localVarFp.institutionConnectionList(start, end, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * BankConnectionApi - object-oriented interface
- * @export
- * @class BankConnectionApi
- * @extends {BaseAPI}
- */
-export class BankConnectionApi extends BaseAPI {
-    /**
-     * 
-     * @param {number} [start] 
-     * @param {number} [end] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BankConnectionApi
-     */
-    public institutionConnectionList(start?: number, end?: number, options?: AxiosRequestConfig) {
-        return BankConnectionApiFp(this.configuration).institutionConnectionList(start, end, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-/**
  * InstitutionApi - axios parameter creator
  * @export
  */
@@ -288,6 +178,116 @@ export class InstitutionApi extends BaseAPI {
      */
     public institutionList(country?: string, options?: AxiosRequestConfig) {
         return InstitutionApiFp(this.configuration).institutionList(country, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * InstitutionConnectionApi - axios parameter creator
+ * @export
+ */
+export const InstitutionConnectionApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {number} [start] 
+         * @param {number} [end] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        institutionConnectionList: async (start?: number, end?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/InstitutionConnection`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (start !== undefined) {
+                localVarQueryParameter['start'] = start;
+            }
+
+            if (end !== undefined) {
+                localVarQueryParameter['end'] = end;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * InstitutionConnectionApi - functional programming interface
+ * @export
+ */
+export const InstitutionConnectionApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = InstitutionConnectionApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {number} [start] 
+         * @param {number} [end] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async institutionConnectionList(start?: number, end?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<InstitutionConnection>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.institutionConnectionList(start, end, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * InstitutionConnectionApi - factory interface
+ * @export
+ */
+export const InstitutionConnectionApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = InstitutionConnectionApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {number} [start] 
+         * @param {number} [end] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        institutionConnectionList(start?: number, end?: number, options?: any): AxiosPromise<Array<InstitutionConnection>> {
+            return localVarFp.institutionConnectionList(start, end, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * InstitutionConnectionApi - object-oriented interface
+ * @export
+ * @class InstitutionConnectionApi
+ * @extends {BaseAPI}
+ */
+export class InstitutionConnectionApi extends BaseAPI {
+    /**
+     * 
+     * @param {number} [start] 
+     * @param {number} [end] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof InstitutionConnectionApi
+     */
+    public institutionConnectionList(start?: number, end?: number, options?: AxiosRequestConfig) {
+        return InstitutionConnectionApiFp(this.configuration).institutionConnectionList(start, end, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

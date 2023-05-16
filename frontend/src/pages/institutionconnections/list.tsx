@@ -5,7 +5,7 @@ import { useTable } from "@refinedev/react-table"
 import { ColumnDef, flexRender } from "@tanstack/react-table"
 import React from "react"
 
-export const BankConnectionList: React.FC<IResourceComponentsProps> = () => {
+export const InstitutionConnectionList: React.FC<IResourceComponentsProps> = () => {
     const columns = React.useMemo<ColumnDef<any>[]>(
         () => [
             {

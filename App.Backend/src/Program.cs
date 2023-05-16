@@ -29,7 +29,7 @@ builder.Services.AddSingleton(DateTimeZoneProviders.Tzdb);
 builder.Services.AddScoped<AuthContext>();
 builder.Services.AddScoped<DatabaseContext>();
 builder.Services.Scan(scan => scan.FromAssemblyOf<Program>()
-    .AddClasses(classes => classes.InNamespaceOf<BankConnectionService>())
+    .AddClasses(classes => classes.InNamespaceOf<InstitutionConnectionService>())
         .AsSelf()
         .WithTransientLifetime());
 

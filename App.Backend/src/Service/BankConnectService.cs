@@ -10,13 +10,13 @@ using VMelnalksnis.NordigenDotNet.Requisitions;
 
 namespace App.Backend.Service;
 
-public class BankConnectionService
+public class InstitutionConnectionService
 {
     private readonly DatabaseContext _databaseContext;
     private readonly AuthContext _authContext;
     private readonly INordigenClient _nordigenClient;
 
-    public BankConnectionService(
+    public InstitutionConnectionService(
         DatabaseContext databaseContext,
         AuthContext authContext,
         INordigenClient nordigenClient)

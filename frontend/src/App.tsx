@@ -21,7 +21,7 @@ import routerBindings, {
 } from "@refinedev/react-router-v6";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { dataProvider } from './dataProvider';
-import { BankConnectionCreate, BankConnectionEdit, BankConnectionList, BankConnectionShow } from "./pages/bankconnections";
+import { InstitutionConnectionCreate, InstitutionConnectionEdit, InstitutionConnectionList, InstitutionConnectionShow } from "./pages/institutionconnections";
 import { Login } from "./pages/login";
 import { resources } from "./resources";
 import { useAuthProvider } from "./useAuthProvider";
@@ -73,7 +73,7 @@ function App() {
                   <Route
                       element={
                           <Authenticated fallback={<Outlet />}>
-                              <NavigateToResource resource="BankConnection" />
+                              <NavigateToResource resource="Institution" />
                           </Authenticated>
                       }
                   >
@@ -93,13 +93,13 @@ function App() {
                   >
                       <Route
                           index
-                          element={<NavigateToResource resource="BankConnection" />}
+                          element={<NavigateToResource resource="Institution" />}
                       />
-                      <Route path="BankConnection">
-                        <Route index element={<BankConnectionList />} />
-                        <Route path="create" element={<BankConnectionCreate />} />
-                        <Route path="edit/:id" element={<BankConnectionEdit />} />
-                        <Route path="show/:id" element={<BankConnectionShow />} />
+                      <Route path="Institution">
+                        <Route index element={<InstitutionConnectionList />} />
+                        <Route path="create" element={<InstitutionConnectionCreate />} />
+                        <Route path="edit/:id" element={<InstitutionConnectionEdit />} />
+                        <Route path="show/:id" element={<InstitutionConnectionShow />} />
                       </Route>
                       <Route path="*" element={<ErrorComponent />} />
                   </Route>

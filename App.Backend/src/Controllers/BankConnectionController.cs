@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace App.Backend.Controllers;
 
-[Tags("BankConnection")]
+[Tags("InstitutionConnection")]
 [Produces("application/json")]
 [Authorize("bankacounts:read")]
-[Route("/BankConnection")]
+[Route("/InstitutionConnection")]
 public class InstitutionConnectionController : ControllerBase
 {
-    private readonly BankConnectionService _bankConnectService;
+    private readonly InstitutionConnectionService _bankConnectService;
 
-    public InstitutionConnectionController(BankConnectionService bankConnectService)
+    public InstitutionConnectionController(InstitutionConnectionService bankConnectService)
     {
         _bankConnectService = bankConnectService;
     }

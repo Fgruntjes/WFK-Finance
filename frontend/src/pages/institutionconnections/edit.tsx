@@ -1,6 +1,6 @@
 import { IResourceComponentsProps } from "@refinedev/core";
 import { MantineInferencer } from "@refinedev/inferencer/mantine";
 
-export const BankConnectionShow: React.FC<IResourceComponentsProps> = () => {
+export const InstitutionConnectionEdit: React.FC<IResourceComponentsProps> = () => {
     return <MantineInferencer />;
 };
