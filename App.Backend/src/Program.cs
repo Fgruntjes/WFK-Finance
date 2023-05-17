@@ -2,8 +2,12 @@ using App.Backend.Auth;
 using App.Backend.Data;
 using App.Backend.Nordigen;
 using App.Backend.Service;
+using App.Backend.Swagger;
 using DotNetEnv.Configuration;
 using NodaTime;
+using NSwag;
+using NSwag.Generation.Processors;
+using NSwag.Generation.Processors.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
@@ -17,7 +21,22 @@ if (auht0Settings == null) throw new Exception("Auth0 settings not found");
 builder.Services.AddControllers();
 builder.Services.AddCors();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSwaggerDocument();
+builder.Services.AddSwaggerDocument(c =>
+{
+    c.Title = "App.Backend";
+    c.Version = "v1";
+    c.DocumentName = "v1";
+    c.OperationProcessors.Add(new OperationIdProcessor());
+    c.AddSecurity("Bearer", new OpenApiSecurityScheme
+    {
+        In = OpenApiSecurityApiKeyLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = OpenApiSecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+});
 
 builder.Services.AddOptions<DatabaseSettings>()
     .Bind(builder.Configuration.GetSection("Database"))

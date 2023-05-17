@@ -10,7 +10,7 @@ public class DatabaseContext
     private readonly MongoClient _client;
     public readonly IMongoDatabase Database;
     public IMongoCollection<InstitutionConnectionEntity> InstitutionConnections { get; }
-    public IMongoCollection<BankAccountEntity> BankAccounts { get; }
+    public IMongoCollection<InstitutionEntity> Institutions { get; }
     public IMongoCollection<TenantEntity> Tenants { get; }
     public IMongoCollection<UserEntity> Users { get; }
 
@@ -23,13 +23,13 @@ public class DatabaseContext
 
         // Create collections
         InstitutionConnections = GetCollection<InstitutionConnectionEntity>();
+        Institutions = GetCollection<InstitutionEntity>();
         Tenants = GetCollection<TenantEntity>();
         Users = GetCollection<UserEntity>();
-        BankAccounts = GetCollection<BankAccountEntity>();
 
         // Ensure indexes
         InstitutionConnectionEntity.EnsureIndexes(InstitutionConnections);
-        BankAccountEntity.EnsureIndexes(BankAccounts);
+        InstitutionEntity.EnsureIndexes(Institutions);
         UserEntity.EnsureIndexes(Users);
     }
 
