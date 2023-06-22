@@ -17,6 +17,7 @@ const initializeUseAuth0 = () => {
         auth0Client.set(await createAuth0Client({
             domain: import.meta.env.AUTH0_DOMAIN,
             clientId: import.meta.env.AUTH0_CLIENT_ID,
+            useRefreshTokens: true,
             authorizationParams: {
                 redirect_uri: window.location.origin,
                 scope: import.meta.env.AUTH0_SCOPE,

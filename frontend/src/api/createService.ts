@@ -1,7 +1,7 @@
-import { createConfiguration } from "./createConfiguration";
+import { createServiceConfiguration } from "./createServiceConfiguration";
 import type { Configuration } from "./generated";
 
 export function createService<T>(type: new (configuration: Configuration) => T): T {
-    const configuration = createConfiguration();
+    const configuration = createServiceConfiguration();
     return new type(configuration);
 }

@@ -1,7 +1,7 @@
 import { auth } from '@/services/auth';
 import { Configuration } from "./generated";
 
-export function createConfiguration() {
+export function createServiceConfiguration() {
     return new Configuration({
         basePath: import.meta.env.APP_API_URI,
         middleware: [

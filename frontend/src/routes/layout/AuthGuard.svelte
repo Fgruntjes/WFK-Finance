@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Loader from '@/components/Loader.svelte';
 	import { auth } from '@/services/auth';
 	import { onMount } from 'svelte';
@@ -8,16 +9,24 @@
 	onMount(async () => {
 		await initializeAuth();
 
-		if (!$isAuthenticated) {
+		if (!$isAuthenticated && !$page.error && !$error) {
 			login();
 		}
 	});
+
+	$: {
+		if (!$isAuthenticated && !$page.error && !$error) {
+			login();
+		}
+	}
 </script>
 
 {#if $error}
 	<p>
 		Auth error: {$error.message}
 	</p>
+{:else if $page.error}
+	<slot />
 {:else if $isLoading || !$isAuthenticated}
 	<Loader />
 {:else}

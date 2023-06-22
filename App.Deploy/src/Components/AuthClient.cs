@@ -27,6 +27,13 @@ class AuthClient : ComponentResource
                 Callbacks = args.CallbackUrls ?? args.FrontendUrls ?? Array.Empty<string>(),
                 WebOrigins = args.FrontendUrls ?? Array.Empty<string>(),
                 AllowedLogoutUrls = args.FrontendUrls ?? Array.Empty<string>(),
+                OidcConformant = true,
+                RefreshToken = new ClientRefreshTokenArgs()
+                {
+                    RotationType = "rotating",
+                    ExpirationType = "expiring",
+                    TokenLifetime = 86400 * 365,
+                },
                 JwtConfiguration = new ClientJwtConfigurationArgs()
                 {
                     Alg = "RS256",

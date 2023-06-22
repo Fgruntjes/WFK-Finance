@@ -2,5 +2,10 @@
     "routes": {
         "home": "Dashboard",
         "institutionconnections": "Bank accounts"
+    },
+    "table": {
+        "header": {
+            "actions": "Actions"
+        }
     }
 }

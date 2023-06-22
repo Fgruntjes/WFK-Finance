@@ -4,7 +4,10 @@ import { createI18nStore } from 'svelte-i18next';
 
 i18next.use(HttpBackend).init({
     fallbackLng: 'en',
-    ns: 'common',
+    ns: [
+        'common',
+        'institutionconnections'
+    ],
     debug: import.meta.env.DEV,
     backend: {
         loadPath: '/locales/{{lng}}/{{ns}}.json'

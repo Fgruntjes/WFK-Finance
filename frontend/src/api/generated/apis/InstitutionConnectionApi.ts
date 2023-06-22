@@ -13,23 +13,19 @@
  */
 
 
-import * as runtime from '../runtime';
 import type {
-  InstitutionConnection,
-  InstitutionConnectionCreateRequest,
-  InstitutionConnectionRefreshRequest,
-  ListResponseOfInstitutionConnection,
+    InstitutionConnection,
+    InstitutionConnectionCreateRequest,
+    InstitutionConnectionRefreshRequest,
+    ListResponseOfInstitutionConnection,
 } from '../models';
 import {
-    InstitutionConnectionFromJSON,
-    InstitutionConnectionToJSON,
-    InstitutionConnectionCreateRequestFromJSON,
     InstitutionConnectionCreateRequestToJSON,
-    InstitutionConnectionRefreshRequestFromJSON,
+    InstitutionConnectionFromJSON,
     InstitutionConnectionRefreshRequestToJSON,
-    ListResponseOfInstitutionConnectionFromJSON,
-    ListResponseOfInstitutionConnectionToJSON,
+    ListResponseOfInstitutionConnectionFromJSON
 } from '../models';
+import * as runtime from '../runtime';
 
 export interface CreateRequest {
     request: InstitutionConnectionCreateRequest;
