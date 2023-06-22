@@ -15,7 +15,7 @@
 	});
 
 	$: {
-		if (!$isAuthenticated && !$page.error && !$error) {
+		if (!isLoading && !$isAuthenticated && !$page.error && !$error) {
 			login();
 		}
 	}
