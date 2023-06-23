@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace App.Backend.Data.Entity;
 
-public class InstitutionConnectionEntity : IListableEntity
+public class InstitutionConnectionEntity : IEntity
 {
     public class InstitutionAccount
     {
