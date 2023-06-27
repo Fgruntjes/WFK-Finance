@@ -1,4 +1,5 @@
 using App.Backend.Auth;
+using App.Backend.Data;
 using App.Backend.Data.Entity;
 using App.Backend.DTO;
 using MongoDB.Bson;
@@ -9,12 +10,13 @@ namespace App.Backend.Service;
 public class EntityCrudService<TEntity> where TEntity : IEntity
 {
     private readonly AuthContext _authContext;
-    private readonly IMongoCollection<TEntity> _mongoCollection;
+    private readonly DatabaseContext _databaseContext;
+    private IMongoCollection<TEntity> MongoCollection => _databaseContext.GetCollection<TEntity>();
 
-    public EntityCrudService(AuthContext authContext, IMongoCollection<TEntity> mongoCollection)
+    public EntityCrudService(AuthContext authContext, DatabaseContext databaseContext)
     {
         _authContext = authContext;
-        _mongoCollection = mongoCollection;
+        _databaseContext = databaseContext;
     }
 
     public async Task<ListResponse<TEntity>> List(ListRequest request, CancellationToken cancellationToken = default)
@@ -35,7 +37,7 @@ public class EntityCrudService<TEntity> where TEntity : IEntity
                 PipelineStageDefinitionBuilder.Limit<TEntity>(request.Limit),
             }));
 
-        var aggregation = await _mongoCollection.Aggregate()
+        var aggregation = await MongoCollection.Aggregate()
             .Match(filter)
             .Facet(countFacet, dataFacet)
             .ToListAsync();
@@ -53,14 +55,20 @@ public class EntityCrudService<TEntity> where TEntity : IEntity
         return new ListResponse<TEntity>(items.ToArray(), itemsTotal);
     }
 
-    public async Task<DeleteResponse> Delete(DeleteRequest request, CancellationToken cancellationToken = default)
+    public async Task<DeleteResponse> DeleteMany(DeleteRequest request, CancellationToken cancellationToken = default)
     {
+        var ids = request.Ids.Where(x => !String.IsNullOrEmpty(x)).ToArray();
+        if (ids.Length == 0)
+        {
+            throw new ArgumentException("Ids must not be empty", nameof(request.Ids));
+        }
+
         var tenantId = await GetTenantId(cancellationToken);
         var filter = Builders<TEntity>.Filter.And(
             Builders<TEntity>.Filter.Eq(c => c.TenantId, tenantId),
-            Builders<TEntity>.Filter.In(c => c.Id, request.Ids.Select(x => new ObjectId(x))));
+            Builders<TEntity>.Filter.In(c => c.Id, ids.Select(x => new ObjectId(x))));
 
-        var result = await _mongoCollection
+        var result = await MongoCollection
             .DeleteManyAsync(filter, cancellationToken: cancellationToken);
 
         return new DeleteResponse(result.DeletedCount);

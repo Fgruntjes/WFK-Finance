@@ -33,15 +33,15 @@ public class DatabaseContext
         UserEntity.EnsureIndexes(Users);
     }
 
-    internal Task<IClientSessionHandle> StartSessionAsync()
-    {
-        return _client.StartSessionAsync();
-    }
-
-    private IMongoCollection<TEntity> GetCollection<TEntity>()
+    public IMongoCollection<TEntity> GetCollection<TEntity>()
     {
         var collectionName = Regex.Replace(typeof(TEntity).Name, "Entity$", "");
 
         return Database.GetCollection<TEntity>(collectionName);
+    }
+
+    internal Task<IClientSessionHandle> StartSessionAsync()
+    {
+        return _client.StartSessionAsync();
     }
 }

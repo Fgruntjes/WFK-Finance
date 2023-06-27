@@ -43,9 +43,9 @@ public class InstitutionConnectionController : ControllerBase
     }
 
     [HttpDelete()]
-    public async Task<DeleteResponse> Delete([FromBody] DeleteRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<DeleteResponse>> DeleteMany([FromQuery] DeleteRequest request, CancellationToken cancellationToken = default)
     {
-        return await _entityCrudService.Delete(request);
+        return await _entityCrudService.DeleteMany(request);
     }
 
     [HttpPost()]

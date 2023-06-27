@@ -1,9 +1,11 @@
 using App.Backend.Auth;
+using App.Backend.Controllers;
 using App.Backend.Data;
 using App.Backend.Nordigen;
 using App.Backend.Service;
 using App.Backend.Swagger;
 using DotNetEnv.Configuration;
+using MongoDB.Driver;
 using NodaTime;
 using NSwag;
 using NSwag.Generation.Processors;
@@ -18,7 +20,10 @@ if (builder.Environment.IsDevelopment())
 var auht0Settings = builder.Configuration.GetSection("Auth0").Get<Auth0Options>();
 if (auht0Settings == null) throw new Exception("Auth0 settings not found");
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<BadRequestExceptionFilter>();
+});
 builder.Services.AddCors();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerDocument(c =>
@@ -50,6 +55,7 @@ builder.Services.AddScoped<DatabaseContext>();
 builder.Services.Scan(scan => scan.FromAssemblyOf<Program>()
     .AddClasses(classes => classes.InNamespaceOf<InstitutionConnectionService>())
         .AsSelf()
+        .AsImplementedInterfaces()
         .WithTransientLifetime());
 
 builder.AddAuth0(auht0Settings);
@@ -61,6 +67,7 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseOpenApi();
     app.UseSwaggerUi3();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseCors(policy =>
