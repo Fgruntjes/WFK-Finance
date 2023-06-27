@@ -1,14 +1,8 @@
 {
-	"table": {
-		"title": "Bank connections",
-		"description": "Manage connected bank accounts",
-		"menu": {
-			"new": "New",
-			"delete": "Delete"
-		},
-		"header": {
-			"institution": "Institusion",
-			"accounts": "Accounts"
-		}
+	"title": "Bank connections",
+	"description": "Manage connected bank accounts",
+	"header": {
+		"institution": "Institusion",
+		"accounts": "Accounts"
 	}
 }

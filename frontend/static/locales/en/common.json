@@ -4,8 +4,9 @@
 		"institutionconnections": "Bank accounts"
 	},
 	"table": {
-		"header": {
-			"actions": "Actions"
+		"actions": {
+			"delete": "Delete",
+			"add": "Add"
 		}
 	}
 }

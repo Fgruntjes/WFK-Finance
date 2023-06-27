@@ -1,52 +1,25 @@
 <script lang="ts">
-	import type { DeleteResponse, Institution } from '@/api/generated';
+	import type { Institution, ListResponseOfInstitutionConnection } from '@/api/generated';
 	import { queries } from '@/api/queries';
 	import { institutionQuery } from '@/api/queries/institutionQuery';
 	import LocalError from '@/components/LocalError.svelte';
 	import PageTitle from '@/components/PageTitle.svelte';
+	import PaginatedTable from '@/components/PaginatedTable/PaginatedTable.svelte';
 	import { i18n } from '@/services/i18n';
-	import {
-		createMutation,
-		createQuery,
-		type CreateMutationResult,
-		type CreateQueryResult
-	} from '@tanstack/svelte-query';
-	import {
-		Button,
-		DataTable,
-		DataTableSkeleton,
-		InlineLoading,
-		Pagination,
-		PaginationSkeleton,
-		SkeletonText,
-		Toolbar,
-		ToolbarContent
-	} from 'carbon-components-svelte';
-	import { Add as AddIcon, TrashCan as DeleteIcon } from 'carbon-icons-svelte';
+	import { createQuery, type CreateQueryResult } from '@tanstack/svelte-query';
+	import { SkeletonText } from 'carbon-components-svelte';
 
-	let selectedRowIds: ReadonlyArray<string> = [];
-	let currentPage = 1;
-	let pageSize = 25;
 	const tableHeaders = [
-		{ key: 'institutionId', value: $i18n.t('institutionconnections:table.header.institution') },
-		{ key: 'accounts', value: $i18n.t('institutionconnections:table.header.accounts') }
+		{ key: 'institutionId', value: $i18n.t('institutionconnections:header.institution') },
+		{ key: 'accounts', value: $i18n.t('institutionconnections:header.accounts') }
 	];
-	const tableTitle = $i18n.t('institutionconnections:table.title');
 
-	const listQuery = createQuery({
-		...queries.InstitutionConnectionQuery.list({
-			skip: (currentPage - 1) * pageSize,
-			limit: pageSize
-		})
-	});
-
-	let deleteMutation: CreateMutationResult<DeleteResponse, Error, undefined>;
+	let listQuery: CreateQueryResult<ListResponseOfInstitutionConnection, Error>;
 	let institutionData: CreateQueryResult<Array<Institution>, Error>;
 	let institutionMap: Record<string, Institution> = {};
-	let deleteButtonDisabled = true;
 	$: {
 		const institutionIds =
-			$listQuery.data?.items
+			$listQuery?.data?.items
 				.map((item) => item.institutionId)
 				.filter((value, index, array) => array.indexOf(value) === index) ?? [];
 
@@ -55,12 +28,6 @@
 			enabled: institutionIds.length > 0
 		});
 
-		deleteMutation = createMutation({
-			...queries.InstitutionConnectionMutation.deleteMany({ ids: selectedRowIds.concat() }),
-			onSettled: () => $listQuery.refetch()
-		});
-
-		deleteButtonDisabled = selectedRowIds.length == 0 || $deleteMutation?.isLoading;
 		$institutionData.data?.reduce((map, institution) => {
 			map[institution.id] = institution;
 			return map;
@@ -70,87 +37,45 @@
 
 <PageTitle title="Bank accounts" />
 
-{#if $listQuery.error}
-	<LocalError error={$listQuery.error} />
-{/if}
-
 {#if $institutionData?.error}
 	<LocalError error={$institutionData?.error} />
 {/if}
 
-{#if $listQuery.isLoading}
-	<DataTableSkeleton headers={tableHeaders} rows={3} />
-{:else}
-	<DataTable
-		headers={tableHeaders}
-		rows={$listQuery.data?.items}
-		title={tableTitle}
-		description={$i18n.t('institutionconnections:table.description') || ''}
-		selectable
-		batchSelection
-		bind:selectedRowIds
-	>
-		<Toolbar>
-			<ToolbarContent>
-				<Button
-					iconDescription={$i18n.t('institutionconnections:table.menu.delete') || ''}
-					icon={DeleteIcon}
-					kind="danger"
-					disabled={deleteButtonDisabled}
-					on:click={() => $deleteMutation.mutate()}
-				>
-					{#if $deleteMutation.isLoading}
-						<InlineLoading />
-					{/if}
-					{$i18n.t('institutionconnections:table.menu.delete')}
-				</Button>
-				<Button
-					iconDescription={$i18n.t('institutionconnections:table.menu.new') || ''}
-					icon={AddIcon}
-				>
-					{$i18n.t('institutionconnections:table.menu.new')}
-				</Button>
-			</ToolbarContent>
-		</Toolbar>
-
-		<svelte:fragment slot="cell" let:row let:cell>
-			{#if cell.key === 'institutionId'}
-				{#if $institutionData.isLoading}
-					<SkeletonText />
-				{:else}
-					{@const institution = institutionMap[cell.value]}
-					{#if institution?.logo}
-						<img alt={institution.name} src={institution.logo} class="institution-logo" />
-					{/if}
-
-					{institution?.name}
-				{/if}
-			{:else if cell.key === 'accounts'}
-				<ul>
-					{#each cell.value as account}
-						<li>
-							{account.iban}
-							{#if account.ownerName}({account.ownerName}){/if}
-						</li>
-					{/each}
-				</ul>
+<PaginatedTable
+	headers={tableHeaders}
+	title={$i18n.t('institutionconnections:title')}
+	description={$i18n.t('institutionconnections:description')}
+	selectable
+	batchSelection
+	listAction={queries.InstitutionConnectionQuery.list}
+	bind:listQuery
+>
+	<svelte:fragment slot="cell" let:row let:cell>
+		{#if cell.key === 'institutionId'}
+			{#if $institutionData.isLoading}
+				<SkeletonText />
 			{:else}
-				{cell.value}
-			{/if}
-		</svelte:fragment>
-	</DataTable>
-{/if}
+				{@const institution = institutionMap[cell.value]}
+				{#if institution?.logo}
+					<img alt={institution.name} src={institution.logo} class="institution-logo" />
+				{/if}
 
-{#if $listQuery.isLoading}
-	<PaginationSkeleton />
-{:else}
-	<Pagination
-		pageSizes={[pageSize]}
-		totalItems={$listQuery.data?.itemsTotal}
-		bind:page={currentPage}
-		{pageSize}
-	/>
-{/if}
+				{institution?.name}
+			{/if}
+		{:else if cell.key === 'accounts'}
+			<ul>
+				{#each cell.value as account}
+					<li>
+						{account.iban}
+						{#if account.ownerName}({account.ownerName}){/if}
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			{cell.value}
+		{/if}
+	</svelte:fragment>
+</PaginatedTable>
 
 <style lang="scss">
 	.institution-logo {
