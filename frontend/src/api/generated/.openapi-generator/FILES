@@ -4,6 +4,7 @@ apis/InstitutionConnectionApi.ts
 apis/index.ts
 index.ts
 models/Account.ts
+models/DeleteResponse.ts
 models/Institution.ts
 models/InstitutionConnection.ts
 models/InstitutionConnectionCreateRequest.ts

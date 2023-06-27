@@ -1,38 +1,52 @@
 <script lang="ts">
-	import type { Institution } from '@/api/generated';
-	import { institutionConnectionQuery } from '@/api/queries/institutionConnectionQuery';
+	import type { DeleteResponse, Institution } from '@/api/generated';
+	import { queries } from '@/api/queries';
 	import { institutionQuery } from '@/api/queries/institutionQuery';
 	import LocalError from '@/components/LocalError.svelte';
 	import PageTitle from '@/components/PageTitle.svelte';
 	import { i18n } from '@/services/i18n';
-	import { createQuery, type CreateQueryResult } from '@tanstack/svelte-query';
 	import {
+		createMutation,
+		createQuery,
+		type CreateMutationResult,
+		type CreateQueryResult
+	} from '@tanstack/svelte-query';
+	import {
+		Button,
 		DataTable,
 		DataTableSkeleton,
+		InlineLoading,
 		Pagination,
 		PaginationSkeleton,
-		SkeletonText
+		SkeletonText,
+		Toolbar,
+		ToolbarContent
 	} from 'carbon-components-svelte';
+	import { Add as AddIcon, TrashCan as DeleteIcon } from 'carbon-icons-svelte';
 
+	let selectedRowIds: ReadonlyArray<string> = [];
 	let currentPage = 1;
 	let pageSize = 25;
 	const tableHeaders = [
-		{ key: 'id', value: $i18n.t('table.header.actions') },
 		{ key: 'institutionId', value: $i18n.t('institutionconnections:table.header.institution') },
 		{ key: 'accounts', value: $i18n.t('institutionconnections:table.header.accounts') }
 	];
+	const tableTitle = $i18n.t('institutionconnections:table.title');
 
-	const institutionConnectionData = createQuery({
-		...institutionConnectionQuery.list({
+	const listQuery = createQuery({
+		...queries.InstitutionConnectionQuery.list({
 			skip: (currentPage - 1) * pageSize,
 			limit: pageSize
 		})
 	});
 
+	let deleteMutation: CreateMutationResult<DeleteResponse, Error, undefined>;
 	let institutionData: CreateQueryResult<Array<Institution>, Error>;
+	let institutionMap: Record<string, Institution> = {};
+	let deleteButtonDisabled = true;
 	$: {
 		const institutionIds =
-			$institutionConnectionData.data?.items
+			$listQuery.data?.items
 				.map((item) => item.institutionId)
 				.filter((value, index, array) => array.indexOf(value) === index) ?? [];
 
@@ -40,10 +54,13 @@
 			...institutionQuery.getMany({ id: institutionIds }),
 			enabled: institutionIds.length > 0
 		});
-	}
 
-	let institutionMap: Record<string, Institution> = {};
-	$: {
+		deleteMutation = createMutation({
+			...queries.InstitutionConnectionMutation.deleteMany({ ids: selectedRowIds.concat() }),
+			onSettled: () => $listQuery.refetch()
+		});
+
+		deleteButtonDisabled = selectedRowIds.length == 0 || $deleteMutation?.isLoading;
 		$institutionData.data?.reduce((map, institution) => {
 			map[institution.id] = institution;
 			return map;
@@ -53,22 +70,51 @@
 
 <PageTitle title="Bank accounts" />
 
-{#if $institutionConnectionData.error}
-	<LocalError error={$institutionConnectionData.error} />
+{#if $listQuery.error}
+	<LocalError error={$listQuery.error} />
 {/if}
 
 {#if $institutionData?.error}
 	<LocalError error={$institutionData?.error} />
 {/if}
 
-{#if $institutionConnectionData.isLoading}
-	<DataTableSkeleton headers={tableHeaders} rows={pageSize} />
+{#if $listQuery.isLoading}
+	<DataTableSkeleton headers={tableHeaders} rows={3} />
 {:else}
-	<DataTable headers={tableHeaders} rows={$institutionConnectionData.data?.items}>
+	<DataTable
+		headers={tableHeaders}
+		rows={$listQuery.data?.items}
+		title={tableTitle}
+		description={$i18n.t('institutionconnections:table.description') || ''}
+		selectable
+		batchSelection
+		bind:selectedRowIds
+	>
+		<Toolbar>
+			<ToolbarContent>
+				<Button
+					iconDescription={$i18n.t('institutionconnections:table.menu.delete') || ''}
+					icon={DeleteIcon}
+					kind="danger"
+					disabled={deleteButtonDisabled}
+					on:click={() => $deleteMutation.mutate()}
+				>
+					{#if $deleteMutation.isLoading}
+						<InlineLoading />
+					{/if}
+					{$i18n.t('institutionconnections:table.menu.delete')}
+				</Button>
+				<Button
+					iconDescription={$i18n.t('institutionconnections:table.menu.new') || ''}
+					icon={AddIcon}
+				>
+					{$i18n.t('institutionconnections:table.menu.new')}
+				</Button>
+			</ToolbarContent>
+		</Toolbar>
+
 		<svelte:fragment slot="cell" let:row let:cell>
-			{#if cell.key === 'id'}
-				<a href="/institutionconnections/{cell.value}/edit">Edit</a>
-			{:else if cell.key === 'institutionId'}
+			{#if cell.key === 'institutionId'}
 				{#if $institutionData.isLoading}
 					<SkeletonText />
 				{:else}
@@ -94,12 +140,13 @@
 		</svelte:fragment>
 	</DataTable>
 {/if}
-{#if $institutionConnectionData.isLoading}
+
+{#if $listQuery.isLoading}
 	<PaginationSkeleton />
 {:else}
 	<Pagination
 		pageSizes={[pageSize]}
-		totalItems={$institutionConnectionData.data?.itemsTotal}
+		totalItems={$listQuery.data?.itemsTotal}
 		bind:page={currentPage}
 		{pageSize}
 	/>

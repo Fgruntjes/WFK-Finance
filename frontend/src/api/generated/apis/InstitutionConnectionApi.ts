@@ -14,12 +14,14 @@
 
 
 import type {
+    DeleteResponse,
     InstitutionConnection,
     InstitutionConnectionCreateRequest,
     InstitutionConnectionRefreshRequest,
     ListResponseOfInstitutionConnection,
 } from '../models';
 import {
+    DeleteResponseFromJSON,
     InstitutionConnectionCreateRequestToJSON,
     InstitutionConnectionFromJSON,
     InstitutionConnectionRefreshRequestToJSON,
@@ -29,6 +31,10 @@ import * as runtime from '../runtime';
 
 export interface CreateRequest {
     request: InstitutionConnectionCreateRequest;
+}
+
+export interface DeleteManyRequest {
+    ids?: Array<string>;
 }
 
 export interface ListRequest {
@@ -73,6 +79,34 @@ export class InstitutionConnectionApi extends runtime.BaseAPI {
      */
     async create(requestParameters: CreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstitutionConnection> {
         const response = await this.createRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async deleteManyRaw(requestParameters: DeleteManyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteResponse>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.ids) {
+            queryParameters['Ids'] = requestParameters.ids;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/InstitutionConnection`,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DeleteResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async deleteMany(requestParameters: DeleteManyRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteResponse> {
+        const response = await this.deleteManyRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

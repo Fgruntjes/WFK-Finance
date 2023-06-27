@@ -1,5 +1,4 @@
-
 export interface ListResult<T> {
-    items: Array<T>;
-    itemsTotal: number;
+	items: Array<T>;
+	itemsTotal: number;
 }

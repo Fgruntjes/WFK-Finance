@@ -1,5 +1,4 @@
-
 export interface ListRequest {
-    skip?: number;
-    limit?: number;
+	skip?: number;
+	limit?: number;
 }

@@ -41,15 +41,17 @@ public class EntityCrudService<TEntity> where TEntity : IEntity
             .Match(filter)
             .Facet(countFacet, dataFacet)
             .ToListAsync();
+        var resultFacets = aggregation.First().Facets;
+        var countResult = resultFacets.First(x => x.Name == "count")
+            .Output<AggregateCountResult>();
 
-        var itemsTotal = aggregation.First()
-            .Facets.First(x => x.Name == "count")
-            .Output<AggregateCountResult>()
-            .First()
-            .Count;
+        if (aggregation.Count == 0 || countResult.Count == 0)
+        {
+            return new ListResponse<TEntity>(new TEntity[0], 0);
+        }
 
-        var items = aggregation.First()
-            .Facets.First(x => x.Name == "data")
+        var itemsTotal = countResult.First().Count;
+        var items = resultFacets.First(x => x.Name == "data")
             .Output<TEntity>();
 
         return new ListResponse<TEntity>(items.ToArray(), itemsTotal);
