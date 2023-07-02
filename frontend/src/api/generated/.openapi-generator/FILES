@@ -8,6 +8,7 @@ models/DeleteResponse.ts
 models/Institution.ts
 models/InstitutionConnection.ts
 models/InstitutionConnectionCreateRequest.ts
+models/InstitutionConnectionRefreshByExternalIdRequest.ts
 models/InstitutionConnectionRefreshRequest.ts
 models/ListResponseOfInstitutionConnection.ts
 models/index.ts

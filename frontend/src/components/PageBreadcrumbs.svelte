@@ -8,8 +8,10 @@
 	type Breadcrumb = RouteItem & { isCurrentPage?: boolean };
 	let crumbs: Breadcrumb[] = [];
 
+	export let route: string | undefined = undefined;
+
 	$: {
-		const activeRoute = routesById[$page.route.id ?? ''];
+		const activeRoute = routesById[route ?? $page.route.id ?? ''];
 		crumbs = [];
 		crumbs.push({
 			...routesById['/'],
@@ -23,7 +25,7 @@
 				.filter((t) => t !== '')
 				.forEach((token) => {
 					tokenPath += '/' + token;
-					const route = routesById['/' + token];
+					const route = routesById[tokenPath];
 					crumbs.push({
 						...route,
 						isCurrentPage: tokenPath === activeRoute.id

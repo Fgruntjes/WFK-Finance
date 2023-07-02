@@ -3,7 +3,13 @@
 	import { Add as AddIcon } from 'carbon-icons-svelte';
 	import Button from '../Button.svelte';
 
-	const { ...buttonProps } = $$props;
+	export let route: string;
+	export let title: string | undefined = undefined;
 </script>
 
-<Button icon={AddIcon} title={buttonProps.title || $i18n.t('table.actions.add')} {...buttonProps} />
+<Button
+	href={route}
+	icon={AddIcon}
+	title={title || $i18n.t('components.addbutton.label')}
+	{...$$restProps}
+/>

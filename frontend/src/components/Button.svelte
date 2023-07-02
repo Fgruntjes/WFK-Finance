@@ -1,21 +1,32 @@
-<script lang="ts" context="module">
-	import type { ButtonProps as CarbonButtonProps } from 'carbon-components-svelte/types/Button/Button.svelte';
-	export type ButtonProps = CarbonButtonProps & {
-		isLoading?: boolean;
-		title?: string;
-	};
-</script>
-
 <script lang="ts">
 	import { Button, InlineLoading } from 'carbon-components-svelte';
 
-	const { isLoading, title, ...buttonProps }: ButtonProps = $$props;
+	export let isLoading: boolean = false;
+	export let disabled: boolean = false;
+	export let iconOnly: boolean = false;
+	export let icon: typeof import('svelte').SvelteComponent | undefined = undefined;
+	export let title: string;
+
+	if (iconOnly && isLoading) {
+		icon = InlineLoading;
+	}
+
+	$: buttonProps = {
+		icon,
+		disabled: disabled || isLoading,
+		iconDescription: title,
+		...$$restProps
+	};
 </script>
 
-<Button {...buttonProps} disabled={buttonProps?.disabled || isLoading} iconDescription={title}>
-	{#if isLoading}
-		<InlineLoading />
-	{/if}
-	{title}
-	<slot />
-</Button>
+{#if iconOnly}
+	<Button on:click {...buttonProps} />
+{:else}
+	<Button on:click {...buttonProps}>
+		{#if isLoading}
+			<InlineLoading />
+		{/if}
+		{title}
+		<slot />
+	</Button>
+{/if}

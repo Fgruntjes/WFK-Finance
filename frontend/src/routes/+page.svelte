@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PageTitle from '@/components/PageTitle.svelte';
+	import PageTitle from '@/components/PageBreadcrumbs.svelte';
 </script>
 
 <PageTitle title="Dashboard" />

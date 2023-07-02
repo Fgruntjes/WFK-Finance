@@ -15,6 +15,11 @@ export const routes: RouteItem[] = [
 		id: '/institutionconnections',
 		translationKey: 'routes.institutionconnections',
 		includeInMenu: true
+	},
+	{
+		id: '/institutionconnections/create',
+		translationKey: 'routes.create',
+		includeInMenu: false
 	}
 ];
 

@@ -52,7 +52,7 @@ const initializeUseAuth0 = () => {
 
 	const login = async (options?: RedirectLoginOptions) => {
 		await get(auth0Client)?.loginWithRedirect({
-			appState: { targetUrl: window.location.pathname },
+			appState: { targetUrl: window.location.pathname + window.location.search },
 			...options
 		});
 	};

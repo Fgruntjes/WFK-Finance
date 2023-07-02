@@ -42,10 +42,23 @@ public class InstitutionConnectionService
     public async Task<InstitutionConnectionEntity> Refresh(ObjectId id, CancellationToken cancellationToken = default)
     {
         var connection = await Get(id, cancellationToken);
-        var institution = await _institutionService.Get(connection.InstitutionId, cancellationToken);
-        var requisition = await _nordigenClient.Requisitions.Get(Guid.Parse(connection.ExternalConnectionId));
+        return await Refresh(connection, cancellationToken);
+    }
 
-        return await PersistConnection(requisition, institution, cancellationToken);
+    public async Task<InstitutionConnectionEntity> RefreshByExternalId(string externalId, CancellationToken cancellationToken = default)
+    {
+        var connection = await GetByExternalId(externalId, cancellationToken);
+        return await Refresh(connection, cancellationToken);
+    }
+
+    public async Task<InstitutionConnectionEntity> GetByExternalId(string externalId, CancellationToken cancellationToken = default)
+    {
+        var result = await _databaseContext.InstitutionConnections.FindAsync(
+            c => c.ExternalConnectionId == externalId,
+            new() { Limit = 1 },
+            cancellationToken);
+
+        return await result.SingleAsync(cancellationToken);
     }
 
     public async Task<InstitutionConnectionEntity> Get(ObjectId id, CancellationToken cancellationToken = default)
@@ -56,6 +69,14 @@ public class InstitutionConnectionService
             cancellationToken);
 
         return await result.SingleAsync(cancellationToken);
+    }
+
+    private async Task<InstitutionConnectionEntity> Refresh(InstitutionConnectionEntity connection, CancellationToken cancellationToken = default)
+    {
+        var institution = await _institutionService.Get(connection.InstitutionId, cancellationToken);
+        var requisition = await _nordigenClient.Requisitions.Get(Guid.Parse(connection.ExternalConnectionId));
+
+        return await PersistConnection(requisition, institution, cancellationToken);
     }
 
     private async Task<InstitutionConnectionEntity> PersistConnection(
@@ -101,7 +122,8 @@ public class InstitutionConnectionService
             update,
             new FindOneAndUpdateOptions<InstitutionConnectionEntity>
             {
-                IsUpsert = true
+                IsUpsert = true,
+                ReturnDocument = ReturnDocument.After
             },
             cancellationToken);
     }

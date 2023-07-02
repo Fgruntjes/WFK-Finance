@@ -62,8 +62,8 @@ export class InstitutionApi extends runtime.BaseAPI {
 
     /**
      */
-    async get(requestParameters: GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Institution> {
-        const response = await this.getRaw(requestParameters, initOverrides);
+    async get(id: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Institution> {
+        const response = await this.getRaw({ id: id }, initOverrides);
         return await response.value();
     }
 
@@ -90,8 +90,8 @@ export class InstitutionApi extends runtime.BaseAPI {
 
     /**
      */
-    async getMany(requestParameters: GetManyRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Institution>> {
-        const response = await this.getManyRaw(requestParameters, initOverrides);
+    async getMany(id?: Array<string>, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Institution>> {
+        const response = await this.getManyRaw({ id: id }, initOverrides);
         return await response.value();
     }
 
@@ -118,8 +118,8 @@ export class InstitutionApi extends runtime.BaseAPI {
 
     /**
      */
-    async search(requestParameters: SearchRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Institution>> {
-        const response = await this.searchRaw(requestParameters, initOverrides);
+    async search(country?: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Institution>> {
+        const response = await this.searchRaw({ country: country }, initOverrides);
         return await response.value();
     }
 

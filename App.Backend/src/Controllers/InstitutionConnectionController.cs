@@ -62,4 +62,12 @@ public class InstitutionConnectionController : ControllerBase
         var result = await _institutionConnectionService.Refresh(new ObjectId(request.Id));
         return InstitutionConnection.FromEntity(result);
     }
+
+    [HttpPost()]
+    [Route("/InstitutionConnection/RefreshByExternalId")]
+    public async Task<InstitutionConnection> RefreshByExternalId([FromBody] InstitutionConnectionRefreshByExternalIdRequest request, CancellationToken cancellationToken = default)
+    {
+        var result = await _institutionConnectionService.RefreshByExternalId(request.ExternalId);
+        return InstitutionConnection.FromEntity(result);
+    }
 }

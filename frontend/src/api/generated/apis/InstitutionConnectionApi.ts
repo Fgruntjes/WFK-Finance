@@ -13,21 +13,29 @@
  */
 
 
+import * as runtime from '../runtime';
 import type {
-    DeleteResponse,
-    InstitutionConnection,
-    InstitutionConnectionCreateRequest,
-    InstitutionConnectionRefreshRequest,
-    ListResponseOfInstitutionConnection,
+  DeleteResponse,
+  InstitutionConnection,
+  InstitutionConnectionCreateRequest,
+  InstitutionConnectionRefreshByExternalIdRequest,
+  InstitutionConnectionRefreshRequest,
+  ListResponseOfInstitutionConnection,
 } from '../models';
 import {
     DeleteResponseFromJSON,
-    InstitutionConnectionCreateRequestToJSON,
+    DeleteResponseToJSON,
     InstitutionConnectionFromJSON,
+    InstitutionConnectionToJSON,
+    InstitutionConnectionCreateRequestFromJSON,
+    InstitutionConnectionCreateRequestToJSON,
+    InstitutionConnectionRefreshByExternalIdRequestFromJSON,
+    InstitutionConnectionRefreshByExternalIdRequestToJSON,
+    InstitutionConnectionRefreshRequestFromJSON,
     InstitutionConnectionRefreshRequestToJSON,
-    ListResponseOfInstitutionConnectionFromJSON
+    ListResponseOfInstitutionConnectionFromJSON,
+    ListResponseOfInstitutionConnectionToJSON,
 } from '../models';
-import * as runtime from '../runtime';
 
 export interface CreateRequest {
     request: InstitutionConnectionCreateRequest;
@@ -44,6 +52,10 @@ export interface ListRequest {
 
 export interface RefreshRequest {
     request: InstitutionConnectionRefreshRequest;
+}
+
+export interface RefreshByExternalIdRequest {
+    request: InstitutionConnectionRefreshByExternalIdRequest;
 }
 
 /**
@@ -77,8 +89,8 @@ export class InstitutionConnectionApi extends runtime.BaseAPI {
 
     /**
      */
-    async create(requestParameters: CreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstitutionConnection> {
-        const response = await this.createRaw(requestParameters, initOverrides);
+    async create(request: InstitutionConnectionCreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstitutionConnection> {
+        const response = await this.createRaw({ request: request }, initOverrides);
         return await response.value();
     }
 
@@ -105,8 +117,8 @@ export class InstitutionConnectionApi extends runtime.BaseAPI {
 
     /**
      */
-    async deleteMany(requestParameters: DeleteManyRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteResponse> {
-        const response = await this.deleteManyRaw(requestParameters, initOverrides);
+    async deleteMany(ids?: Array<string>, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteResponse> {
+        const response = await this.deleteManyRaw({ ids: ids }, initOverrides);
         return await response.value();
     }
 
@@ -137,8 +149,8 @@ export class InstitutionConnectionApi extends runtime.BaseAPI {
 
     /**
      */
-    async list(requestParameters: ListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListResponseOfInstitutionConnection> {
-        const response = await this.listRaw(requestParameters, initOverrides);
+    async list(skip?: number, limit?: number, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListResponseOfInstitutionConnection> {
+        const response = await this.listRaw({ skip: skip, limit: limit }, initOverrides);
         return await response.value();
     }
 
@@ -168,8 +180,39 @@ export class InstitutionConnectionApi extends runtime.BaseAPI {
 
     /**
      */
-    async refresh(requestParameters: RefreshRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstitutionConnection> {
-        const response = await this.refreshRaw(requestParameters, initOverrides);
+    async refresh(request: InstitutionConnectionRefreshRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstitutionConnection> {
+        const response = await this.refreshRaw({ request: request }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async refreshByExternalIdRaw(requestParameters: RefreshByExternalIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstitutionConnection>> {
+        if (requestParameters.request === null || requestParameters.request === undefined) {
+            throw new runtime.RequiredError('request','Required parameter requestParameters.request was null or undefined when calling refreshByExternalId.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/InstitutionConnection/RefreshByExternalId`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: InstitutionConnectionRefreshByExternalIdRequestToJSON(requestParameters.request),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => InstitutionConnectionFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async refreshByExternalId(request: InstitutionConnectionRefreshByExternalIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstitutionConnection> {
+        const response = await this.refreshByExternalIdRaw({ request: request }, initOverrides);
         return await response.value();
     }
 
