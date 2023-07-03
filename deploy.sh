@@ -11,6 +11,8 @@ source .deploy.env
 test -f .local.env && source .local.env
 set +a
 
+pulumi login gs://${GOOGLE_PROJECT_SLUG}-pulumi 
+
 pulumi stack select "${APP_ENVIRONMENT}" \
     --cwd "App.Deploy" \
     --create \
