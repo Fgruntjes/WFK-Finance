@@ -22,7 +22,7 @@ class AuthClient : ComponentResource
             new()
             {
                 AppType = isFrontend ? "spa" : "non_interactive",
-                TokenEndpointAuthMethod = "none",
+                TokenEndpointAuthMethod = isFrontend ? "none" : "client_secret_post",
                 CrossOriginAuth = false,
                 Callbacks = args.CallbackUrls ?? args.FrontendUrls ?? Array.Empty<string>(),
                 WebOrigins = args.FrontendUrls ?? Array.Empty<string>(),
@@ -30,9 +30,18 @@ class AuthClient : ComponentResource
                 OidcConformant = true,
                 RefreshToken = new ClientRefreshTokenArgs()
                 {
-                    RotationType = "rotating",
+                    RotationType = isFrontend ? "rotating" : "non-rotating",
                     ExpirationType = "expiring",
                     TokenLifetime = 86400 * 365,
+                },
+                GrantTypes = isFrontend ? new()
+                {
+                    "refresh_token",
+                    "authorization_code",
+                } : new()
+                {
+                    "authorization_code",
+                    "client_credentials",
                 },
                 JwtConfiguration = new ClientJwtConfigurationArgs()
                 {

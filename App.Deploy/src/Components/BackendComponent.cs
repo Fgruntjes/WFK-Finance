@@ -1,6 +1,8 @@
 using App.Deploy.Components;
 using App.Deploy.Utils;
 using Pulumi;
+using Pulumi.Gcp.CloudRun;
+using Pulumi.Gcp.CloudRun.Inputs;
 
 namespace App.Deploy.Component;
 
@@ -18,9 +20,40 @@ public class BackendComponent : ComponentResource
             $"{name}-authclient",
             new()
             {
-                Environment = args.Environment,
+                Environment = args.AppEnvironment,
             },
             new ComponentResourceOptions { Parent = this });
+
+        var gcpServer = new Service(
+            $"{name}-backend",
+            new()
+            {
+                Location = args.GoogleRegion,
+                Template = new ServiceTemplateArgs
+                {
+                    Spec = new ServiceTemplateSpecArgs
+                    {
+                        Containers = new[]
+                    {
+                        new ServiceTemplateSpecContainerArgs
+                        {
+                            Image = args.GoogleRegion.Apply(region =>
+                                args.GoogleProjectSlug.Apply(projectSlug =>
+                                    args.AppEnvironment.Apply(environment =>
+                                        args.AppVersion.Apply(version =>
+                                            $"{region}-docker.pkg.dev/{projectSlug}/docker/{environment}/backend:{version}")))),
+                        },
+                    },
+                    },
+                },
+                Traffics = new[]
+            {
+            new ServiceTrafficArgs
+            {
+                Percent = 100,
+                LatestRevision = true,
+            }}
+            });
 
         // So "npm run dev" use the deploy values
         EnvFileWriter.Write("../App.Backend/.local.env", new InputMap<string>() {
@@ -35,7 +68,7 @@ public class BackendComponent : ComponentResource
             {"Database__DatabaseName", args.DatabaseName},
         });
 
-        BaseUrl = Output.Create("http://localhost:5000");
+        BaseUrl = Output.Create("http://localhost:8080");
         RegisterOutputs();
     }
 }

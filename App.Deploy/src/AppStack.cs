@@ -40,10 +40,13 @@ internal class AppStack : Stack
             $"{config.Environment}-backend",
             new()
             {
-                Environment = config.Environment,
+                AppEnvironment = config.Environment,
+                AppVersion = config.Version,
                 AuthDomain = config.Auth0Domain,
                 AuthAudience = auth.PublicApiAudience,
                 AuthScope = authScopeString,
+                GoogleRegion = config.GoogleRegion,
+                GoogleProjectSlug = config.GoogleProjectSlug,
                 NordigenSecretId = config.NordigenSecretId,
                 NordigenSecretKey = config.NordigenSecretKey,
                 DatabaseConnectionString = database.ConnectionString,

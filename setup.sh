@@ -13,13 +13,12 @@ test -f .local.env && source .local.env
 set +a
 
 # Env defaults
-GOOGLE_SERVICE_ACCOUNT="github-cicd"
+GOOGLE_SERVICE_ACCOUNT="github-actions"
 GOOGLE_IDENTITY_POOL="github-pool"
 GOOGLE_IDENTITY_PROVIDER="github-provider"
-GOOGLE_IDENTIY_ROLES=(
+GOOGLE_IDENTIY_PROJECT_ROLES=(
     "roles/artifactregistry.repoAdmin"
-    "roles/storage.objectAdmin"
-    "roles/iam.serviceAccountUser"
+    "roles/storage.admin"
     "roles/secretmanager.admin"
 )
 
@@ -109,9 +108,9 @@ gcloud iam service-accounts add-iam-policy-binding "${GOOGLE_SERVICE_ACCOUNT_EMA
     --role="roles/iam.workloadIdentityUser" \
     --member="principalSet://iam.googleapis.com/${GOOGLE_IDENTITY_POOL_ID}/attribute.repository/${GITHUB_REPOSITORY}"
 
-for GOOGLE_IDENTIY_ROLE in "${GOOGLE_IDENTIY_ROLES[@]}"; do
+for GOOGLE_IDENTIY_PROJECT_ROLE in "${GOOGLE_IDENTIY_PROJECT_ROLES[@]}"; do
 	  gcloud projects add-iam-policy-binding "${GOOGLE_PROJECT_SLUG}" \
-        --role="${GOOGLE_IDENTIY_ROLE}" \
+        --role="${GOOGLE_IDENTIY_PROJECT_ROLE}" \
         --member="serviceAccount:${GOOGLE_SERVICE_ACCOUNT_EMAIL}"
 done
 GOOGLE_WORKLOAD_IDENTITY_PROVIDER=$(
@@ -137,6 +136,19 @@ if ! gcloud storage buckets describe --project="${GOOGLE_PROJECT_SLUG}" "gs://${
       --lifecycle-file=App.Deploy/pulumi-state-bucket-lifecycle.json
 else
     echo "Pulumi state bucket already created"
+fi
+echo ""
+
+# Create container registry
+if ! gcloud artifacts repositories describe --project="${GOOGLE_PROJECT_SLUG}" --location="${GOOGLE_REGION}" docker > /dev/null; then
+    echo "Creating artifact repository"
+    gcloud artifacts repositories create docker \
+        --repository-format=docker \
+        --description="Docker repository" \
+        --location="${GOOGLE_REGION}" \
+        --project="${GOOGLE_PROJECT_SLUG}"
+else
+    echo "Artifact repository already created"
 fi
 echo ""
 
@@ -174,5 +186,5 @@ storeSecret AUTH0_CLIENT_SECRET true
 storeSecret MONGODB_PROJECT_ID
 storeSecret MONGODB_ATLAS_PUBLIC_KEY
 storeSecret MONGODB_ATLAS_PRIVATE_KEY true
-storeSecret NORDIGEN_SECRET_ID
+storeSecret NORDIGEN_SECRET_ID true
 storeSecret NORDIGEN_SECRET_KEY true

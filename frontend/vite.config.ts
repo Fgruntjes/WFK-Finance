@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
 		plugins: [sveltekit(), process.env.NODE_ENV === 'production' && optimizeCss()],
 		define: {
 			'process.env': {},
-			'import.meta.env.APP_API_BASE_PATH': JSON.stringify(process.env.APP_API_BASE_PATH),
+			'import.meta.env.APP_API_URI': JSON.stringify(process.env.APP_API_URI),
 			'import.meta.env.AUTH0_DOMAIN': JSON.stringify(process.env.AUTH0_DOMAIN),
 			'import.meta.env.AUTH0_AUDIENCE': JSON.stringify(process.env.AUTH0_AUDIENCE),
 			'import.meta.env.AUTH0_SCOPE': JSON.stringify(process.env.AUTH0_SCOPE),

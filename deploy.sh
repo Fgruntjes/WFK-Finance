@@ -6,32 +6,50 @@ cd "$(dirname "$(realpath "$0")")";
 
 # Load env variables
 set -a
+CURRENT_ENV=$(declare -p -x)
 source .env
-source .deploy.env
+test -f .deploy.env && source .deploy.env
 test -f .local.env && source .local.env
+eval "${CURRENT_ENV}"
 set +a
+
+pulumi login gs://${GOOGLE_PROJECT_SLUG}-pulumi \
+    --non-interactive \
+    -v=5
 
 pulumi stack select "${APP_ENVIRONMENT}" \
     --cwd "App.Deploy" \
     --create \
     --non-interactive
+PULUMI_ACTION=${1:-"up"}
 
-pulumi up \
-    --cwd "App.Deploy" \
-    --non-interactive \
-    --config "backend.url=gs://${GOOGLE_PROJECT_SLUG}-pulumi" \
-    --config "gcp:project=${GOOGLE_PROJECT_SLUG}" \
-    --config "gcp:region=${GOOGLE_REGION}" \
-    --config "app:auth_domain=${MONGODB_PROJECT_ID}" \
-    --config "app:mongodb_project_id=${MONGODB_PROJECT_ID}" \
-    --config "app:google_region=${GOOGLE_REGION}" \
-    --config "app:environment=${APP_ENVIRONMENT}" \
-    --config "app:auth0_domain=${AUTH0_DOMAIN}" \
-    --config "app:nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
-    --config "app:nordigen_secret_key=${NORDIGEN_SECRET_KEY}" \
-    --yes \
-    --show-full-output \
-    --show-config \
-    --diff \
-    --stack "${APP_ENVIRONMENT}" \
-    "${@:2}"
+if [[ "${PULUMI_ACTION}" == "up" ]]; then
+    pulumi ${PULUMI_ACTION} \
+        --cwd "App.Deploy" \
+        --non-interactive \
+        --yes \
+        --stack "${APP_ENVIRONMENT}" \
+        --config "backend.url=gs://${GOOGLE_PROJECT_SLUG}-pulumi" \
+        --config "gcp:project=${GOOGLE_PROJECT_SLUG}" \
+        --config "gcp:region=${GOOGLE_REGION}" \
+        --config "app:auth_domain=${MONGODB_PROJECT_ID}" \
+        --config "app:mongodb_project_id=${MONGODB_PROJECT_ID}" \
+        --config "app:google_region=${GOOGLE_REGION}" \
+        --config "app:google_project_slug=${GOOGLE_PROJECT_SLUG}" \
+        --config "app:environment=${APP_ENVIRONMENT}" \
+        --config "app:version=${APP_VERSION}" \
+        --config "app:auth0_domain=${AUTH0_DOMAIN}" \
+        --config "app:nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
+        --config "app:nordigen_secret_key=${NORDIGEN_SECRET_KEY}" \
+        --show-full-output \
+        --show-config \
+        --diff \
+        "${@:2}"
+else
+    pulumi ${PULUMI_ACTION} \
+        --cwd "App.Deploy" \
+        --non-interactive \
+        --yes \
+        --stack "${APP_ENVIRONMENT}" \
+        "${@:2}"
+fi

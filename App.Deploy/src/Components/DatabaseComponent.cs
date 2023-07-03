@@ -69,7 +69,7 @@ public class DatabaseComponent : ComponentResource
                 },
             },
             AuthDatabaseName = "admin",
-            Username = "admin",
+            Username = $"{name}-admin",
             Password = password.Result,
         }, new CustomResourceOptions { Parent = this });
 

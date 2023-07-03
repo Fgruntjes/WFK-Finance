@@ -5,11 +5,8 @@ using App.Backend.Nordigen;
 using App.Backend.Service;
 using App.Backend.Swagger;
 using DotNetEnv.Configuration;
-using MongoDB.Driver;
 using NodaTime;
 using NSwag;
-using NSwag.Generation.Processors;
-using NSwag.Generation.Processors.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
@@ -85,7 +82,7 @@ app.UseCors(policy =>
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
+app.Run("http://0.0.0.0:8080");
 
 public partial class Program
 { }
