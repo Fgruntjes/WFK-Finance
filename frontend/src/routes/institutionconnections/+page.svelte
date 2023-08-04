@@ -131,7 +131,6 @@
 
 <style lang="scss">
 	.institution-logo {
-		// make the image round and no bigger then the text in the cell
 		border-radius: 10%;
 		max-height: 2em;
 		max-width: 2em;

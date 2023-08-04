@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Pulumi;
 
@@ -10,16 +8,24 @@ internal static class EnvFileWriter
 {
     public static void Write(string path, InputMap<string> env)
     {
-        env.Apply(env =>
+        ToString(env).Apply(envData =>
+        {
+            File.WriteAllText(path, envData);
+            return env;
+        });
+    }
+
+    public static Output<string> ToString(InputMap<string> env)
+    {
+        return env.Apply(env =>
         {
             var envFile = new StringBuilder();
             foreach (var kvp in env)
             {
                 envFile.AppendLine($"{kvp.Key}='{kvp.Value}'");
             }
-            File.WriteAllText(path, envFile.ToString());
 
-            return env;
+            return envFile.ToString();
         });
     }
 }

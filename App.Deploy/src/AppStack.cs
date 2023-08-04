@@ -63,6 +63,9 @@ internal class AppStack : Stack
                 AuthAudience = auth.PublicApiAudience,
                 AuthScope = authScopeString,
                 ApiUrl = backend.BaseUrl,
+                GoogleProjectSlug = config.GoogleProjectSlug,
+                CloudflareAccountId = config.CloudflareAccountId,
+                CloudflareApiToken = config.CloudflareApiToken,
             },
             new ComponentResourceOptions { Parent = this });
     }

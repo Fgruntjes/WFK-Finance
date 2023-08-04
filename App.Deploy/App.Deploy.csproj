@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Pulumi" Version="3.*" />
     <PackageReference Include="Pulumi.Auth0" Version="2.18.0" />
+    <PackageReference Include="Pulumi.Cloudflare" Version="5.5.0" />
+    <PackageReference Include="Pulumi.Command" Version="0.5.2" />
     <PackageReference Include="Pulumi.Gcp" Version="6.*" />
     <PackageReference Include="Pulumi.Mongodbatlas" Version="3.7.2" />
     <PackageReference Include="Pulumi.Random" Version="4.12.1" />

@@ -1,10 +1,10 @@
 ---
 version: "3.2"
 services:
-  mongodb:
-    image: mongo:6.0
+  database:
+    image: postgres:15.3
     ports:
-      - 27017:27017
+      - 5432:5432
     environment:
-      MONGO_INITDB_ROOT_USERNAME: username
-      MONGO_INITDB_ROOT_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password

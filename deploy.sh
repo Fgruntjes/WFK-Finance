@@ -41,6 +41,8 @@ if [[ "${PULUMI_ACTION}" == "up" ]]; then
         --config "app:auth0_domain=${AUTH0_DOMAIN}" \
         --config "app:nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
         --config "app:nordigen_secret_key=${NORDIGEN_SECRET_KEY}" \
+        --config "app:cloudflare_account_id=${CLOUDFLARE_ACCOUNT_ID}" \
+        --config "app:cloudflare_api_token=${CLOUDFLARE_API_TOKEN}" \
         --show-full-output \
         --show-config \
         --diff \

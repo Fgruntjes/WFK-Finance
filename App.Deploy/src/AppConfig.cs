@@ -14,6 +14,8 @@ internal class AppConfig
     public string Auth0Domain => _config.Require("auth0_domain");
     public string NordigenSecretId => _config.Require("nordigen_secret_id");
     public string NordigenSecretKey => _config.Require("nordigen_secret_key");
+    public string CloudflareAccountId => _config.Require("cloudflare_account_id");
+    public string CloudflareApiToken => _config.Require("cloudflare_api_token");
 
     public AppConfig()
     {

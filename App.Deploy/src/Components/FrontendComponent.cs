@@ -1,11 +1,15 @@
 using App.Deploy.Components;
 using App.Deploy.Utils;
 using Pulumi;
+using Pulumi.Cloudflare;
+using Pulumi.Command.Local;
 
 namespace App.Deploy.Component;
 
 public class FrontendComponent : ComponentResource
 {
+    [Output]
+    public Output<string> FrontendUrl { get; internal set; } = null!;
     public FrontendComponent(
         string name,
         FrontendComponentArgs args,
@@ -17,26 +21,59 @@ public class FrontendComponent : ComponentResource
             new()
             {
                 Environment = args.Environment,
-                FrontendUrls = args.Environment
-                    .Apply(environment => environment == "dev"
+                FrontendUrls = args.GoogleProjectSlug.Apply(googleProjectSlug =>
+                    args.Environment.Apply(environment => environment == "dev"
                         ? new string[] {
                             "http://localhost:3000",
-                            "http://localhost:5000",
+                            "http://localhost:8080",
+                            $"https://{environment}.{googleProjectSlug}.pages.dev",
                         }
                         : new string[] {
-                            "https://example.com",
-                        }),
-                CallbackUrls = args.Environment
-                    .Apply(environment => environment == "dev"
+                            $"https://{environment}.{googleProjectSlug}.pages.dev",
+                        })),
+                CallbackUrls = args.GoogleProjectSlug.Apply(googleProjectSlug =>
+                    args.Environment.Apply(environment => environment == "dev"
                         ? new string[] {
                             "http://localhost:3000",
-                            "http://localhost:5000/swagger/oauth2-redirect.html",
+                            "http://localhost:8080/swagger/oauth2-redirect.html",
+                            $"https://{environment}.{googleProjectSlug}.pages.dev",
                         }
                         : new string[] {
-                            "https://example.com",
-                        }),
+                            $"https://{environment}.{googleProjectSlug}.pages.dev",
+                        })),
             },
             new ComponentResourceOptions { Parent = this });
+
+        var cfProject = new PagesProject(
+            $"{name}-pages-project",
+            new()
+            {
+                AccountId = args.CloudflareAccountId,
+                Name = args.GoogleProjectSlug,
+                ProductionBranch = "main",
+            });
+
+        var wranglerPush = new Command(
+            $"{name}-deploy",
+            new()
+            {
+                Environment = {
+                    { "CLOUDFLARE_API_TOKEN", args.CloudflareApiToken },
+                    { "CLOUDFLARE_ACCOUNT_ID", args.CloudflareAccountId },
+                },
+                Create = args.Environment.Apply(environment =>
+                    args.GoogleProjectSlug.Apply(googleProjectSlug =>
+                        string.Join(' ', new string[] {
+                            "npx",
+                            "wrangler",
+                            "pages",
+                            "publish",
+                            "../frontend/build",
+                            $"--project-name={googleProjectSlug}",
+                            $"--branch={environment}",
+                            "--commit-dirty=true",
+                        })))
+            });
 
         // So "npm run dev" use the deploy values
         EnvFileWriter.Write("../frontend/.env.local", new InputMap<string>() {
@@ -46,6 +83,10 @@ public class FrontendComponent : ComponentResource
             {"AUTH0_CLIENT_ID", authClient.ClientId},
             {"APP_API_URI", args.ApiUrl},
         });
+
+        FrontendUrl = args.GoogleProjectSlug.Apply(googleProjectSlug =>
+            args.Environment.Apply(environment => $"https://{environment}.{googleProjectSlug}.pages.dev"));
+
         RegisterOutputs();
     }
 }
