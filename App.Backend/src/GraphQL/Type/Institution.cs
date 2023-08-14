@@ -1,13 +1,11 @@
-using System.ComponentModel.DataAnnotations.Schema;
+namespace App.Backend.GraphQL.Type;
 
-namespace App.Backend.Data.Entity;
-
-public class InstitutionEntity
+public class Institution
 {
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	public Guid Id { get; set; }
 	public string ExternalId { get; set; } = null!;
 	public string Name { get; set; } = null!;
 	public string? Logo { get; set; }
 	public string[] Countries { get; set; } = null!;
+	public InstitutionConnection[] Connections { get; set; } = null!;
 }

@@ -1,21 +1,20 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /source
-
-# copy csproj and restore as distinct layers
-COPY *.csproj .
-RUN dotnet restore --use-current-runtime
-
-# copy and publish app and libraries
-COPY . .
-RUN dotnet publish --use-current-runtime --self-contained false --no-restore -o /app
-
-
-# final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-RUN addgroup --gid 1000 app && \
-    adduser --uid 1000 --ingroup app --home /app --shell /bin/sh --disabled-password --gecos "" app
-USER app:app
-COPY --from=build /app .
-EXPOSE 8080
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["App.Backend/App.Backend.csproj", "App.Backend/"]
+RUN dotnet restore "App.Backend/App.Backend.csproj"
+COPY . .
+WORKDIR "/src/App.Backend"
+RUN dotnet build "App.Backend.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "App.Backend.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "App.Backend.dll"]

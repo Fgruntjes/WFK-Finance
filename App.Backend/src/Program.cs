@@ -1,88 +1,43 @@
-using App.Backend.Auth;
-using App.Backend.Controllers;
 using App.Backend.Data;
-using App.Backend.Nordigen;
-using App.Backend.Service;
-using App.Backend.Swagger;
-using DotNetEnv.Configuration;
-using NodaTime;
-using NSwag;
+using App.Backend.GraphQL;
+using GraphQL;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-if (builder.Environment.IsDevelopment())
+builder.Services.AddProblemDetails();
+builder.Services.AddResponseCompression(options =>
 {
-    builder.Configuration.AddDotNetEnv(".local.env");
-}
-
-var auht0Settings = builder.Configuration.GetSection("Auth0").Get<Auth0Options>();
-if (auht0Settings == null) throw new Exception("Auth0 settings not found");
-
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<BadRequestExceptionFilter>();
-});
-builder.Services.AddCors();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSwaggerDocument(c =>
-{
-    c.Title = "App.Backend";
-    c.Version = "v1";
-    c.DocumentName = "v1";
-    c.OperationProcessors.Add(new OperationIdProcessor());
-    c.AddSecurity("Bearer", new OpenApiSecurityScheme
-    {
-        In = OpenApiSecurityApiKeyLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = OpenApiSecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
+	options.MimeTypes = new[] { "application/json", "application/graphql-response+json" };
 });
 
-builder.Services.AddOptions<DatabaseSettings>()
-    .Bind(builder.Configuration.GetSection("Database"))
-    .ValidateDataAnnotations();
+// Database connection
+builder.Services.AddEntityFrameworkNpgsql()
+	.AddDbContext<DatabaseContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IClock>(SystemClock.Instance);
-builder.Services.AddSingleton(DateTimeZoneProviders.Tzdb);
-builder.Services.AddScoped<AuthContext>();
-builder.Services.AddScoped<DatabaseContext>();
-builder.Services.Scan(scan => scan.FromAssemblyOf<Program>()
-    .AddClasses(classes => classes.InNamespaceOf<InstitutionConnectionService>())
-        .AsSelf()
-        .AsImplementedInterfaces()
-        .WithTransientLifetime());
+// App services
+builder.Services.AddSingleton<AppQuery>();
 
-builder.AddAuth0(auht0Settings);
-builder.AddNordigenClient();
+builder.Services.AddGraphQL(b => b
+	.AddSchema<AppSchema>()
+	.AddNewtonsoftJson());
+// @see https://github.com/graphql-dotnet/graphql-dotnet/issues/1116
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+	options.AllowSynchronousIO = true;
+});
 
 var app = builder.Build();
+app.UseResponseCompression();
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-    app.UseOpenApi();
-    app.UseSwaggerUi3();
-    app.UseDeveloperExceptionPage();
+	app.UseDeveloperExceptionPage();
 }
 
-app.UseCors(policy =>
-{
-    policy.WithOrigins(builder.Configuration["App:FrontendUrl"] ?? "http://localhost:3000")
-        .WithHeaders(
-            "Authorization",
-            AuthContext.TenantHeader,
-            "Content-Type"
-        )
-        .AllowCredentials()
-        .AllowAnyMethod();
-});
+app.UseGraphQLAltair();
+app.UseGraphQL();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.Run("http://0.0.0.0:8080");
-
-public partial class Program
-{ }
+app.Run();
