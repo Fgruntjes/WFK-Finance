@@ -1,8 +1,5 @@
-using App.Backend.Data;
-using App.Backend.GraphQL;
-using GraphQL;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.EntityFrameworkCore;
+using App.Backend.Startup;
+using GraphQL.AspNet.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
@@ -11,21 +8,10 @@ builder.Services.AddResponseCompression(options =>
 	options.MimeTypes = new[] { "application/json", "application/graphql-response+json" };
 });
 
-// Database connection
-builder.Services.AddEntityFrameworkNpgsql()
-	.AddDbContext<DatabaseContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// App services
-builder.Services.AddSingleton<AppQuery>();
-
-builder.Services.AddGraphQL(b => b
-	.AddSchema<AppSchema>()
-	.AddNewtonsoftJson());
-// @see https://github.com/graphql-dotnet/graphql-dotnet/issues/1116
-builder.Services.Configure<KestrelServerOptions>(options =>
-{
-	options.AllowSynchronousIO = true;
-});
+// App configuration
+builder.Services.AddLogging();
+builder.Services.AddDatabase(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddGraphQL();
 
 var app = builder.Build();
 app.UseResponseCompression();
@@ -37,7 +23,6 @@ if (app.Environment.IsDevelopment())
 	app.UseDeveloperExceptionPage();
 }
 
-app.UseGraphQLAltair();
 app.UseGraphQL();
 
 app.Run();

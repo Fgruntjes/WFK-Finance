@@ -9,5 +9,10 @@ public class InstitutionEntity
 	public string ExternalId { get; set; } = null!;
 	public string Name { get; set; } = null!;
 	public string? Logo { get; set; }
-	public string[] Countries { get; set; } = null!;
+	public IList<CountryEntity> Countries { get; set; } = null!;
+
+	public InstitutionEntity()
+	{
+		Countries = new List<CountryEntity>();
+	}
 }
