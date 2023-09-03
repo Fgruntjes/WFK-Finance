@@ -1,0 +1,12 @@
+﻿{
+  "data": {
+    "institutionConnections": {
+      "items": [
+        {
+          "externalId": "SomeExternalId-1"
+        }
+      ],
+      "totalCount": 3
+    }
+  }
+}

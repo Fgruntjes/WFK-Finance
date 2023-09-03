@@ -1,0 +1,84 @@
+﻿{
+  "data": {
+    "institutionConnections": {
+      "items": [
+        {
+          "externalId": "SomeExternalId-0"
+        },
+        {
+          "externalId": "SomeExternalId-1"
+        },
+        {
+          "externalId": "SomeExternalId-2"
+        },
+        {
+          "externalId": "SomeExternalId-3"
+        },
+        {
+          "externalId": "SomeExternalId-4"
+        },
+        {
+          "externalId": "SomeExternalId-5"
+        },
+        {
+          "externalId": "SomeExternalId-6"
+        },
+        {
+          "externalId": "SomeExternalId-7"
+        },
+        {
+          "externalId": "SomeExternalId-8"
+        },
+        {
+          "externalId": "SomeExternalId-9"
+        },
+        {
+          "externalId": "SomeExternalId-10"
+        },
+        {
+          "externalId": "SomeExternalId-11"
+        },
+        {
+          "externalId": "SomeExternalId-12"
+        },
+        {
+          "externalId": "SomeExternalId-13"
+        },
+        {
+          "externalId": "SomeExternalId-14"
+        },
+        {
+          "externalId": "SomeExternalId-15"
+        },
+        {
+          "externalId": "SomeExternalId-16"
+        },
+        {
+          "externalId": "SomeExternalId-17"
+        },
+        {
+          "externalId": "SomeExternalId-18"
+        },
+        {
+          "externalId": "SomeExternalId-19"
+        },
+        {
+          "externalId": "SomeExternalId-20"
+        },
+        {
+          "externalId": "SomeExternalId-21"
+        },
+        {
+          "externalId": "SomeExternalId-22"
+        },
+        {
+          "externalId": "SomeExternalId-23"
+        },
+        {
+          "externalId": "SomeExternalId-24"
+        }
+      ],
+      "totalCount": 30
+    }
+  }
+}

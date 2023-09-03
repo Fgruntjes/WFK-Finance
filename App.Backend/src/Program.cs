@@ -14,7 +14,7 @@ builder.Services.AddResponseCompression(options =>
 
 // App configuration
 builder.Services.AddLogging();
-builder.Services.AddDatabase(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddDatabase(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Missing 'ConnectionStrings.DefaultConnection' setting."));
 builder.Services.AddGraphQL();
 
 var app = builder.Build();

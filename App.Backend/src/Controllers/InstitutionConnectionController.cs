@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using App.Backend.Data;
 using App.Backend.GraphQL.Type;
 using GraphQL.AspNet.Attributes;
@@ -23,8 +24,30 @@ public class InstitutionConnectionController : GraphController
 	{
 		return _database.InstitutionConnections
 			.Where(e => e.Id == id)
+			.Take(1)
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.SingleOrDefaultAsync();
+	}
+	
+	[Authorize]
+	[QueryRoot("institutionConnections")]
+	public async Task<ListResult<InstitutionConnection>> List(SkipLimitArgs? skipLimitArgs = null)
+	{
+		skipLimitArgs ??= new SkipLimitArgs();
+		var query = _database.InstitutionConnections;
+
+		var totalCount = await query.CountAsync();
+		var result = await query
+			.Skip(skipLimitArgs.Skip)
+			.Take(skipLimitArgs.Limit)
+			.Select(e => InstitutionConnection.FromEntity(e))
+			.ToListAsync();
+
+		return new ListResult<InstitutionConnection>
+		{
+			Items = result,
+			TotalCount = totalCount
+		};
 	}
 	
 	[Authorize]
@@ -64,3 +87,4 @@ public class InstitutionConnectionController : GraphController
 			.Complete();
 	}
 }
+

@@ -1,0 +1,8 @@
+query institutionConnections($skipLimitArgs: Input_SkipLimitArgs) {
+    institutionConnections(skipLimitArgs: $skipLimitArgs) {
+        items {
+            externalId
+        }
+        totalCount
+    }
+}
