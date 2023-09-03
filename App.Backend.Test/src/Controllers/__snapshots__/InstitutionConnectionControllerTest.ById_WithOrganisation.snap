@@ -1,0 +1,10 @@
+﻿{
+  "data": {
+    "institutionConnection": {
+      "externalId": "SomeExternalId",
+      "organisation": {
+        "slug": "some-slug"
+      }
+    }
+  }
+}

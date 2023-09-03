@@ -1,13 +1,24 @@
+using App.Backend.Data.Entity;
+
 namespace App.Backend.GraphQL.Type;
 
 public class InstitutionConnection
 {
-	public string Id { get; set; } = null!;
+	public Guid Id { get; set; }
 	public string ExternalId { get; set; } = null!;
-	public Organisation Organisation { get; set; } = null!;
-	public int OrganisationId { get; set; }
-	public Institution Institution { get; set; } = null!;
-	public int InstitutionId { get; set; }
+	public Guid OrganisationId { get; set; }
+	public Guid InstitutionId { get; set; }
 	public string ConnectUrl { get; set; } = null!;
-	public InstitutionConnectionAccount[] Accounts { get; set; } = null!;
+	
+	public static InstitutionConnection FromEntity(InstitutionConnectionEntity entity)
+	{
+		return new InstitutionConnection
+		{
+			Id = entity.Id,
+			ExternalId = entity.ExternalId,
+			OrganisationId = entity.OrganisationId,
+			InstitutionId = entity.InstitutionId,
+			ConnectUrl = entity.ConnectUrl,
+		};
+	}
 }

@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <PackageReference Include="GraphQL.AspNet" Version="1.2.4" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
         <PrivateAssets>all</PrivateAssets>
@@ -22,6 +23,10 @@
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.10" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="src\Migrations" />
     </ItemGroup>
 
 </Project>

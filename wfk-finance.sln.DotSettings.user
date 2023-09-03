@@ -1,4 +1,12 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3ef4b53f_002D6fd2_002D4a17_002Daf32_002D6aa4cae3b08b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ById_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionControllerTest.ById_Success&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionConnectionControllerTest.ById_WithoutSubTypes&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionConnectionControllerTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionControllerTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=713461d2_002D2e07_002D42f4_002Db829_002D1939397cf9e8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ByIdTest_Success" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
@@ -6,15 +14,11 @@
     &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionControllerTest.ByIdTest_NotFound&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b48a6541_002Dbbb9_002D4a5f_002D873e_002D053c4ea14a18/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ByIdTest_NotFound #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b48a6541_002Dbbb9_002D4a5f_002D873e_002D053c4ea14a18/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ByIdTest_NotFound #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionControllerTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c499c4ef_002De382_002D4746_002D8720_002Dc0dbd6f0f147/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ByIdTest_NotFound" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::07B5AF49-39A2-492F-9B5F-E6163A4D4A78::net7.0::App.Backend.Test.Controllers.InstitutionControllerTest.ByIdTest_NotFound&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	</wpf:ResourceDictionary>

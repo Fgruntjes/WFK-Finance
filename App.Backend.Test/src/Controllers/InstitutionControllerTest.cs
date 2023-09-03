@@ -1,51 +1,33 @@
 using App.Backend.Controllers;
 using App.Backend.Data.Entity;
+using App.Backend.Test.Fixtures;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionControllerTest : GraphControllerTest<InstitutionController>
+public class InstitutionControllerTest : GraphControllerTest<GraphQLFixture<InstitutionController>>
 {
-	private static string GET_INSTITUTION_QUERY = @"
-		query institution($Id: Guid!) {
-			institution(id: $Id) {
-				name
-			}
-		}";
+	public InstitutionControllerTest(GraphQLFixture<InstitutionController> fixture) : base(fixture)
+	{
+	}
 	
 	[Fact]
-	public async Task ByIdTest_Success()
+	public async Task ById_Success()
 	{
-		var context = CreateQueryContext();
-		var addResult = await context.Database.Institutions.AddAsync(new InstitutionEntity()
+		var addResult = await Fixture.Database.Institutions.AddAsync(new InstitutionEntity()
 		{
 			Name = "MyFakeName",
 			ExternalId = "SomeExternalId"
 		});
-		await context.Database.SaveChangesAsync();
-		
-		var result = await context.Render(
-			GET_INSTITUTION_QUERY,
-			new { addResult.Entity.Id });
+		await Fixture.Database.SaveChangesAsync();
 
-		result["data"]?["institution"]?["name"]?
-			.AsValue()
-			.ToString()
-			.Should()
-			.Be("MyFakeName");
+		var result = await Fixture.ExecuteQuery(new { addResult.Entity.Id });
+		result.MatchSnapshot();
 	}
 
 	[Fact]
-	public async Task ByIdTest_NotFound()
+	public async Task ById_NotFound()
 	{
-		var context = CreateQueryContext();
-		var result = await context.Render(
-			GET_INSTITUTION_QUERY,
-			new { Id = Guid.NewGuid() });
-
-		result["data"]?["institution"]?
-			.AsValue()
-			.ToString()
-			.Should()
-			.BeNull();
+		var result = await Fixture.ExecuteQuery(new { Id = Guid.NewGuid() });
+		result.MatchSnapshot();
 	}
 }

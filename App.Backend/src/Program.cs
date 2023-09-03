@@ -2,6 +2,10 @@ using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services
+	.AddAuthorization()
+	.AddAuthentication()
+	.AddJwtBearer();
 builder.Services.AddProblemDetails();
 builder.Services.AddResponseCompression(options =>
 {
@@ -14,6 +18,8 @@ builder.Services.AddDatabase(builder.Configuration.GetConnectionString("DefaultC
 builder.Services.AddGraphQL();
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseResponseCompression();
 app.UseExceptionHandler();
 app.UseStatusCodePages();

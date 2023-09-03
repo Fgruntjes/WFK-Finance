@@ -1,9 +1,18 @@
+using App.Backend.Data.Entity;
+
 namespace App.Backend.GraphQL.Type;
 
 public class Organisation
 {
-	public string Id { get; set; } = null!;
+	public Guid Id { get; set; }
 	public string Slug { get; set; } = null!;
-	public OrganisationUser[] Users { get; set; } = null!;
-	public InstitutionConnection[] InstitutionConnections { get; set; } = null!;
+
+	public static Organisation FromEntity(OrganisationEntity entity)
+	{
+		return new Organisation()
+		{
+			Id = entity.Id,
+			Slug = entity.Slug,
+		};
+	}
 }

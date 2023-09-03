@@ -1,3 +1,5 @@
+using App.Backend.Data;
+
 namespace App.Backend.GraphQL.Type;
 
 public class OrganisationUser
