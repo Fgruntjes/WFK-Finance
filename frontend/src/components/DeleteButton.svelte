@@ -3,7 +3,7 @@
 	import { Modal } from 'carbon-components-svelte';
 	import { TrashCan as DeleteIcon } from 'carbon-icons-svelte';
 	import { createEventDispatcher } from 'svelte';
-	import Button from '../Button.svelte';
+	import Button from './Button.svelte';
 
 	type TQueryFunctionData = $$Generic;
 	type TQueryKey = $$Generic<QueryKey>;

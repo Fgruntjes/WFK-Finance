@@ -11,6 +11,17 @@ builder.Services.AddResponseCompression(options =>
 {
 	options.MimeTypes = new[] { "application/json", "application/graphql-response+json" };
 });
+builder.Services.AddCors(options =>
+{
+	options.AddDefaultPolicy(
+		policy =>
+		{
+			policy.WithOrigins("*")
+				.AllowAnyHeader()
+				.AllowAnyMethod();
+		});
+});
+
 
 // App configuration
 builder.Services.AddLogging();
@@ -23,6 +34,7 @@ app.UseAuthorization();
 app.UseResponseCompression();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
+app.UseCors();
 
 if (app.Environment.IsDevelopment())
 {

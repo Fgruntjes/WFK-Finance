@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { Content } from 'carbon-components-svelte';
 	import AuthGuard from './AuthGuard.svelte';
 	import Header from './Header.svelte';
 	import I18nLoader from './I18nLoader.svelte';
+	import client from '@/api/client';
+	import { setContextClient } from '@urql/svelte';
 
-	const queryClient = new QueryClient();
+	setContextClient(client);
 </script>
 
 <I18nLoader>
 	<AuthGuard>
-		<QueryClientProvider client={queryClient}>
-			<Header />
-			<Content>
-				<slot />
-			</Content>
-		</QueryClientProvider>
+		<Header />
+		<Content>
+			<slot />
+		</Content>
 	</AuthGuard>
 </I18nLoader>

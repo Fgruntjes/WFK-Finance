@@ -31,15 +31,14 @@ public class InstitutionConnectionController : GraphController
 	
 	[Authorize]
 	[QueryRoot("institutionConnections")]
-	public async Task<ListResult<InstitutionConnection>> List(SkipLimitArgs? skipLimitArgs = null)
+	public async Task<ListResult<InstitutionConnection>> List(int first = 0, int last = 25)
 	{
-		skipLimitArgs ??= new SkipLimitArgs();
 		var query = _database.InstitutionConnections;
 
 		var totalCount = await query.CountAsync();
 		var result = await query
-			.Skip(skipLimitArgs.Skip)
-			.Take(skipLimitArgs.Limit)
+			.Skip(first)
+			.Take(last - first)
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.ToListAsync();
 

@@ -105,7 +105,7 @@ public class BackendComponent : ComponentResource
         // So "npm run dev" use the deploy values
         EnvFileWriter.Write("../App.Backend/.local.env", backendEnvValues);
 
-        BaseUrl = Output.Create("http://localhost:8080");
+        BaseUrl = Output.Create("http://localhost:5204");
         RegisterOutputs();
     }
 }

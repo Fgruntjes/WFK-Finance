@@ -10,7 +10,10 @@ export default defineConfig(({ mode }) => {
 		server: {
 			port: 3000
 		},
-		plugins: [sveltekit(), process.env.NODE_ENV === 'production' && optimizeCss()],
+		plugins: [
+			sveltekit(),
+			process.env.NODE_ENV === 'production' && optimizeCss()
+		],
 		define: {
 			'process.env': {},
 			'import.meta.env.APP_API_URI': JSON.stringify(process.env.APP_API_URI),
@@ -18,6 +21,9 @@ export default defineConfig(({ mode }) => {
 			'import.meta.env.AUTH0_AUDIENCE': JSON.stringify(process.env.AUTH0_AUDIENCE),
 			'import.meta.env.AUTH0_SCOPE': JSON.stringify(process.env.AUTH0_SCOPE),
 			'import.meta.env.AUTH0_CLIENT_ID': JSON.stringify(process.env.AUTH0_CLIENT_ID)
+		},
+		optimizeDeps: {
+			exclude: ['@urql/svelte'],
 		}
 	};
 });

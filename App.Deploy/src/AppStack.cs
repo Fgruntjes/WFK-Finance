@@ -62,7 +62,7 @@ internal class AppStack : Stack
                 AuthDomain = config.Auth0Domain,
                 AuthAudience = auth.PublicApiAudience,
                 AuthScope = authScopeString,
-                ApiUrl = backend.BaseUrl,
+                ApiUrl = $"{backend.BaseUrl}/graphql",
                 GoogleProjectSlug = config.GoogleProjectSlug,
                 CloudflareAccountId = config.CloudflareAccountId,
                 CloudflareApiToken = config.CloudflareApiToken,
