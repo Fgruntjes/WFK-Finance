@@ -6,7 +6,9 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface Platform {}
-		// interface Session {}
+		interface Session {
+			token?: string;
+		}
 	}
 }
 

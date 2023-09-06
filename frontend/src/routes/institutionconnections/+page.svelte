@@ -14,11 +14,7 @@
 		Toolbar,
 		ToolbarContent
 	} from 'carbon-components-svelte';
-	import { queryStore, getContextClient } from '@urql/svelte';
-	import type { Institution } from '@/api/generated/graphql';
-	import { institutionConnectionsQuery } from '@/api/query/institutionConnectionsQuery';
-
-	type InstitutionMap = { [key: string]: Institution };
+	import type { PageData, InstitutionConnectionsVariables } from './$houdini';
 
 	const tableHeaders = [
 		{ key: 'institutionId', value: $i18n.t('institutionconnections:list.header.institution') },
@@ -26,33 +22,34 @@
 		{ key: 'actions', value: $i18n.t('institutionconnections:list.header.actions') }
 	];
 
+	export let data: PageData;
+
 	let selectedRowIds: ReadonlyArray<string> = [];
 	let page: number = 1;
 
 	const handleDelete = (ids: string[]) => {};
 
-	const getInstitutionByConnectionId = (id: string): Institution | undefined => {
+	const getInstitutionByConnectionId = (id: string): undefined => {
 		return undefined;
 	};
 
-	const institutionConnections = queryStore({
-		client: getContextClient(),
-		query: institutionConnectionsQuery
-	});
+	$: ({ InstitutionConnections } = data);
 </script>
 
 <PageBreadcrumbs title={$i18n.t('institutionconnections:list.title')} />
 
-{#if $institutionConnections.error}
-	<LocalError error={$institutionConnections.error} />
-{:else if $institutionConnections.fetching}
+{#if $InstitutionConnections.errors}
+	{#each $InstitutionConnections.errors as error}
+		<LocalError {error} />
+	{/each}
+{:else if $InstitutionConnections.fetching}
 	<DataTableSkeleton headers={tableHeaders} rows={3} />
 	<PaginationSkeleton />
 {:else}
 	<DataTable
 		bind:selectedRowIds
 		batchSelection
-		rows={$institutionConnections.data}
+		rows={$InstitutionConnections.data?.institutionConnections?.items ?? []}
 		headers={tableHeaders}
 		title={$i18n.t('institutionconnections:list.title')}
 		description={$i18n.t('institutionconnections:list.description')}

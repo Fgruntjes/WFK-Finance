@@ -8,6 +8,12 @@
 		normalizedError = error;
 	} else if (typeof error === 'string') {
 		normalizedError = new Error(error);
+	} else if (typeof error == 'object' && error !== null) {
+		if ('message' in error) {
+			normalizedError = new Error((error.message as string) ?? undefined);
+		} else {
+			normalizedError = new Error('Unknown error');
+		}
 	} else {
 		normalizedError = new Error('Unknown error');
 	}

@@ -1,6 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { optimizeCss } from 'carbon-preprocess-svelte';
 import { defineConfig, loadEnv } from 'vite';
+import houdini from 'houdini/vite'
 
 export default defineConfig(({ mode }) => {
 	// Load app-level env vars to node-level env vars.
@@ -11,6 +12,7 @@ export default defineConfig(({ mode }) => {
 			port: 3000
 		},
 		plugins: [
+			houdini(),
 			sveltekit(),
 			process.env.NODE_ENV === 'production' && optimizeCss()
 		],

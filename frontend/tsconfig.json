@@ -11,7 +11,8 @@
 		"strict": true,
 		"rootDirs": [
 			".",
-			"./.svelte-kit/types"
+			"./.svelte-kit/types",
+			"./$houdini/types"
 		]
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
