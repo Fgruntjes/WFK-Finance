@@ -7,8 +7,8 @@ namespace App.Backend.Test.Controllers;
 public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFixture<InstitutionConnectionController>>
 {
 	public InstitutionConnectionControllerTest(GraphQLFixture<InstitutionConnectionController> fixture) : base(fixture)
-	{}
-	
+	{ }
+
 	[Fact]
 	public async Task ById_WithoutSubTypes()
 	{
@@ -18,11 +18,11 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 			ConnectUrl = "SomeConnectUrl"
 		});
 		await Fixture.Database.SaveChangesAsync();
-		
+
 		var result = await Fixture.ExecuteQuery(new { addResult.Entity.Id });
 		result.MatchSnapshot();
 	}
-	
+
 	[Fact]
 	public async Task ById_WithInstitution()
 	{
@@ -31,7 +31,7 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 			ExternalId = "SomeExternalId",
 			Name = "SomeName"
 		});
-		
+
 		var addResult = await Fixture.Database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity()
 		{
 			ExternalId = "SomeExternalId",
@@ -39,11 +39,11 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 			InstitutionId = institutionsAddResult.Entity.Id
 		});
 		await Fixture.Database.SaveChangesAsync();
-		
+
 		var result = await Fixture.ExecuteQuery(new { addResult.Entity.Id });
 		result.MatchSnapshot();
 	}
-	
+
 	[Fact]
 	public async Task ById_WithOrganisation()
 	{
@@ -51,7 +51,7 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 		{
 			Slug = "some-slug"
 		});
-		
+
 		var addResult = await Fixture.Database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity()
 		{
 			ExternalId = "SomeExternalId",
@@ -59,7 +59,7 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 			OrganisationId = organisationAddResult.Entity.Id
 		});
 		await Fixture.Database.SaveChangesAsync();
-		
+
 		var result = await Fixture.ExecuteQuery(new { addResult.Entity.Id });
 		result.MatchSnapshot();
 	}
@@ -73,15 +73,15 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 			{
 				ExternalId = $"SomeExternalId-{i}",
 				ConnectUrl = $"SomeConnectUrl-{i}"
-			});			
+			});
 		}
-		
+
 		await Fixture.Database.SaveChangesAsync();
-		
+
 		var result = await Fixture.ExecuteQuery();
 		result.MatchSnapshot();
 	}
-	
+
 	[Fact]
 	public async Task List_WithSkipLimit()
 	{
@@ -91,12 +91,12 @@ public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFi
 			{
 				ExternalId = $"SomeExternalId-{i}",
 				ConnectUrl = $"SomeConnectUrl-{i}"
-			});			
+			});
 		}
-		
+
 		await Fixture.Database.SaveChangesAsync();
-		
-		var result = await Fixture.ExecuteQuery(new { skipLimitArgs = new { skip = 1, limit = 1 } });
+
+		var result = await Fixture.ExecuteQuery(new { offset = 1, limit = 1 });
 		result.MatchSnapshot();
 	}
 }

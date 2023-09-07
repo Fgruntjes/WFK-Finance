@@ -3,7 +3,6 @@ import {
 	Auth0Client,
 	User,
 	createAuth0Client,
-	type GetTokenSilentlyOptions,
 	type LogoutOptions,
 	type RedirectLoginOptions
 } from '@auth0/auth0-spa-js';
@@ -24,9 +23,9 @@ const initializeUseAuth0 = () => {
 	return {
 		isAuthenticated: isAuthenticatedStore,
 		isLoading: isLoadingStore,
-		accessToken: accessTokenStore,
 		user: userStore,
 		error: errorStore,
+		accessToken: accessTokenStore,
 
 		initializeAuth: async () => {
 			const auth0Client = await createAuth0Client({
@@ -39,28 +38,29 @@ const initializeUseAuth0 = () => {
 					audience: import.meta.env.AUTH0_AUDIENCE
 				}
 			});
-			auth0ClientStore.set(auth0Client);
 
+			auth0ClientStore.set(auth0Client);
 			try {
 				const search = window.location.search;
 
 				if ((search.includes('code=') || search.includes('error=')) && search.includes('state=')) {
-					const loginResult = await auth0Client.handleRedirectCallback<AppState>();
+					const loginResult = await auth0Client?.handleRedirectCallback<AppState>();
 
 					goto(loginResult?.appState?.targetUrl ?? window.location.pathname, { replaceState: true });
 				}
 			} catch (err) {
 				errorStore.set(err as Error);
 			} finally {
-				const isAuthenticated = await auth0Client.isAuthenticated();
+				const isAuthenticated = await auth0Client?.isAuthenticated();
 				isAuthenticatedStore.set(isAuthenticated || false);
+				userStore.set((await auth0Client?.getUser()) || null);
+
 				if (isAuthenticated) {
-					accessTokenStore.set(await auth0Client.getTokenSilently() || null);
+					accessTokenStore.set(await auth0Client?.getTokenSilently() || null)
 				} else {
 					accessTokenStore.set(null);
 				}
 
-				userStore.set((await auth0Client.getUser()) || null);
 				isLoadingStore.set(false);
 			}
 		},

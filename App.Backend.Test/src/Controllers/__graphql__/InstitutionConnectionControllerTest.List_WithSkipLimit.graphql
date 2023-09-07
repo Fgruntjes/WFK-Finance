@@ -1,5 +1,5 @@
-query institutionConnections($skipLimitArgs: Input_SkipLimitArgs) {
-    institutionConnections(skipLimitArgs: $skipLimitArgs) {
+query institutionConnections($offset: Int, $limit: Int) {
+    institutionConnections(offset: $offset, limit: $limit) {
         items {
             externalId
         }

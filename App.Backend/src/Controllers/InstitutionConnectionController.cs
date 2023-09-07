@@ -17,7 +17,7 @@ public class InstitutionConnectionController : GraphController
 	{
 		_database = database;
 	}
-	
+
 	[Authorize]
 	[QueryRoot("institutionConnection")]
 	public Task<InstitutionConnection?> Get(Guid id)
@@ -28,17 +28,17 @@ public class InstitutionConnectionController : GraphController
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.SingleOrDefaultAsync();
 	}
-	
+
 	[Authorize]
 	[QueryRoot("institutionConnections")]
-	public async Task<ListResult<InstitutionConnection>> List(int first = 0, int last = 25)
+	public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25)
 	{
 		var query = _database.InstitutionConnections;
 
 		var totalCount = await query.CountAsync();
 		var result = await query
-			.Skip(first)
-			.Take(last - first)
+			.Skip(offset)
+			.Take(limit)
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.ToListAsync();
 
@@ -48,7 +48,7 @@ public class InstitutionConnectionController : GraphController
 			TotalCount = totalCount
 		};
 	}
-	
+
 	[Authorize]
 	[TypeExtension(typeof(InstitutionConnection), "organisation")]
 	public async Task<Organisation> GetOrganisation(InstitutionConnection connection)
@@ -58,7 +58,7 @@ public class InstitutionConnectionController : GraphController
 			.Select(e => Organisation.FromEntity(e))
 			.SingleAsync();
 	}
-	
+
 	[Authorize]
 	[TypeExtension(typeof(InstitutionConnection), "institution")]
 	public async Task<Institution> GetInstitution(InstitutionConnection connection)
@@ -68,7 +68,7 @@ public class InstitutionConnectionController : GraphController
 			.Select(e => Institution.FromEntity(e))
 			.SingleAsync();
 	}
-	
+
 	[Authorize]
 	[BatchTypeExtension(typeof(InstitutionConnection), "accounts", typeof(List<InstitutionConnectionAccount>))]
 	public async Task<IGraphActionResult> GetAccounts(IEnumerable<InstitutionConnection> connections, int limit = 25)
@@ -79,7 +79,7 @@ public class InstitutionConnectionController : GraphController
 			.InstitutionConnectionAccounts
 			.Where(e => connectionIds.Contains(e.InstitutionConnectionId))
 			.Take(limit);
-		
+
 		return StartBatch()
 			.FromSource(connections, c => c.Id)
 			.WithResults(allAccounts, a => a.InstitutionConnectionId)
