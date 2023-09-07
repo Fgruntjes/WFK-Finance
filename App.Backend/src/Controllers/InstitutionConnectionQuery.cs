@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
-public class InstitutionConnectionController : GraphController
+public class InstitutionConnectionQuery : GraphController
 {
 	private readonly DatabaseContext _database;
 
-	public InstitutionConnectionController(DatabaseContext database)
+	public InstitutionConnectionQuery(DatabaseContext database)
 	{
 		_database = database;
 	}
@@ -39,6 +39,7 @@ public class InstitutionConnectionController : GraphController
 		var result = await query
 			.Skip(offset)
 			.Take(limit)
+			.OrderBy(e => e.Id)
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.ToListAsync();
 
@@ -71,7 +72,7 @@ public class InstitutionConnectionController : GraphController
 
 	[Authorize]
 	[BatchTypeExtension(typeof(InstitutionConnection), "accounts", typeof(List<InstitutionConnectionAccount>))]
-	public async Task<IGraphActionResult> GetAccounts(IEnumerable<InstitutionConnection> connections, int limit = 25)
+	public IGraphActionResult GetAccounts(IEnumerable<InstitutionConnection> connections, int limit = 25)
 	{
 		var connectionIds = connections.Select(c => c.Id).ToArray();
 

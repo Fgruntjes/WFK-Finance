@@ -31,9 +31,9 @@ public class BackendComponent : ComponentResource
         var backendEnvValues = new InputMap<string>() {
             {"Auth0__Domain", args.AuthDomain},
             {"Auth0__Audience", args.AuthAudience},
-            {"Auth0__Scope", args.AuthScope},
-            {"Auth0__ClientId", authClient.ClientId},
-            {"Auth0__ClientSecret", authClient.ClientSecret},
+            //{"Auth0__Scope", args.AuthScope},
+            //{"Auth0__ClientId", authClient.ClientId},
+            //{"Auth0__ClientSecret", authClient.ClientSecret},
             {"Nordigen__SecretId", args.NordigenSecretId},
             {"Nordigen__SecretKey", args.NordigenSecretKey},
             {"Database__ConnectionString", args.DatabaseConnectionString},
@@ -102,7 +102,7 @@ public class BackendComponent : ComponentResource
             }}
             });
 
-        // So "npm run dev" use the deploy values
+        // So "dotnet start" use the deploy values
         EnvFileWriter.Write("../App.Backend/.local.env", backendEnvValues);
 
         BaseUrl = Output.Create("http://localhost:5204");

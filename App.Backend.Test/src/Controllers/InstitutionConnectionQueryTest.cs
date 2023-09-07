@@ -4,9 +4,9 @@ using App.Backend.Test.Fixtures;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFixture<InstitutionConnectionController>>
+public class InstitutionConnectionControllerTest : GraphControllerTest<GraphQLFixture<InstitutionConnectionQuery>>
 {
-	public InstitutionConnectionControllerTest(GraphQLFixture<InstitutionConnectionController> fixture) : base(fixture)
+	public InstitutionConnectionControllerTest(GraphQLFixture<InstitutionConnectionQuery> fixture) : base(fixture)
 	{ }
 
 	[Fact]

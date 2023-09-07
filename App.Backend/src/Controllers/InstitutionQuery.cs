@@ -7,15 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
-public class InstitutionController : GraphController
+public class InstitutionQuery : GraphController
 {
 	private readonly DatabaseContext _database;
 
-	public InstitutionController(DatabaseContext database)
+	public InstitutionQuery(DatabaseContext database)
 	{
 		_database = database;
 	}
-	
+
 	[Authorize]
 	[QueryRoot("institution")]
 	public Task<Institution?> Get(Guid id)

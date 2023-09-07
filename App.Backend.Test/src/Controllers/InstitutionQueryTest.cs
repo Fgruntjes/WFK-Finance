@@ -4,12 +4,12 @@ using App.Backend.Test.Fixtures;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionControllerTest : GraphControllerTest<GraphQLFixture<InstitutionController>>
+public class InstitutionQueryTest : GraphControllerTest<GraphQLFixture<InstitutionQuery>>
 {
-	public InstitutionControllerTest(GraphQLFixture<InstitutionController> fixture) : base(fixture)
+	public InstitutionQueryTest(GraphQLFixture<InstitutionQuery> fixture) : base(fixture)
 	{
 	}
-	
+
 	[Fact]
 	public async Task ById_Success()
 	{
