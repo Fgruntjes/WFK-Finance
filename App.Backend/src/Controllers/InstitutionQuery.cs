@@ -18,11 +18,11 @@ public class InstitutionQuery : GraphController
 
 	[Authorize]
 	[QueryRoot("institution")]
-	public Task<Institution?> Get(Guid id)
+	public Task<Institution?> Get(Guid id, CancellationToken cancellationToken = default)
 	{
 		return _database.Institutions
 			.Where(e => e.Id == id)
 			.Select(e => Institution.FromEntity(e))
-			.SingleOrDefaultAsync();
+			.SingleOrDefaultAsync(cancellationToken);
 	}
 }

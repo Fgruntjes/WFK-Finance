@@ -9,6 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
+public class InstitutionConnectionMutation : GraphController
+{
+}
+
 public class InstitutionConnectionQuery : GraphController
 {
 	private readonly DatabaseContext _database;
@@ -20,18 +24,18 @@ public class InstitutionConnectionQuery : GraphController
 
 	[Authorize]
 	[QueryRoot("institutionConnection")]
-	public Task<InstitutionConnection?> Get(Guid id)
+	public Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
 	{
 		return _database.InstitutionConnections
 			.Where(e => e.Id == id)
 			.Take(1)
 			.Select(e => InstitutionConnection.FromEntity(e))
-			.SingleOrDefaultAsync();
+			.SingleOrDefaultAsync(cancellationToken);
 	}
 
 	[Authorize]
 	[QueryRoot("institutionConnections")]
-	public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25)
+	public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
 	{
 		var query = _database.InstitutionConnections;
 
@@ -41,7 +45,7 @@ public class InstitutionConnectionQuery : GraphController
 			.Take(limit)
 			.OrderBy(e => e.Id)
 			.Select(e => InstitutionConnection.FromEntity(e))
-			.ToListAsync();
+			.ToListAsync(cancellationToken);
 
 		return new ListResult<InstitutionConnection>
 		{
@@ -52,34 +56,35 @@ public class InstitutionConnectionQuery : GraphController
 
 	[Authorize]
 	[TypeExtension(typeof(InstitutionConnection), "organisation")]
-	public async Task<Organisation> GetOrganisation(InstitutionConnection connection)
+	public async Task<Organisation> GetOrganisation(InstitutionConnection connection, CancellationToken cancellationToken = default)
 	{
 		return await _database.Organisations
 			.Where(e => e.Id == connection.OrganisationId)
 			.Select(e => Organisation.FromEntity(e))
-			.SingleAsync();
+			.SingleAsync(cancellationToken);
 	}
 
 	[Authorize]
 	[TypeExtension(typeof(InstitutionConnection), "institution")]
-	public async Task<Institution> GetInstitution(InstitutionConnection connection)
+	public async Task<Institution> GetInstitution(InstitutionConnection connection, CancellationToken cancellationToken = default)
 	{
 		return await _database.Institutions
 			.Where(e => e.Id == connection.InstitutionId)
 			.Select(e => Institution.FromEntity(e))
-			.SingleAsync();
+			.SingleAsync(cancellationToken);
 	}
 
 	[Authorize]
 	[BatchTypeExtension(typeof(InstitutionConnection), "accounts", typeof(List<InstitutionConnectionAccount>))]
-	public IGraphActionResult GetAccounts(IEnumerable<InstitutionConnection> connections, int limit = 25)
+	public async Task<IGraphActionResult> GetAccounts(IEnumerable<InstitutionConnection> connections, int limit = 25, CancellationToken cancellationToken = default)
 	{
 		var connectionIds = connections.Select(c => c.Id).ToArray();
 
-		var allAccounts = _database
+		var allAccounts = await _database
 			.InstitutionConnectionAccounts
 			.Where(e => connectionIds.Contains(e.InstitutionConnectionId))
-			.Take(limit);
+			.Take(limit)
+			.ToListAsync(cancellationToken);
 
 		return StartBatch()
 			.FromSource(connections, c => c.Id)
