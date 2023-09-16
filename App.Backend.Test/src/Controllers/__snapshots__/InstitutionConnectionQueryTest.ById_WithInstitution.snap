@@ -1,0 +1,10 @@
+﻿{
+  "data": {
+    "institutionConnection": {
+      "externalId": "SomeExternalId-organisation-match-0",
+      "institution": {
+        "name": "Some Institution Name"
+      }
+    }
+  }
+}

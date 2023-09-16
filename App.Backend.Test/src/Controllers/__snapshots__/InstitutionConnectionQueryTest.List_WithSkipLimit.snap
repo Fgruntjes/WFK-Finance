@@ -3,10 +3,10 @@
     "institutionConnections": {
       "items": [
         {
-          "externalId": "SomeExternalId-1"
+          "externalId": "SomeExternalId-organisation-match-1"
         }
       ],
-      "totalCount": 3
+      "totalCount": 30
     }
   }
 }

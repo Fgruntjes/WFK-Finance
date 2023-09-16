@@ -22,6 +22,8 @@ public class InstitutionQuery : GraphController
 	{
 		return _database.Institutions
 			.Where(e => e.Id == id)
+			.OrderBy(e => e.CreatedAt)
+			.Take(1)
 			.Select(e => Institution.FromEntity(e))
 			.SingleOrDefaultAsync(cancellationToken);
 	}

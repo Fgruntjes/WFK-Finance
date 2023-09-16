@@ -9,17 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
-public class InstitutionConnectionMutation : GraphController
-{
-}
-
 public class InstitutionConnectionQuery : GraphController
 {
 	private readonly DatabaseContext _database;
+	private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public InstitutionConnectionQuery(DatabaseContext database)
+	public InstitutionConnectionQuery(DatabaseContext database, IHttpContextAccessor httpContextAccessor)
 	{
 		_database = database;
+		_httpContextAccessor = httpContextAccessor;
 	}
 
 	[Authorize]
@@ -27,7 +25,8 @@ public class InstitutionConnectionQuery : GraphController
 	public Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
 	{
 		return _database.InstitutionConnections
-			.Where(e => e.Id == id)
+			.Where(e => e.Id == id && e.OrganisationId == _httpContextAccessor.GetOrganisationId())
+			.OrderBy(e => e.CreatedAt)
 			.Take(1)
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.SingleOrDefaultAsync(cancellationToken);
@@ -37,13 +36,14 @@ public class InstitutionConnectionQuery : GraphController
 	[QueryRoot("institutionConnections")]
 	public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
 	{
-		var query = _database.InstitutionConnections;
+		var query = _database.InstitutionConnections
+			.Where(e => e.OrganisationId == _httpContextAccessor.GetOrganisationId());
 
 		var totalCount = await query.CountAsync();
 		var result = await query
+			.OrderBy(e => e.CreatedAt)
 			.Skip(offset)
 			.Take(limit)
-			.OrderBy(e => e.Id)
 			.Select(e => InstitutionConnection.FromEntity(e))
 			.ToListAsync(cancellationToken);
 
@@ -52,16 +52,6 @@ public class InstitutionConnectionQuery : GraphController
 			Items = result,
 			TotalCount = totalCount
 		};
-	}
-
-	[Authorize]
-	[TypeExtension(typeof(InstitutionConnection), "organisation")]
-	public async Task<Organisation> GetOrganisation(InstitutionConnection connection, CancellationToken cancellationToken = default)
-	{
-		return await _database.Organisations
-			.Where(e => e.Id == connection.OrganisationId)
-			.Select(e => Organisation.FromEntity(e))
-			.SingleAsync(cancellationToken);
 	}
 
 	[Authorize]
@@ -83,6 +73,7 @@ public class InstitutionConnectionQuery : GraphController
 		var allAccounts = await _database
 			.InstitutionConnectionAccounts
 			.Where(e => connectionIds.Contains(e.InstitutionConnectionId))
+			.OrderBy(e => e.CreatedAt)
 			.Take(limit)
 			.ToListAsync(cancellationToken);
 

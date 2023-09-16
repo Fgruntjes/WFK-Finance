@@ -1,5 +1,7 @@
+using App.Backend.Service;
 using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
+using NodaTime;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuth(
@@ -24,11 +26,15 @@ builder.Services.AddCors(options =>
 
 
 // App configuration
-builder.Services.AddLogging();
 builder.Services.AddDatabase(
 	builder.Configuration.GetConnectionString("DefaultConnection")
 	?? throw new InvalidOperationException("Missing 'ConnectionStrings:DefaultConnection' setting."));
-builder.Services.AddGraphQL();
+builder.Services.AddGraphQL(c =>
+	{
+		c.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
+	});
+builder.Services.AddNordigenClient(builder.Configuration);
+builder.Services.AddAppServices();
 
 var app = builder.Build();
 app.UseAuthentication();
