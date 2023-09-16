@@ -7,7 +7,7 @@ public class Institution
 	public Guid Id { get; init; }
 	public string ExternalId { get; init; } = null!;
 	public string Name { get; init; } = null!;
-	public string? Logo { get; init; }
+	public Uri? Logo { get; init; }
 	public IReadOnlyList<string> Countries { get; init; } = null!;
 
 	public static Institution FromEntity(InstitutionEntity entity)

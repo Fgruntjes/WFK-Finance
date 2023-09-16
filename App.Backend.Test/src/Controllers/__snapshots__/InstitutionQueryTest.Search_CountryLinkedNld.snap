@@ -1,0 +1,13 @@
+﻿{
+  "data": {
+    "institutions": {
+      "items": [
+        {
+          "name": "MyFakeName-nld",
+          "externalId": "SomeExternalId-nld"
+        }
+      ],
+      "totalCount": 1
+    }
+  }
+}

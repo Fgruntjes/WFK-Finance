@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace App.Backend.src.Migrations
+namespace App.Backend.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -30,6 +30,7 @@ namespace App.Backend.src.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Logo = table.Column<string>(type: "text", nullable: true)
@@ -92,6 +93,7 @@ namespace App.Backend.src.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     ConnectUrl = table.Column<string>(type: "text", nullable: false),
                     OrganisationId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -144,6 +146,7 @@ namespace App.Backend.src.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     InstitutionConnectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     OwnerName = table.Column<string>(type: "text", nullable: false),

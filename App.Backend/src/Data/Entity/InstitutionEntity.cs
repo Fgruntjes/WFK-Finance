@@ -13,6 +13,6 @@ public class InstitutionEntity
 
 	public string ExternalId { get; set; } = null!;
 	public string Name { get; set; } = null!;
-	public string? Logo { get; set; }
-	public ICollection<CountryEntity> Countries { get; } = new List<CountryEntity>();
+	public Uri? Logo { get; set; }
+	public ICollection<CountryEntity> Countries { get; set; } = new List<CountryEntity>();
 }

@@ -1,4 +1,4 @@
-namespace App.Backend.GraphQL.Type;
+namespace App.Backend.Dto;
 
 public class ListResult<T>
 {

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using App.Backend.Data;
+using App.Backend.Dto;
 using App.Backend.GraphQL.Type;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;

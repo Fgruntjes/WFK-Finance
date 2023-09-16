@@ -27,6 +27,7 @@ public class AppFixture<TController>
 			options.UseInMemoryDatabase(Guid.NewGuid().ToString());
 		});
 		services.AddAppServices();
+		MockServices(services);
 
 		var builder = new TestServerBuilder<GraphSchema>(serviceCollection: services);
 		builder.AddGraphQL(o =>
@@ -54,6 +55,11 @@ public class AppFixture<TController>
 	{
 		var context = BuildQueryContext(null, variables);
 		return await _server.RenderResult(context);
+	}
+
+	protected virtual void MockServices(IServiceCollection services)
+	{
+
 	}
 
 	private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)

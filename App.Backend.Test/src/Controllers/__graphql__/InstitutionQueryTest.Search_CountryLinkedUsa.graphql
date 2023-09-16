@@ -1,0 +1,9 @@
+query institutions($CountryIso3: String!) {
+	institutions(countryIso3: $CountryIso3) {
+		items {
+			name
+			externalId
+		}
+		totalCount
+	}
+}
