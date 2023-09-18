@@ -19,8 +19,6 @@ public class InstitutionConnectionAccountEntity
 
 	public InstitutionConnectionEntity InstitutionConnection { get; set; } = null!;
 
-	public string OwnerName { get; set; } = null!;
-
 	public string Iban { get; set; } = null!;
 
 	public InstitutionConnectionAccountEntity()

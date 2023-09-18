@@ -24,8 +24,9 @@ public class InstitutionConnectionCreateService
 
     public async Task<InstitutionConnectionEntity> Connect(Guid institutionId, Uri returnUrl, CancellationToken cancellationToken = default)
     {
-        var institution = await _database.Institutions.FindAsync(institutionId)
-            ?? throw new ArgumentOutOfRangeException(nameof(institutionId));
+        var institution = await _database.Institutions
+            .FindAsync(institutionId)
+            ?? throw new ArgumentOutOfRangeException(nameof(institutionId), institutionId, "Could not find institution");
 
         var connectEntity = await GetConnectUrl(institution, cancellationToken);
         if (connectEntity != null)
@@ -57,23 +58,14 @@ public class InstitutionConnectionCreateService
     private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
         var organisationId = _httpContextAccessor.GetOrganisationId();
-        var connection = new InstitutionConnectionEntity
+        var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,
             InstitutionId = institutionId,
             ConnectUrl = connectUrl,
             ExternalId = connectionId
-        };
+        }, cancellationToken);
 
-        var result = await _database.InstitutionConnections
-            .Upsert(connection)
-            .On(c => new { c.OrganisationId, c.InstitutionId })
-            .WhenMatched(c => new InstitutionConnectionEntity
-            {
-                ConnectUrl = connectUrl,
-            })
-            .RunAsync();
-
-        return connection;
+        return result.Entity;
     }
 }

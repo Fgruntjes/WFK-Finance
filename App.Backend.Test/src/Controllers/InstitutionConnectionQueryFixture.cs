@@ -1,9 +1,12 @@
 using App.Backend.Controllers;
 using App.Backend.Data.Entity;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using VMelnalksnis.NordigenDotNet;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectionQuery>
+public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectionController>
 {
     public IList<InstitutionConnectionEntity> OrganisationMatchEntities { get; private set; }
     public IList<InstitutionConnectionEntity> OrganisationMissmatchEntities { get; private set; }
@@ -20,7 +23,7 @@ public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectio
     {
         get
         {
-            return OrganisationMatchEntities.First().Id;
+            return OrganisationMissmatchEntities.First().Id;
         }
     }
 
@@ -33,6 +36,7 @@ public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectio
         {
             ExternalId = "SomeExternalId",
             Name = "Some Institution Name",
+            CountryIso2 = "NL",
         });
 
         for (int i = 0; i < 30; i++)
@@ -59,6 +63,21 @@ public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectio
             OrganisationMatchEntities.Add(entity.Entity);
         }
 
+        for (int i = 0; i < 3; i++)
+        {
+            Database.InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            {
+                ExternalId = $"SomeExternalId-organisation-account-{i}",
+                InstitutionConnectionId = FirstOrganisationMatchConnection,
+                Iban = $"IBAN{i}",
+            });
+        }
+
         Database.SaveChanges();
+    }
+
+    protected override void MockServices(IServiceCollection services)
+    {
+        services.AddScoped((_) => new Mock<INordigenClient>().Object);
     }
 }

@@ -1,0 +1,20 @@
+﻿{
+  "data": {
+    "institutionConnection": {
+      "get": {
+        "externalId": "SomeExternalId-organisation-match-0",
+        "accounts": [
+          {
+            "iban": "IBAN0"
+          },
+          {
+            "iban": "IBAN1"
+          },
+          {
+            "iban": "IBAN2"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,7 +1,9 @@
 ﻿{
   "data": {
     "institution": {
-      "name": "MyFakeName-nld"
+      "get": {
+        "name": "MyFakeName-NL"
+      }
     }
   }
 }

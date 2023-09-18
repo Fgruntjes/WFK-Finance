@@ -1,8 +1,10 @@
-query institutionConnections($offset: Int, $limit: Int) {
-    institutionConnections(offset: $offset, limit: $limit) {
-        items {
-            externalId
-        }
-        totalCount
-    }
+query institutionConnections($offset: Int, $limit: Int){
+	institutionConnection {
+		list(offset: $offset, limit: $limit) {
+			items {
+			externalId
+		}
+		totalCount
+		}
+	}
 }

@@ -1,0 +1,13 @@
+mutation RefreshInstitutionConnection($ExternalId: String!){
+	institutionConnection {
+		refresh {
+			externalId(externalId: $ExternalId) {
+				externalId
+				connectUrl
+				accounts {
+					iban
+				}
+			}
+		}
+	}
+}

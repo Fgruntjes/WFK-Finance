@@ -1,12 +1,14 @@
 ﻿{
   "data": {
-    "institutionConnections": {
-      "items": [
-        {
-          "externalId": "SomeExternalId-organisation-match-1"
-        }
-      ],
-      "totalCount": 30
+    "institutionConnection": {
+      "list": {
+        "items": [
+          {
+            "externalId": "SomeExternalId-organisation-match-1"
+          }
+        ],
+        "totalCount": 30
+      }
     }
   }
 }

@@ -1,5 +1,7 @@
-query institutionConnection($Id: Guid!) {
-    institutionConnection(id: $Id) {
-        externalId
-    }
+query institutionConnections($Id: Guid!){
+	institutionConnection {
+		get(id: $Id) {
+			externalId
+		}
+	}
 }

@@ -19,7 +19,7 @@ public class InstitutionSearchService
     public async Task<IEnumerable<InstitutionEntity>> Search(string countryIso2, CancellationToken cancellationToken = default)
     {
         var institutions = await _database.Institutions
-            .Where(i => i.Country == countryIso2)
+            .Where(i => i.CountryIso2 == countryIso2)
             .ToListAsync(cancellationToken);
 
         if (institutions.Count > 0)
@@ -38,7 +38,7 @@ public class InstitutionSearchService
                 ExternalId = i.Id,
                 Name = i.Name,
                 Logo = i.Logo,
-                Country = countryIso2,
+                CountryIso2 = countryIso2,
             });
 
         await _database.Institutions

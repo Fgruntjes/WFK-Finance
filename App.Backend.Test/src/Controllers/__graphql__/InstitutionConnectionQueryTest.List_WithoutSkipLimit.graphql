@@ -1,8 +1,10 @@
 query institutionConnections{
-    institutionConnections {
-        items {
-            externalId
-        }
-        totalCount
-    }
+	institutionConnection {
+		list {
+			items {
+			externalId
+		}
+		totalCount
+		}
+	}
 }

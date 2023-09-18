@@ -1,5 +1,7 @@
 query institution($Id: Guid!) {
-    institution(id: $Id) {
-        name
-    }
+	institution {
+		get(id: $Id) {
+			name
+		}
+	}
 }

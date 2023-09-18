@@ -23,6 +23,12 @@ public class InstitutionConnectionQueryTest : IClassFixture<InstitutionConnectio
 		result.MatchSnapshot();
 	}
 
+	[Fact]
+	public async Task ById_WithAccounts()
+	{
+		var result = await _fixture.ExecuteQuery(new { Id = _fixture.FirstOrganisationMatchConnection });
+		result.MatchSnapshot();
+	}
 
 	[Fact]
 	public async Task ById_OrganisationMismatch()

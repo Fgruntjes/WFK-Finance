@@ -27,7 +27,7 @@ public class Institution
 			ExternalId = entity.ExternalId,
 			Name = entity.Name,
 			Logo = entity.Logo,
-			Country = entity.Country,
+			Country = entity.CountryIso2,
 		};
 	}
 }

@@ -6,30 +6,26 @@ using VMelnalksnis.NordigenDotNet;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionQueryFixture : AppFixture<InstitutionQuery>
+public class InstitutionQueryFixture : AppFixture<InstitutionController>
 {
     public Guid InstitutionIdNldLinked { get; private set; }
-    public Mock<INordigenClient> NordigenClientMoq { get; private set; }
+    public Mock<INordigenClient> NordigenClientMoq { get; private set; } = null!;
 
     public InstitutionQueryFixture() : base()
     {
-        var countryNld = new CountryEntity { Iso2 = "nld" };
-        var countryUsa = new CountryEntity { Iso2 = "usa" };
         var institutionNldLinked = new InstitutionEntity()
         {
-            Name = "MyFakeName-nld",
-            ExternalId = "SomeExternalId-nld",
-            Countries = new List<CountryEntity>() { countryNld }
+            Name = "MyFakeName-NL",
+            ExternalId = "SomeExternalId-NL",
+            CountryIso2 = "NL"
         };
         var institutionUsaLinked = new InstitutionEntity()
         {
-            Name = "MyFakeName-usa",
-            ExternalId = "SomeExternalId-usa",
-            Countries = new List<CountryEntity>() { countryUsa }
+            Name = "MyFakeName-US",
+            ExternalId = "SomeExternalId-US",
+            CountryIso2 = "US"
         };
 
-        Database.Countries.Add(countryNld);
-        Database.Countries.Add(countryUsa);
         Database.Institutions.Add(institutionNldLinked);
         Database.Institutions.Add(institutionUsaLinked);
         Database.SaveChanges();

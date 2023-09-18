@@ -1,7 +1,9 @@
 ﻿{
   "data": {
     "institutionConnection": {
-      "externalId": "SomeExternalId-organisation-match-0"
+      "get": {
+        "externalId": "SomeExternalId-organisation-match-0"
+      }
     }
   }
 }

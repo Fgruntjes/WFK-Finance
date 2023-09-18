@@ -1,6 +1,7 @@
 using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
 using DotNetEnv.Configuration;
+using GraphQL.AspNet.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
@@ -35,6 +36,7 @@ builder.Services.AddDatabase(
 	?? throw new InvalidOperationException("Missing 'ConnectionStrings:DefaultConnection' setting."));
 builder.Services.AddGraphQL(c =>
 	{
+		c.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;
 		c.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
 		c.ResponseOptions.ExposeExceptions = builder.Environment.IsDevelopment();
 	});

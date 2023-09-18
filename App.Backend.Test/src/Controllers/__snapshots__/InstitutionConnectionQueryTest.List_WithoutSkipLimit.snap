@@ -1,84 +1,86 @@
 ﻿{
   "data": {
-    "institutionConnections": {
-      "items": [
-        {
-          "externalId": "SomeExternalId-organisation-match-0"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-1"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-2"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-3"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-4"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-5"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-6"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-7"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-8"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-9"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-10"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-11"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-12"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-13"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-14"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-15"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-16"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-17"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-18"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-19"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-20"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-21"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-22"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-23"
-        },
-        {
-          "externalId": "SomeExternalId-organisation-match-24"
-        }
-      ],
-      "totalCount": 30
+    "institutionConnection": {
+      "list": {
+        "items": [
+          {
+            "externalId": "SomeExternalId-organisation-match-0"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-1"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-2"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-3"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-4"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-5"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-6"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-7"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-8"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-9"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-10"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-11"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-12"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-13"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-14"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-15"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-16"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-17"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-18"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-19"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-20"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-21"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-22"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-23"
+          },
+          {
+            "externalId": "SomeExternalId-organisation-match-24"
+          }
+        ],
+        "totalCount": 30
+      }
     }
   }
 }

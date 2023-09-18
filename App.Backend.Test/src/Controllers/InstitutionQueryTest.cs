@@ -27,21 +27,21 @@ public class InstitutionQueryTest : IClassFixture<InstitutionQueryFixture>
 	}
 
 	[Fact]
-	public async Task Search_CountryLinkedNld()
+	public async Task List_CountryLinkedNld()
 	{
-		var result = await _fixture.ExecuteQuery(new { CountryIso3 = "NLD" });
+		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "NL" });
 		result.MatchSnapshot();
 	}
 
 	[Fact]
-	public async Task Search_CountryLinkedUsa()
+	public async Task List_CountryLinkedUsa()
 	{
-		var result = await _fixture.ExecuteQuery(new { CountryIso3 = "USA" });
+		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "US" });
 		result.MatchSnapshot();
 	}
 
 	[Fact]
-	public async Task Search_CallRefreshWhenMissing()
+	public async Task List_CallRefreshWhenMissing()
 	{
 		var institutionsMock = new Mock<IInstitutionClient>();
 		institutionsMock
@@ -49,23 +49,15 @@ public class InstitutionQueryTest : IClassFixture<InstitutionQueryFixture>
 			.ReturnsAsync(new List<Institution>()
 			{
 				new Institution{
-					Id = "SomeExternalId-gbr",
-					Name = "MyFakeName-gbr"
+					Id = "SomeExternalId-GB",
+					Name = "MyFakeName-GB"
 				}
 			});
 		_fixture.NordigenClientMoq
 			.SetupGet(c => c.Institutions)
 			.Returns(institutionsMock.Object);
 
-		var result = await _fixture.ExecuteQuery(new { CountryIso3 = "GBR" });
+		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "GBR" });
 		result.MatchSnapshot();
-	}
-
-
-
-	[Fact]
-	public async Task Search_AppendCountry()
-	{
-		throw new NotImplementedException();
 	}
 }

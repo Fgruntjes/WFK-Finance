@@ -1,0 +1,27 @@
+﻿{
+  "errors": [
+    {
+      "message": "Could not find institution (Parameter 'institutionId')\nActual value was 63ee89f0-d929-4f13-9636-4efd23aee070.",
+      "locations": [
+        {
+          "line": 3,
+          "column": 3
+        }
+      ],
+      "path": [
+        "institutionConnection",
+        "create"
+      ],
+      "extensions": {
+        "code": "BAD_REQUEST",
+        "timestamp": "2023-09-18T19:45:48.152+02:00",
+        "severity": "CRITICAL"
+      }
+    }
+  ],
+  "data": {
+    "institutionConnection": {
+      "create": null
+    }
+  }
+}
