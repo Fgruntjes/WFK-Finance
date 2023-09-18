@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "dotnetwatchattach",
+            "request": "launch",
+            "name": ".NET Watch Attach",
+            "args": {
+                "env": {
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                }
+            },
+            "task": "StartDev",
+            "program": "App.Backend"
+        }
+    ]
+}
