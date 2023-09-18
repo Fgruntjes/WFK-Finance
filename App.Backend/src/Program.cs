@@ -1,9 +1,13 @@
-using App.Backend.Service;
 using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
-using NodaTime;
+using DotNetEnv.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment())
+{
+	builder.Configuration.AddDotNetEnv(".local.env");
+}
+
 builder.Services.AddAuth(
 	builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),
 	builder.Configuration["Auth0:Audience"] ?? throw new InvalidOperationException("Missing 'Auth0:Audience' setting.")
@@ -32,6 +36,7 @@ builder.Services.AddDatabase(
 builder.Services.AddGraphQL(c =>
 	{
 		c.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
+		c.ResponseOptions.ExposeExceptions = builder.Environment.IsDevelopment();
 	});
 builder.Services.AddNordigenClient(builder.Configuration);
 builder.Services.AddAppServices();

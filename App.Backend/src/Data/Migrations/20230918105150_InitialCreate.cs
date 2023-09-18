@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NodaTime;
 
 #nullable disable
 
-namespace App.Backend.Migrations
+namespace App.Backend.src.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -15,25 +16,15 @@ namespace App.Backend.Migrations
                 .Annotation("Npgsql:Enum:user_role", "user,admin");
 
             migrationBuilder.CreateTable(
-                name: "Country",
-                columns: table => new
-                {
-                    Iso3 = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Country", x => x.Iso3);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Institutions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Logo = table.Column<string>(type: "text", nullable: true)
+                    Logo = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,35 +56,11 @@ namespace App.Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CountryInstitution",
-                columns: table => new
-                {
-                    CountriesIso3 = table.Column<string>(type: "text", nullable: false),
-                    InstitutionsId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CountryInstitution", x => new { x.CountriesIso3, x.InstitutionsId });
-                    table.ForeignKey(
-                        name: "FK_CountryInstitution_Country_CountriesIso3",
-                        column: x => x.CountriesIso3,
-                        principalTable: "Country",
-                        principalColumn: "Iso3",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CountryInstitution_Institutions_InstitutionsId",
-                        column: x => x.InstitutionsId,
-                        principalTable: "Institutions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "InstitutionConnections",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     ConnectUrl = table.Column<string>(type: "text", nullable: false),
                     OrganisationId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -146,7 +113,7 @@ namespace App.Backend.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     InstitutionConnectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     OwnerName = table.Column<string>(type: "text", nullable: false),
@@ -164,11 +131,6 @@ namespace App.Backend.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CountryInstitution_InstitutionsId",
-                table: "CountryInstitution",
-                column: "InstitutionsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_InstitutionConnectionAccounts_InstitutionConnectionId",
                 table: "InstitutionConnectionAccounts",
                 column: "InstitutionConnectionId");
@@ -184,6 +146,12 @@ namespace App.Backend.Migrations
                 column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Institutions_ExternalId",
+                table: "Institutions",
+                column: "ExternalId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrganisationUser_OrganisationId",
                 table: "OrganisationUser",
                 column: "OrganisationId");
@@ -193,16 +161,10 @@ namespace App.Backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CountryInstitution");
-
-            migrationBuilder.DropTable(
                 name: "InstitutionConnectionAccounts");
 
             migrationBuilder.DropTable(
                 name: "OrganisationUser");
-
-            migrationBuilder.DropTable(
-                name: "Country");
 
             migrationBuilder.DropTable(
                 name: "InstitutionConnections");

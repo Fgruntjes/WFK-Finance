@@ -13,8 +13,8 @@ public class InstitutionQueryFixture : AppFixture<InstitutionQuery>
 
     public InstitutionQueryFixture() : base()
     {
-        var countryNld = new CountryEntity { Iso3 = "nld" };
-        var countryUsa = new CountryEntity { Iso3 = "usa" };
+        var countryNld = new CountryEntity { Iso2 = "nld" };
+        var countryUsa = new CountryEntity { Iso2 = "usa" };
         var institutionNldLinked = new InstitutionEntity()
         {
             Name = "MyFakeName-nld",

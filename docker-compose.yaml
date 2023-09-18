@@ -8,3 +8,8 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database: {}

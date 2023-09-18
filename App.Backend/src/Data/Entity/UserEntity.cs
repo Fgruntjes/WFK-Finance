@@ -1,11 +1,18 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace App.Backend.Data.Entity;
 
 public class UserEntity
 {
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.None)]
 	public Guid Id { get; set; }
 	public string ExternalId { get; set; } = null!;
 	public ICollection<OrganisationUserEntity> Organisations { get; } = new List<OrganisationUserEntity>();
+
+	public UserEntity()
+	{
+		Id = Guid.NewGuid();
+	}
 }

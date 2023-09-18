@@ -1,18 +1,30 @@
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using NodaTime;
 
 namespace App.Backend.Data.Entity;
 
+[Index(nameof(ExternalId), IsUnique = true)]
 public class InstitutionEntity
 {
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.None)]
 	public Guid Id { get; set; }
 
-	[DefaultValue("now()")]
-	public DateTime CreatedAt { get; set; }
+	public Instant CreatedAt { get; set; }
 
 	public string ExternalId { get; set; } = null!;
+
 	public string Name { get; set; } = null!;
+
 	public Uri? Logo { get; set; }
-	public ICollection<CountryEntity> Countries { get; set; } = new List<CountryEntity>();
+
+	public string Country { get; set; } = null!;
+
+	public InstitutionEntity()
+	{
+		Id = Guid.NewGuid();
+		CreatedAt = SystemClock.Instance.GetCurrentInstant();
+	}
 }

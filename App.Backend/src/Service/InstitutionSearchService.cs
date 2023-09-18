@@ -1,7 +1,5 @@
-using System.Collections.Immutable;
 using App.Backend.Data;
 using App.Backend.Data.Entity;
-using App.Backend.Dto;
 using Microsoft.EntityFrameworkCore;
 using VMelnalksnis.NordigenDotNet;
 
@@ -18,66 +16,40 @@ public class InstitutionSearchService
         _nordigenClient = nordigenClient;
     }
 
-    public async Task<ListResult<InstitutionEntity>> Search(string countryIso3, int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<InstitutionEntity>> Search(string countryIso2, CancellationToken cancellationToken = default)
     {
-        var query = _database.Institutions
-            .Include(e => e.Countries)
-            .Where(e => e.Countries.Any(c => c.Iso3 == countryIso3));
-
-        var totalCount = await query.CountAsync(cancellationToken);
-        if (totalCount == 0)
-        {
-            var list = await Refresh(countryIso3, cancellationToken);
-            return new ListResult<InstitutionEntity>
-            {
-                Items = list.AsQueryable()
-                    .Skip(offset)
-                    .Take(limit)
-                    .ToImmutableList(),
-                TotalCount = list.Count()
-            };
-        }
-
-        var result = await query
-            .OrderBy(e => e.CreatedAt)
-            .Skip(offset)
-            .Take(limit)
+        var institutions = await _database.Institutions
+            .Where(i => i.Country == countryIso2)
             .ToListAsync(cancellationToken);
 
-        return new ListResult<InstitutionEntity>
+        if (institutions.Count > 0)
         {
-            Items = result,
-            TotalCount = totalCount
-        };
+            return institutions;
+        }
+
+        return await Refresh(countryIso2, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<InstitutionEntity>> Refresh(string countryIso3, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<InstitutionEntity>> Refresh(string countryIso2, CancellationToken cancellationToken)
     {
-        var countryEntity = GetCountry(countryIso3);
-        var institutions = (await _nordigenClient.Institutions.GetByCountry(countryIso3))
+        var institutions = (await _nordigenClient.Institutions.GetByCountry(countryIso2))
             .Select(i => new InstitutionEntity
             {
                 ExternalId = i.Id,
                 Name = i.Name,
                 Logo = i.Logo,
+                Country = countryIso2,
             });
 
         await _database.Institutions
                 .UpsertRange(institutions)
-                .On(i => new { i.ExternalId })
+                .On(i => new
+                {
+                    i.ExternalId
+                })
+                .NoUpdate()
                 .RunAsync();
 
         return new List<InstitutionEntity>(institutions);
-    }
-
-    private async Task<CountryEntity> GetCountry(string countryIso3)
-    {
-        var country = new CountryEntity { Iso3 = countryIso3 };
-        await _database.Countries
-            .Upsert(country)
-            .On(c => new { c.Iso3 })
-            .RunAsync();
-
-        return country;
     }
 }

@@ -5,14 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace App.Backend.Migrations
+namespace App.Backend.src.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230916205255_InitialCreate")]
+    [Migration("20230918105150_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,23 +27,13 @@ namespace App.Backend.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_role", new[] { "user", "admin" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("App.Backend.Data.Entity.CountryEntity", b =>
-                {
-                    b.Property<string>("Iso3")
-                        .HasColumnType("text");
-
-                    b.HasKey("Iso3");
-
-                    b.ToTable("Country");
-                });
-
             modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionAccountEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ExternalId")
@@ -77,7 +68,7 @@ namespace App.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ExternalId")
@@ -105,7 +96,11 @@ namespace App.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ExternalId")
@@ -120,6 +115,9 @@ namespace App.Backend.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ExternalId")
+                        .IsUnique();
 
                     b.ToTable("Institutions");
                 });
@@ -172,21 +170,6 @@ namespace App.Backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CountryEntityInstitutionEntity", b =>
-                {
-                    b.Property<string>("CountriesIso3")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("InstitutionsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CountriesIso3", "InstitutionsId");
-
-                    b.HasIndex("InstitutionsId");
-
-                    b.ToTable("CountryInstitution");
-                });
-
             modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionAccountEntity", b =>
                 {
                     b.HasOne("App.Backend.Data.Entity.InstitutionConnectionEntity", "InstitutionConnection")
@@ -234,21 +217,6 @@ namespace App.Backend.Migrations
                     b.Navigation("Organisation");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CountryEntityInstitutionEntity", b =>
-                {
-                    b.HasOne("App.Backend.Data.Entity.CountryEntity", null)
-                        .WithMany()
-                        .HasForeignKey("CountriesIso3")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("App.Backend.Data.Entity.InstitutionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("InstitutionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionEntity", b =>

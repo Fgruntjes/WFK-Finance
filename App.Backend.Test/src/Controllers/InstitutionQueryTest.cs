@@ -60,4 +60,12 @@ public class InstitutionQueryTest : IClassFixture<InstitutionQueryFixture>
 		var result = await _fixture.ExecuteQuery(new { CountryIso3 = "GBR" });
 		result.MatchSnapshot();
 	}
+
+
+
+	[Fact]
+	public async Task Search_AppendCountry()
+	{
+		throw new NotImplementedException();
+	}
 }

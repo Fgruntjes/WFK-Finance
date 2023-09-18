@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Data.Entity;
@@ -6,8 +7,10 @@ namespace App.Backend.Data.Entity;
 public class OrganisationUserEntity
 {
 	public UserEntity User { get; set; } = null!;
-	public Guid UserId {get; set;}
+	[Key]
+	public Guid UserId { get; set; }
 	public OrganisationEntity Organisation { get; set; } = null!;
-	public Guid OrganisationId {get; set;}
+	[Key]
+	public Guid OrganisationId { get; set; }
 	public UserRole Role { get; set; }
 }

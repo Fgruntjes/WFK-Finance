@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Reflection;
 using App.Backend.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,7 +7,6 @@ namespace App.Backend.Data;
 
 public class DatabaseContext : DbContext
 {
-	public DbSet<CountryEntity> Countries { get; set; } = null!;
 	public DbSet<InstitutionEntity> Institutions { get; set; } = null!;
 	public DbSet<InstitutionConnectionEntity> InstitutionConnections { get; set; } = null!;
 	public DbSet<InstitutionConnectionAccountEntity> InstitutionConnectionAccounts { get; set; } = null!;
