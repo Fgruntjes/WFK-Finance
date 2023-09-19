@@ -20,6 +20,8 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
 
     public Guid InstitutionId => InstitutionEntity.Id;
 
+    public Guid InstitutionConnectionDeleteId { get; internal set; }
+
     public InstitutionConnectionMutationFixture() : base()
     {
         InstitutionEntity = new InstitutionEntity
@@ -38,6 +40,16 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
             ExternalId = "ed69f988-a1fb-4e89-8d56-66b42e43a675"
         };
         Database.InstitutionConnections.Add(InstitutionConnectionEntity);
+
+        InstitutionConnectionDeleteId = new Guid("56612691-dcf7-44e2-b506-ba83b60de5a9");
+        var institutionConnectionDeleteEntity = new InstitutionConnectionEntity
+        {
+            Id = InstitutionConnectionDeleteId,
+            OrganisationId = HttpContextAccessorExtension.OrganisationGuid,
+            ConnectUrl = new Uri("https://www.example.com/connect-url/refresh"),
+            ExternalId = "ed69f988-a1fb-4e89-8d56-66b42e43a675"
+        };
+        Database.InstitutionConnections.Add(institutionConnectionDeleteEntity);
 
         NordigenClientMoq = new Mock<INordigenClient>();
 

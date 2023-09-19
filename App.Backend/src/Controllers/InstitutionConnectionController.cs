@@ -78,6 +78,7 @@ public class InstitutionConnectionController : GraphController
 		return await _database
 			.InstitutionConnectionAccounts
 			.Where(e => e.InstitutionConnectionId == connection.Id)
+			.OrderBy(e => e.CreatedAt)
 			.Select(e => InstitutionConnectionAccount.FromEntity(e))
 			.ToListAsync(cancellationToken);
 	}
@@ -140,6 +141,6 @@ public class InstitutionConnectionController : GraphController
 		_database.InstitutionConnections.RemoveRange(entities);
 		await _database.SaveChangesAsync(cancellationToken);
 
-		return connectionIds.Count();
+		return deleteCount;
 	}
 }

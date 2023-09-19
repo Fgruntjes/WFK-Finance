@@ -24,7 +24,7 @@ namespace App.Backend.src.Data.Migrations
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Logo = table.Column<string>(type: "text", nullable: true),
-                    Country = table.Column<string>(type: "text", nullable: false)
+                    CountryIso2 = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -116,7 +116,6 @@ namespace App.Backend.src.Data.Migrations
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: false),
                     InstitutionConnectionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OwnerName = table.Column<string>(type: "text", nullable: false),
                     Iban = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -134,6 +133,12 @@ namespace App.Backend.src.Data.Migrations
                 name: "IX_InstitutionConnectionAccounts_InstitutionConnectionId",
                 table: "InstitutionConnectionAccounts",
                 column: "InstitutionConnectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InstitutionConnections_ExternalId",
+                table: "InstitutionConnections",
+                column: "ExternalId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_InstitutionConnections_InstitutionId",

@@ -27,7 +27,6 @@ namespace App.Backend.src.Data.Migrations
             modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionAccountEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
@@ -44,10 +43,6 @@ namespace App.Backend.src.Data.Migrations
                     b.Property<Guid>("InstitutionConnectionId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("OwnerName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("InstitutionConnectionId");
@@ -58,7 +53,6 @@ namespace App.Backend.src.Data.Migrations
             modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("ConnectUrl")
@@ -80,6 +74,9 @@ namespace App.Backend.src.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExternalId")
+                        .IsUnique();
+
                     b.HasIndex("InstitutionId");
 
                     b.HasIndex("OrganisationId");
@@ -90,10 +87,9 @@ namespace App.Backend.src.Data.Migrations
             modelBuilder.Entity("App.Backend.Data.Entity.InstitutionEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Country")
+                    b.Property<string>("CountryIso2")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -122,7 +118,6 @@ namespace App.Backend.src.Data.Migrations
             modelBuilder.Entity("App.Backend.Data.Entity.OrganisationEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Slug")
@@ -155,7 +150,6 @@ namespace App.Backend.src.Data.Migrations
             modelBuilder.Entity("App.Backend.Data.Entity.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("ExternalId")

@@ -74,12 +74,20 @@ public class InstitutionConnectionMutationTest : IClassFixture<InstitutionConnec
 	[Fact]
 	public async Task Delete_Success()
 	{
-		throw new NotImplementedException();
+		var result = await _fixture.ExecuteQuery(new
+		{
+			ConnectionIds = new List<Guid> { _fixture.InstitutionConnectionDeleteId }
+		});
+		result.MatchSnapshot();
 	}
 
 	[Fact]
 	public async Task Delete_MissingConnection()
 	{
-		throw new NotImplementedException();
+		var result = await _fixture.ExecuteQuery(new
+		{
+			ConnectionIds = new List<Guid> { new("5dcb861b-b879-427e-ad47-4c4eade20813") }
+		});
+		result.MatchSnapshot();
 	}
 }
