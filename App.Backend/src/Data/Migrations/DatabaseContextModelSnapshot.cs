@@ -47,6 +47,9 @@ namespace App.Backend.src.Data.Migrations
 
                     b.HasIndex("InstitutionConnectionId");
 
+                    b.HasIndex("ExternalId", "InstitutionConnectionId")
+                        .IsUnique();
+
                     b.ToTable("InstitutionConnectionAccounts");
                 });
 

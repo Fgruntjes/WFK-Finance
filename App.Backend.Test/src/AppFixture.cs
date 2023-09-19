@@ -14,8 +14,10 @@ public class AppFixture<TController>
 	where TController : GraphController
 {
 	private readonly ISnapshotFullNameReader _testNameResolver;
-	private readonly TestServer<GraphSchema> _server;
-	public DatabaseContext Database { get; }
+	public TestServer<GraphSchema> Server { get; private set; }
+	public DatabaseContext Database { get; private set; }
+
+	public Guid OrganisationId => Server.ServiceProvider.GetRequiredService<AppHttpContext>().OrganisationId();
 
 	public AppFixture()
 	{
@@ -27,7 +29,7 @@ public class AppFixture<TController>
 			options.UseInMemoryDatabase(Guid.NewGuid().ToString());
 		});
 		services.AddAppServices();
-		MockServices(services);
+		RegisterMocks(services);
 
 		var builder = new TestServerBuilder<GraphSchema>(serviceCollection: services);
 		builder.AddGraphQL(o =>
@@ -39,25 +41,25 @@ public class AppFixture<TController>
 		// TODO handle non authorized test cases
 		builder.UserContext.Authenticate();
 
-		_server = builder.Build();
+		Server = builder.Build();
 
-		Database = _server.ServiceProvider.GetRequiredService<DatabaseContext>();
+		Database = Server.ServiceProvider.GetRequiredService<DatabaseContext>();
 	}
 
 
 	public async Task<string> ExecuteQuery(string? queryFile, object? variables = null)
 	{
 		var context = BuildQueryContext(queryFile, variables);
-		return await _server.RenderResult(context);
+		return await Server.RenderResult(context);
 	}
 
 	public async Task<string> ExecuteQuery(object? variables = null)
 	{
 		var context = BuildQueryContext(null, variables);
-		return await _server.RenderResult(context);
+		return await Server.RenderResult(context);
 	}
 
-	protected virtual void MockServices(IServiceCollection services)
+	protected virtual void RegisterMocks(IServiceCollection services)
 	{
 
 	}
@@ -65,7 +67,7 @@ public class AppFixture<TController>
 	private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)
 	{
 		var queryText = LoadQueryFile(queryFile);
-		var queryBuilder = _server.CreateQueryContextBuilder();
+		var queryBuilder = Server.CreateQueryContextBuilder();
 		queryBuilder.AddQueryText(queryText);
 		if (variables != null)
 		{

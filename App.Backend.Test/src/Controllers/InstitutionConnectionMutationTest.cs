@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Xunit.Sdk;
+
 namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionMutationTest : IClassFixture<InstitutionConnectionMutationFixture>
@@ -18,6 +21,12 @@ public class InstitutionConnectionMutationTest : IClassFixture<InstitutionConnec
 			ReturnUrl = "http://www.example.com/return"
 		});
 		result.MatchSnapshot();
+
+		// Assert database
+		var connectionEntity = await _fixture.Database.InstitutionConnections
+			.Where(e => e.ExternalId == _fixture.NordigenRequisitionResult.Id.ToString())
+			.FirstAsync();
+		connectionEntity.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -59,6 +68,12 @@ public class InstitutionConnectionMutationTest : IClassFixture<InstitutionConnec
 			_fixture.InstitutionConnectionEntity.Id
 		});
 		result.MatchSnapshot();
+
+		// Assert database
+		var connectionEntity = await _fixture.Database.InstitutionConnections
+			.FindAsync(_fixture.InstitutionConnectionEntity.Id);
+		connectionEntity.Should().NotBeNull();
+		connectionEntity?.Accounts.Should().HaveCount(2);
 	}
 
 	[Fact]

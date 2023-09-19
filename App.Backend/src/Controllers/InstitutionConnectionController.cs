@@ -13,28 +13,29 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionController : GraphController
 {
 	private readonly DatabaseContext _database;
-	private readonly IHttpContextAccessor _httpContextAccessor;
+	private readonly AppHttpContext _httpContext;
 	private readonly InstitutionConnectionCreateService _createService;
 	private readonly InstitutionConnectionRefreshService _refreshService;
 
 	public InstitutionConnectionController(
 		DatabaseContext database,
-		IHttpContextAccessor httpContextAccessor,
+		AppHttpContext httpContext,
 		InstitutionConnectionCreateService createService,
 		InstitutionConnectionRefreshService refreshService)
 	{
 		_database = database;
-		_httpContextAccessor = httpContextAccessor;
+		_httpContext = httpContext;
 		_createService = createService;
 		_refreshService = refreshService;
 	}
 
 	[Authorize]
 	[Query("get")]
-	public Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
+	public async Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
 	{
-		return _database.InstitutionConnections
-			.Where(e => e.Id == id && e.OrganisationId == _httpContextAccessor.GetOrganisationId())
+		var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+		return await _database.InstitutionConnections
+			.Where(e => e.Id == id && e.OrganisationId == organisationId)
 			.OrderBy(e => e.CreatedAt)
 			.Take(1)
 			.Select(e => InstitutionConnection.FromEntity(e))
@@ -45,8 +46,9 @@ public class InstitutionConnectionController : GraphController
 	[Query("list")]
 	public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
 	{
+		var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
 		var query = _database.InstitutionConnections
-			.Where(e => e.OrganisationId == _httpContextAccessor.GetOrganisationId());
+			.Where(e => e.OrganisationId == organisationId);
 
 		var totalCount = await query.CountAsync();
 		var result = await query
@@ -132,7 +134,7 @@ public class InstitutionConnectionController : GraphController
 	[Mutation("delete")]
 	public async Task<int> Delete(ICollection<Guid> connectionIds, CancellationToken cancellationToken = default)
 	{
-		var organisationId = _httpContextAccessor.GetOrganisationId();
+		var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
 		var entities = _database.InstitutionConnections
 				.Where(e => e.OrganisationId == organisationId)
 				.Where(e => connectionIds.Contains(e.Id));

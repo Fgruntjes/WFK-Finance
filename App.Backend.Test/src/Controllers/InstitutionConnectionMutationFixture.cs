@@ -35,7 +35,7 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
         InstitutionConnectionEntity = new InstitutionConnectionEntity
         {
             Id = new Guid("3accd6ff-bdf3-450c-bc39-5fc40a4816aa"),
-            OrganisationId = HttpContextAccessorExtension.OrganisationGuid,
+            OrganisationId = OrganisationId,
             ConnectUrl = new Uri("https://www.example.com/connect-url/refresh"),
             ExternalId = "ed69f988-a1fb-4e89-8d56-66b42e43a675"
         };
@@ -45,7 +45,7 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
         var institutionConnectionDeleteEntity = new InstitutionConnectionEntity
         {
             Id = InstitutionConnectionDeleteId,
-            OrganisationId = HttpContextAccessorExtension.OrganisationGuid,
+            OrganisationId = OrganisationId,
             ConnectUrl = new Uri("https://www.example.com/connect-url/refresh"),
             ExternalId = "ed69f988-a1fb-4e89-8d56-66b42e43a675"
         };
@@ -98,7 +98,7 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
         Database.SaveChanges();
     }
 
-    protected override void MockServices(IServiceCollection services)
+    protected override void RegisterMocks(IServiceCollection services)
     {
         services.AddScoped((_) => NordigenClientMoq.Object);
     }

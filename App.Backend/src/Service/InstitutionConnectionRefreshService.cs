@@ -9,16 +9,16 @@ namespace App.Backend.Service;
 public class InstitutionConnectionRefreshService
 {
     private DatabaseContext _database;
-    private IHttpContextAccessor _httpContextAccessor;
+    private readonly AppHttpContext _httpContext;
     private INordigenClient _nordigenClient;
 
     public InstitutionConnectionRefreshService(
         DatabaseContext database,
-        IHttpContextAccessor httpContextAccessor,
+        AppHttpContext httpContext,
         INordigenClient nordigenClient)
     {
         _database = database;
-        _httpContextAccessor = httpContextAccessor;
+        _httpContext = httpContext;
         _nordigenClient = nordigenClient;
     }
 
@@ -34,7 +34,7 @@ public class InstitutionConnectionRefreshService
 
     private async Task<InstitutionConnectionEntity> Refresh(Expression<Func<InstitutionConnectionEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        var organisationId = _httpContextAccessor.GetOrganisationId();
+        var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
         var entity = await _database.InstitutionConnections
             .OrderBy(e => e.CreatedAt)
             .Take(1)
@@ -58,10 +58,12 @@ public class InstitutionConnectionRefreshService
         await _database.InstitutionConnectionAccounts.UpsertRange(connectionAccountEntities)
             .On(i => new
             {
-                i.ExternalId
+                i.ExternalId,
+                i.InstitutionConnectionId
             })
             .NoUpdate()
             .RunAsync(cancellationToken);
+
         return entity;
     }
 }

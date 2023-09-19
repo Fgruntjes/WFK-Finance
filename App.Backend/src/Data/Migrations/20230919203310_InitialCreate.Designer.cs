@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.Backend.src.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230919183334_InitialCreate")]
+    [Migration("20230919203310_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -49,6 +49,9 @@ namespace App.Backend.src.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("InstitutionConnectionId");
+
+                    b.HasIndex("ExternalId", "InstitutionConnectionId")
+                        .IsUnique();
 
                     b.ToTable("InstitutionConnectionAccounts");
                 });

@@ -33,7 +33,7 @@ public class InstitutionQueryFixture : AppFixture<InstitutionController>
         InstitutionIdNldLinked = institutionNldLinked.Id;
     }
 
-    protected override void MockServices(IServiceCollection services)
+    protected override void RegisterMocks(IServiceCollection services)
     {
         NordigenClientMoq = new Mock<INordigenClient>();
 

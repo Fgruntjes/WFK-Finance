@@ -11,6 +11,7 @@ public static class App
         services.AddHttpContextAccessor();
         services.AddSingleton<IClock>(SystemClock.Instance);
         services.AddSingleton(DateTimeZoneProviders.Tzdb);
+        services.AddScoped<AppHttpContext>();
         services.Scan(scan => scan.FromAssemblyOf<Program>()
             .AddClasses(classes => classes.InNamespaceOf<InstitutionConnectionCreateService>())
                 .AsSelf()

@@ -37,7 +37,7 @@ builder.Services.AddDatabase(
 builder.Services.AddGraphQL(c =>
 	{
 		c.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;
-		c.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
+		c.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.All;
 		c.ResponseOptions.ExposeExceptions = builder.Environment.IsDevelopment();
 	});
 builder.Services.AddNordigenClient(builder.Configuration);

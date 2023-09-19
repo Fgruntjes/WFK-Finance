@@ -130,6 +130,12 @@ namespace App.Backend.src.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_InstitutionConnectionAccounts_ExternalId_InstitutionConnect~",
+                table: "InstitutionConnectionAccounts",
+                columns: new[] { "ExternalId", "InstitutionConnectionId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InstitutionConnectionAccounts_InstitutionConnectionId",
                 table: "InstitutionConnectionAccounts",
                 column: "InstitutionConnectionId");

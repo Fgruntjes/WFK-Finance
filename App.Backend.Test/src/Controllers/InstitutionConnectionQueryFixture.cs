@@ -46,7 +46,7 @@ public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectio
                 ExternalId = $"SomeExternalId-organisation-missmatch-{i}",
                 ConnectUrl = new Uri($"https://www.example-organisation-missmatch-{i}.com/"),
                 InstitutionId = institutionsAddResult.Entity.Id,
-                OrganisationId = new Guid("71119dce-59d9-426a-8cd3-4f770b72f2ed"),
+                OrganisationId = OrganisationId,
             });
             OrganisationMissmatchEntities.Add(entity.Entity);
         }
@@ -58,7 +58,7 @@ public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectio
                 ExternalId = $"SomeExternalId-organisation-match-{i}",
                 ConnectUrl = new Uri($"https://www.example-organisation-match-{i}.com/"),
                 InstitutionId = institutionsAddResult.Entity.Id,
-                OrganisationId = HttpContextAccessorExtension.OrganisationGuid,
+                OrganisationId = OrganisationId,
             });
             OrganisationMatchEntities.Add(entity.Entity);
         }
@@ -76,7 +76,7 @@ public class InstitutionConnectionQueryFixture : AppFixture<InstitutionConnectio
         Database.SaveChanges();
     }
 
-    protected override void MockServices(IServiceCollection services)
+    protected override void RegisterMocks(IServiceCollection services)
     {
         services.AddScoped((_) => new Mock<INordigenClient>().Object);
     }

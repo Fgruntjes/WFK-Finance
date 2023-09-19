@@ -9,16 +9,16 @@ namespace App.Backend.Service;
 public class InstitutionConnectionCreateService
 {
     private readonly DatabaseContext _database;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly AppHttpContext _httpContext;
     private readonly INordigenClient _nordigenClient;
 
     public InstitutionConnectionCreateService(
         DatabaseContext database,
-        IHttpContextAccessor httpContextAccessor,
+        AppHttpContext httpContext,
         INordigenClient nordigenClient)
     {
         _database = database;
-        _httpContextAccessor = httpContextAccessor;
+        _httpContext = httpContext;
         _nordigenClient = nordigenClient;
     }
 
@@ -45,7 +45,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity?> GetConnectUrl(InstitutionEntity institution, CancellationToken cancellationToken = default)
     {
-        var organisationId = _httpContextAccessor.GetOrganisationId();
+        var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
 
         return await _database.InstitutionConnections
             .AsQueryable()
@@ -57,7 +57,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var organisationId = _httpContextAccessor.GetOrganisationId();
+        var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
         var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,
@@ -65,6 +65,8 @@ public class InstitutionConnectionCreateService
             ConnectUrl = connectUrl,
             ExternalId = connectionId
         }, cancellationToken);
+
+        await _database.SaveChangesAsync(cancellationToken);
 
         return result.Entity;
     }
