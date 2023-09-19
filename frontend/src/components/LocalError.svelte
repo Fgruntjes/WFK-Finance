@@ -2,25 +2,33 @@
 	import { ToastNotification } from 'carbon-components-svelte';
 
 	export let error: unknown;
-	let normalizedError: Error | undefined;
 
-	if (error instanceof Error) {
-		normalizedError = error;
-	} else if (typeof error === 'string') {
-		normalizedError = new Error(error);
-	} else if (typeof error == 'object' && error !== null) {
-		if ('message' in error) {
-			normalizedError = new Error((error.message as string) ?? undefined);
-		} else {
-			normalizedError = new Error('Unknown error');
+	const normalizeErrors = (error: unknown): Error[] => {
+		if (Array.isArray(error)) {
+			return error.map(normalizeErrors).flat();
 		}
-	} else {
-		normalizedError = new Error('Unknown error');
-	}
 
+		if (error instanceof Error) {
+			return [error];
+		} else if (typeof error === 'string') {
+			return [new Error(error)];
+		} else if (typeof error == 'object' && error !== null) {
+			if ('message' in error) {
+				return [new Error((error.message as string) ?? undefined)];
+			}
+			return [new Error('Unknown error')];
+		}
+
+		return [new Error('Unknown error')];
+	};
+
+	const normalizedErrors = normalizeErrors(error);
 	const caption = new Date().toLocaleString();
-	const title = normalizedError.name ?? 'Error';
-	const subtitle = normalizedError.message ?? 'Unknown error';
+	const title = normalizedErrors.length === 1 ? normalizedErrors[0].name ?? 'Error' : 'Errors';
+	const subtitle =
+		normalizedErrors.length === 1
+			? normalizedErrors[0].message ?? 'Unknown error'
+			: normalizedErrors.map((error) => error.message).join('\n');
 </script>
 
 <ToastNotification hideCloseButton fullWidth {title} {subtitle} {caption} />

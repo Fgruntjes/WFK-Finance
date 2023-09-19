@@ -99,7 +99,7 @@ public class InstitutionConnectionController : GraphController
 	}
 
 	[Authorize]
-	[Mutation("refresh/externalId", typeof(InstitutionConnection))]
+	[Mutation("refreshExternalId", typeof(InstitutionConnection))]
 	public async Task<IGraphActionResult> Refresh(string externalId, CancellationToken cancellationToken = default)
 	{
 		try
@@ -114,7 +114,7 @@ public class InstitutionConnectionController : GraphController
 	}
 
 	[Authorize]
-	[Mutation("refresh/id", typeof(InstitutionConnection))]
+	[Mutation("refreshId", typeof(InstitutionConnection))]
 	public async Task<IGraphActionResult> Refresh(Guid id, CancellationToken cancellationToken = default)
 	{
 		try

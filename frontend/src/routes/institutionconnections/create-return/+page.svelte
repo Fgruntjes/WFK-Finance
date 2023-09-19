@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import queries from '@/api/queries';
+	import { graphql } from '$houdini';
 	import LocalError from '@/components/LocalError.svelte';
 	import PageBreadcrumbs from '@/components/PageBreadcrumbs.svelte';
 	import { i18n } from '@/services/i18n';
-	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		Link,
 		StructuredList,
@@ -16,26 +15,32 @@
 		StructuredListSkeleton
 	} from 'carbon-components-svelte';
 
-	const externalConnectionId = $page.url.searchParams.get('ref');
-
-	$: refreshQuery = createQuery({
-		...queries.institutionConnection.refresh({
-			externalId: externalConnectionId || ''
-		}),
-		enabled: $page.url.searchParams.has('ref'),
-		refetchOnWindowFocus: false
-	});
-
-	$: institutionData = createQuery({
-		...queries.institution.getMany({
-			id: [$refreshQuery.data?.institutionId || '']
-		}),
-		enabled: !!$refreshQuery.data?.institutionId
-	});
+	let isMutationCalled = false;
+	const refreshMutation = graphql(`
+		mutation institutionConnectionRefresh($externalId: String!) {
+			institutionConnection {
+				refreshExternalId(externalId: $externalId) {
+					institution {
+						name
+						logo
+					}
+					accounts {
+						iban
+					}
+				}
+			}
+		}
+	`);
 
 	$: {
+		const externalConnectionId = $page.url.searchParams.get('ref');
 		if (!externalConnectionId) {
 			goto('/institutionconnections');
+		} else if (!isMutationCalled) {
+			isMutationCalled = true;
+			refreshMutation.mutate({
+				externalId: externalConnectionId
+			});
 		}
 	}
 </script>
@@ -47,14 +52,15 @@
 
 <h2>{$i18n.t('institutionconnections:create-return.title')}</h2>
 
-{#if $refreshQuery.error}
-	<LocalError error={$refreshQuery.error} />
-{/if}
-
-{#if $refreshQuery.isLoading}
+{#if $refreshMutation.errors}
+	<LocalError error={$refreshMutation.errors} />
+{:else if $refreshMutation.fetching}
 	<StructuredListSkeleton rows={3} />
 {:else}
-	{@const institution = $institutionData.data?.[0]}
+	{@const institution =
+		$refreshMutation.data?.institutionConnection?.refresh?.externalId?.institution}
+	{@const accounts =
+		$refreshMutation.data?.institutionConnection?.refresh?.externalId?.accounts || []}
 
 	<StructuredList condensed>
 		<StructuredListHead>
@@ -68,17 +74,14 @@
 			</StructuredListRow>
 		</StructuredListHead>
 		<StructuredListBody>
-			{#each $refreshQuery.data?.accounts || [] as account}
+			{#each accounts as account}
 				<StructuredListRow>
 					<StructuredListCell>
-						{#if institution}
-							<img alt={institution?.name} src={institution?.logo} class="institution-logo" />
-							{institution?.name}
-						{/if}
+						<img alt={institution?.name} src={institution?.logo} class="institution-logo" />
+						{institution?.name}
 					</StructuredListCell>
 					<StructuredListCell>
 						{account.iban}
-						{#if account.ownerName}({account.ownerName}){/if}
 					</StructuredListCell>
 				</StructuredListRow>
 			{/each}
@@ -88,11 +91,3 @@
 <Link href="/institutionconnections">
 	{$i18n.t('institutionconnections:create-return.return')}
 </Link>
-
-<style lang="scss">
-	.institution-logo {
-		border-radius: 10%;
-		max-height: 2em;
-		max-width: 2em;
-	}
-</style>

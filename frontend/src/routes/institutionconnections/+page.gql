@@ -1,8 +1,10 @@
 query InstitutionConnections($offset: Int, $limit: Int) {
-	institutionConnections(offset: $offset, limit: $limit) {
-		items {
+	institutionConnection {
+		list(offset: $offset, limit: $limit) {
+			items {
 			externalId
 		}
 		totalCount
+		}
 	}
 }

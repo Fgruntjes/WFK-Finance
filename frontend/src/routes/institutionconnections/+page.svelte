@@ -15,6 +15,7 @@
 		ToolbarContent
 	} from 'carbon-components-svelte';
 	import type { PageData, InstitutionConnectionsVariables } from './$houdini';
+	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
 
 	const tableHeaders = [
 		{ key: 'institutionId', value: $i18n.t('institutionconnections:list.header.institution') },
@@ -26,6 +27,8 @@
 
 	let selectedRowIds: ReadonlyArray<string> = [];
 	let page: number = 1;
+	let pageSize: number = 25;
+	let tableData: ReadonlyArray<DataTableRow> = [];
 
 	const handleDelete = (ids: string[]) => {};
 
@@ -33,7 +36,22 @@
 		return undefined;
 	};
 
+	export const _InstitutionConnectionsVariables: InstitutionConnectionsVariables = () => {
+		return {
+			limit: pageSize,
+			offset: (page - 1) * pageSize
+		};
+	};
+
 	$: ({ InstitutionConnections } = data);
+	$: {
+		const data =
+			$InstitutionConnections.data?.institutionConnection?.list?.items?.filter(
+				(e) => !!e?.externalId
+			) || [];
+
+		tableData = data as unknown as DataTableRow[];
+	}
 </script>
 
 <PageBreadcrumbs title={$i18n.t('institutionconnections:list.title')} />
@@ -49,7 +67,7 @@
 	<DataTable
 		bind:selectedRowIds
 		batchSelection
-		rows={$InstitutionConnections.data?.institutionConnections?.items ?? []}
+		rows={tableData}
 		headers={tableHeaders}
 		title={$i18n.t('institutionconnections:list.title')}
 		description={$i18n.t('institutionconnections:list.description')}
@@ -116,7 +134,7 @@
 		</svelte:fragment>
 	</DataTable>
 
-	<Pagination pageSizes={[25]} totalItems={30} bind:page pageSize={25} />
+	<Pagination pageSizes={[25]} totalItems={30} bind:page bind:pageSize />
 {/if}
 
 <style lang="scss">

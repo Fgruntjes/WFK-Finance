@@ -1,12 +1,10 @@
 mutation RefreshInstitutionConnection($Id: Guid!){
 	institutionConnection {
-		refresh {
-			id(id: $Id) {
-				externalId
-				connectUrl
-				accounts {
-					iban
-				}
+		refreshId(id: $Id) {
+			externalId
+			connectUrl
+			accounts {
+				iban
 			}
 		}
 	}

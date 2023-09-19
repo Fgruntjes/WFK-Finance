@@ -1,38 +1,40 @@
 <script lang="ts">
-	import type { Institution } from '@/api/generated';
-	import { institutionQuery } from '@/api/queries/institutionQuery';
+	import { graphql } from '$houdini';
+	import type { InstitutionsVariables } from './$houdini';
 	import { i18n } from '@/services/i18n';
-	import { createQuery } from '@tanstack/svelte-query';
 	import { Select, SelectItem, SelectSkeleton } from 'carbon-components-svelte';
 
-	export let country: string;
-	export let selected: Institution | undefined = undefined;
-	let selectedId: string | undefined = undefined;
+	export let countryIso2: string;
+	export let selectedId: Guid | undefined = undefined;
+	export const _InstitutionsVariables: InstitutionsVariables = ({ props: { countryIso2 } }) => {
+		return { countryIso2 };
+	};
 
-	$: optionsQuery = createQuery({
-		...institutionQuery.search({ country })
-	});
-
-	let options: { [key: string]: Institution } = {};
-	$: {
-		if (selectedId) {
-			selected = options[selectedId];
-		} else {
-			selected = undefined;
+	const optionsStore = graphql(`
+		query Institutions($countryIso2: String!) @load {
+			institution {
+				list(countryIso2: $countryIso2) {
+					id
+					name
+				}
+			}
 		}
+	`);
 
+	let options: { [key: string]: { id: Guid; name: string } } = {};
+	$: {
 		options = {};
-		$optionsQuery.data
+		$optionsStore.data?.institution?.list
 			?.sort((a, b) => {
 				const nameA = a.name;
 				const nameB = b.name;
 				if (!nameA) {
-					if (nameB) return -1;
+					if (!!nameB) return -1;
 					return 0;
 				}
 
 				if (!nameB) {
-					if (nameA) return 1;
+					if (!!nameA) return 1;
 					return 0;
 				}
 
@@ -42,7 +44,7 @@
 	}
 </script>
 
-{#if $optionsQuery.isLoading}
+{#if $optionsStore.fetching}
 	<SelectSkeleton />
 {:else}
 	<Select

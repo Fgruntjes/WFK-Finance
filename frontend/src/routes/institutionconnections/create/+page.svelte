@@ -1,41 +1,43 @@
 <script lang="ts">
-	import type {
-		Institution,
-		InstitutionConnection,
-		InstitutionConnectionCreateRequest
-	} from '@/api/generated';
-	import { institutionConnectionMutation } from '@/api/queries/institutionConnectionQuery';
 	import Button from '@/components/Button.svelte';
 	import CountrySelect from '@/components/CountrySelect.svelte';
 	import LocalError from '@/components/LocalError.svelte';
 	import PageBreadcrumbs from '@/components/PageBreadcrumbs.svelte';
 	import { i18n } from '@/services/i18n';
-	import { createMutation } from '@tanstack/svelte-query';
 	import { Form, FormGroup } from 'carbon-components-svelte';
 	import InstitutionSelect from './InstitutionSelect.svelte';
+	import { graphql } from '$houdini';
 
 	let selectedCountry: string;
-	let selectedInstitution: Institution | undefined;
+	let selectedInstitutionId: Guid | undefined;
 
-	const mutation = createMutation<
-		InstitutionConnection,
-		Error,
-		InstitutionConnectionCreateRequest,
-		unknown
-	>({
-		...institutionConnectionMutation.create()
-	});
+	const connectMutation = graphql(`
+		mutation CreateInstitutionConnection($institutionId: Guid!, $returnUrl: Uri!) {
+			institutionConnection {
+				create(institutionId: $institutionId, returnUrl: $returnUrl) {
+					externalId
+					connectUrl
+				}
+			}
+		}
+	`);
 
-	const handleConnect = () => {
-		$mutation.mutate({
-			institutionId: selectedInstitution?.id ?? '',
-			returnUri: `${window.location.origin}/institutionconnections/create-return`
+	function handleConnect() {
+		if (!selectedInstitutionId) {
+			console.log('Could not connect, no institution selected.');
+			return;
+		}
+
+		connectMutation.mutate({
+			institutionId: selectedInstitutionId as string,
+			returnUrl: `${window.location.origin}/institutionconnections/create-return`
 		});
-	};
+	}
 
 	$: {
-		if ($mutation.data?.connectUrl) {
-			window.location.href = $mutation.data?.connectUrl;
+		const connectUrl = $connectMutation.data?.institutionConnection?.create?.connectUrl;
+		if (!!connectUrl) {
+			window.location.href = connectUrl;
 		}
 	}
 </script>
@@ -51,17 +53,17 @@
 
 	<FormGroup>
 		{#if selectedCountry}
-			<InstitutionSelect country={selectedCountry} bind:selected={selectedInstitution} />
+			<InstitutionSelect countryIso2={selectedCountry} bind:selectedId={selectedInstitutionId} />
 		{/if}
 	</FormGroup>
 
-	{#if $mutation.error}
-		<LocalError error={$mutation.error} />
+	{#if $connectMutation.errors}
+		<LocalError error={$connectMutation.errors} />
 	{/if}
 	<Button
 		on:click={() => handleConnect()}
-		disabled={!selectedInstitution}
-		isLoading={$mutation.isLoading}
+		disabled={!selectedInstitutionId}
+		isLoading={$connectMutation.fetching}
 		title={$i18n.t('institutionconnections:create.submit')}
 	/>
 </Form>

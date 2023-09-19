@@ -26,6 +26,9 @@ export default defineConfig(({ mode }) => {
 		},
 		optimizeDeps: {
 			exclude: ['@urql/svelte'],
+		},
+		build: {
+			sourcemap: process.env.NODE_ENV !== 'production'
 		}
 	};
 });

@@ -7,6 +7,21 @@ const config = {
         "houdini-svelte": {
             "client": "./src/api/client.ts"
         }
+    },
+    "scalars": {
+        "Guid": {
+            "type": "Guid"
+        },
+        "Uri": {
+            "type": "Uri",
+            unmarshal(val) {
+                return val ? new URL(val) : null
+            },
+            /** @param {URL} url */
+            marshal(url) {
+                return url && url.toString();
+            }
+        },
     }
 }
 
