@@ -58,9 +58,9 @@
 	<StructuredListSkeleton rows={3} />
 {:else}
 	{@const institution =
-		$refreshMutation.data?.institutionConnection?.refresh?.externalId?.institution}
+		$refreshMutation.data?.institutionConnection?.refreshExternalId?.institution}
 	{@const accounts =
-		$refreshMutation.data?.institutionConnection?.refresh?.externalId?.accounts || []}
+		$refreshMutation.data?.institutionConnection?.refreshExternalId?.accounts || []}
 
 	<StructuredList condensed>
 		<StructuredListHead>
@@ -91,3 +91,11 @@
 <Link href="/institutionconnections">
 	{$i18n.t('institutionconnections:create-return.return')}
 </Link>
+
+<style lang="scss">
+	.institution-logo {
+		border-radius: 10%;
+		max-height: 2em;
+		max-width: 2em;
+	}
+</style>

@@ -5,10 +5,10 @@
 	import { Renew as RenewIcon } from 'carbon-icons-svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let institutionConnection: InstitutionConnection | DataTableRow;
+	// export let institutionConnection: InstitutionConnection | DataTableRow;
 
-	const dispatch = createEventDispatcher();
-	const dispatchDelete = (connection: InstitutionConnection) => dispatch('refresh', connection);
+	// const dispatch = createEventDispatcher();
+	// const dispatchDelete = (connection: InstitutionConnection) => dispatch('refresh', connection);
 </script>
 
 <Button

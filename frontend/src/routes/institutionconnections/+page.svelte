@@ -4,7 +4,7 @@
 	import DeleteButton from '@/components/DeleteButton.svelte';
 	import { i18n } from '@/services/i18n';
 	import { SkeletonText } from 'carbon-components-svelte';
-	import RefreshButton from './RefreshButton.svelte';
+	import RefreshButton from './page/RefreshButton.svelte';
 	import AddButton from '@/components/AddButton.svelte';
 	import {
 		DataTable,
@@ -14,8 +14,9 @@
 		Toolbar,
 		ToolbarContent
 	} from 'carbon-components-svelte';
-	import type { PageData, InstitutionConnectionsVariables } from './$houdini';
-	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
+	import { graphql } from '$houdini';
+	import type { InstitutionConnectionsVariables } from './$houdini';
+	import { onMount } from 'svelte';
 
 	const tableHeaders = [
 		{ key: 'institutionId', value: $i18n.t('institutionconnections:list.header.institution') },
@@ -23,51 +24,61 @@
 		{ key: 'actions', value: $i18n.t('institutionconnections:list.header.actions') }
 	];
 
-	export let data: PageData;
-
 	let selectedRowIds: ReadonlyArray<string> = [];
 	let page: number = 1;
 	let pageSize: number = 25;
-	let tableData: ReadonlyArray<DataTableRow> = [];
+
+	const data = graphql(`
+		query InstitutionConnections($offset: Int!, $limit: Int!) {
+			institutionConnection {
+				list(offset: $offset, limit: $limit) {
+					items {
+						id
+						externalId
+						accounts {
+							iban
+						}
+						institution {
+							id
+							name
+							logo
+						}
+					}
+					totalCount
+				}
+			}
+		}
+	`);
 
 	const handleDelete = (ids: string[]) => {};
+	const loadData = async () => {
+		await data.fetch({
+			variables: {
+				offset: (page - 1) * pageSize,
+				limit: pageSize
+			}
+		});
+	};
+	onMount(loadData);
 
 	const getInstitutionByConnectionId = (id: string): undefined => {
 		return undefined;
 	};
-
-	export const _InstitutionConnectionsVariables: InstitutionConnectionsVariables = () => {
-		return {
-			limit: pageSize,
-			offset: (page - 1) * pageSize
-		};
-	};
-
-	$: ({ InstitutionConnections } = data);
-	$: {
-		const data =
-			$InstitutionConnections.data?.institutionConnection?.list?.items?.filter(
-				(e) => !!e?.externalId
-			) || [];
-
-		tableData = data as unknown as DataTableRow[];
-	}
 </script>
 
 <PageBreadcrumbs title={$i18n.t('institutionconnections:list.title')} />
-
-{#if $InstitutionConnections.errors}
-	{#each $InstitutionConnections.errors as error}
+{#if $data.errors}
+	{#each $data.errors as error}
 		<LocalError {error} />
 	{/each}
-{:else if $InstitutionConnections.fetching}
+{:else if $data.fetching || !$data.data}
 	<DataTableSkeleton headers={tableHeaders} rows={3} />
 	<PaginationSkeleton />
 {:else}
 	<DataTable
 		bind:selectedRowIds
 		batchSelection
-		rows={tableData}
+		rows={$data.data?.institutionConnection?.list?.items || []}
 		headers={tableHeaders}
 		title={$i18n.t('institutionconnections:list.title')}
 		description={$i18n.t('institutionconnections:list.description')}
@@ -88,18 +99,13 @@
 		</Toolbar>
 
 		<svelte:fragment slot="cell" let:row let:cell>
-			{@const institution = getInstitutionByConnectionId(row.id)}
-
+			{@const institution = row.institution}
 			{#if cell.key === 'institutionId'}
-				{#if true}
-					<SkeletonText />
-				{:else}
-					{#if institution?.logo}
-						<img alt={institution.name} src={institution.logo} class="institution-logo" />
-					{/if}
-
-					{institution?.name}
+				{#if institution?.logo}
+					<img alt={institution.name} src={institution.logo} class="institution-logo" />
 				{/if}
+
+				{institution?.name}
 			{:else if cell.key === 'accounts'}
 				<ul>
 					{#each cell.value as account}
@@ -110,31 +116,33 @@
 					{/each}
 				</ul>
 			{:else if cell.key === 'actions'}
-				{#if true}
-					<SkeletonText />
-				{:else}
-					<RefreshButton
-						institutionConnection={row}
-						on:refresh={() => {
-							// TODO refresh
-						}}
-					/>
-					<DeleteButton
-						iconOnly
-						title={$i18n.t('institutionconnections:list.actions.delete.title')}
-						confirmation={$i18n.t('institutionconnections:list.actions.delete.confirmation', {
-							institution: institution?.name
-						})}
-						on:delete={() => handleDelete([row.id])}
-					/>
-				{/if}
+				<RefreshButton
+					institutionConnection={row}
+					on:refresh={() => {
+						// TODO refresh
+					}}
+				/>
+				<DeleteButton
+					iconOnly
+					title={$i18n.t('institutionconnections:list.actions.delete.title')}
+					confirmation={$i18n.t('institutionconnections:list.actions.delete.confirmation', {
+						institution: institution?.name
+					})}
+					on:delete={() => handleDelete([row.id])}
+				/>
 			{:else}
 				{cell.value}
 			{/if}
 		</svelte:fragment>
 	</DataTable>
 
-	<Pagination pageSizes={[25]} totalItems={30} bind:page bind:pageSize />
+	<Pagination
+		pageSizes={[25]}
+		totalItems={$data.data?.institutionConnection?.list?.totalCount}
+		bind:page
+		bind:pageSize
+		on:change={loadData}
+	/>
 {/if}
 
 <style lang="scss">
