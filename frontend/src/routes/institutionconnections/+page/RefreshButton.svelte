@@ -1,10 +1,9 @@
 <script lang="ts">
 	import Button from '@/components/Button.svelte';
 	import { i18n } from '@/services/i18n';
-	import type { DataTableRow } from 'carbon-components-svelte/types/DataTable/DataTable.svelte';
 	import { Renew as RenewIcon } from 'carbon-icons-svelte';
-	import { createEventDispatcher } from 'svelte';
 
+	export let isLoading: boolean = false;
 	// export let institutionConnection: InstitutionConnection | DataTableRow;
 
 	// const dispatch = createEventDispatcher();
@@ -16,6 +15,6 @@
 	title={$i18n.t('institutionconnections:list.actions.refresh')}
 	kind="ghost"
 	iconOnly
-	isLoading={true}
-	on:click={() => {}}
+	{isLoading}
+	on:click
 />

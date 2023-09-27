@@ -4,7 +4,7 @@
 	import DeleteButton from '@/components/DeleteButton.svelte';
 	import { i18n } from '@/services/i18n';
 	import { SkeletonText } from 'carbon-components-svelte';
-	import RefreshButton from './page/RefreshButton.svelte';
+	import RefreshButton from './+page/RefreshButton.svelte';
 	import AddButton from '@/components/AddButton.svelte';
 	import {
 		DataTable,
@@ -28,6 +28,7 @@
 	let page: number = 1;
 	let pageSize: number = 25;
 
+	// TODO: If somebody is in the mood, please change to using fragments here. Sorry I am tired.
 	const data = graphql(`
 		query InstitutionConnections($offset: Int!, $limit: Int!) {
 			institutionConnection {
@@ -50,6 +51,25 @@
 		}
 	`);
 
+	const refreshMutation = graphql(`
+		mutation RefreshInstitutionConnection($Id: Guid!) {
+			institutionConnection {
+				refreshId(id: $Id) {
+					id
+					externalId
+					accounts {
+						iban
+					}
+					institution {
+						id
+						name
+						logo
+					}
+				}
+			}
+		}
+	`);
+
 	const handleDelete = (ids: string[]) => {};
 	const loadData = async () => {
 		await data.fetch({
@@ -60,10 +80,6 @@
 		});
 	};
 	onMount(loadData);
-
-	const getInstitutionByConnectionId = (id: string): undefined => {
-		return undefined;
-	};
 </script>
 
 <PageBreadcrumbs title={$i18n.t('institutionconnections:list.title')} />
@@ -90,7 +106,7 @@
 					title={$i18n.t('institutionconnections:list.actions.delete.title')}
 					confirmation={$i18n.t('institutionconnections:list.actions.delete.confirmation', {
 						institution: selectedRowIds
-							.map((id) => getInstitutionByConnectionId(id)?.name)
+							.map((id) => $data.data?.institutionConnection?.list)
 							.join(', ')
 					})}
 					on:delete={() => handleDelete(selectedRowIds.concat())}
@@ -117,9 +133,11 @@
 				</ul>
 			{:else if cell.key === 'actions'}
 				<RefreshButton
-					institutionConnection={row}
-					on:refresh={() => {
-						// TODO refresh
+					isLoading={$refreshMutation.fetching}
+					on:click={() => {
+						refreshMutation.mutate({
+							Id: row.id
+						});
 					}}
 				/>
 				<DeleteButton
