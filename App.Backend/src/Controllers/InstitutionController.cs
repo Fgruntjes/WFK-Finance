@@ -28,7 +28,7 @@ public class InstitutionController : GraphController
 			.Where(e => e.Id == id)
 			.OrderBy(e => e.CreatedAt)
 			.Take(1)
-			.Select(e => Institution.FromEntity(e))
+			.Select(e => e.ToGraphQLType())
 			.SingleOrDefaultAsync(cancellationToken);
 	}
 
@@ -39,6 +39,6 @@ public class InstitutionController : GraphController
 		CancellationToken cancellationToken = default)
 	{
 		return (await _searchService.Search(countryIso2, cancellationToken))
-			.Select(e => Institution.FromEntity(e));
+			.Select(e => e.ToGraphQLType());
 	}
 }

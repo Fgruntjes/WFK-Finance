@@ -18,16 +18,4 @@ public class Institution
 
 	[GraphField(TypeExpression = "Type!")]
 	public string Country { get; init; } = null!;
-
-	public static Institution FromEntity(InstitutionEntity entity)
-	{
-		return new Institution
-		{
-			Id = entity.Id,
-			ExternalId = entity.ExternalId,
-			Name = entity.Name,
-			Logo = entity.Logo,
-			Country = entity.CountryIso2,
-		};
-	}
 }

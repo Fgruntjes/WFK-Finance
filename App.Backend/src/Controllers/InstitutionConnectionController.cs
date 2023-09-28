@@ -38,7 +38,7 @@ public class InstitutionConnectionController : GraphController
 			.Where(e => e.Id == id && e.OrganisationId == organisationId)
 			.OrderBy(e => e.CreatedAt)
 			.Take(1)
-			.Select(e => InstitutionConnection.FromEntity(e))
+			.Select(e => e.ToGraphQLType())
 			.SingleOrDefaultAsync(cancellationToken);
 	}
 
@@ -55,7 +55,7 @@ public class InstitutionConnectionController : GraphController
 			.OrderBy(e => e.CreatedAt)
 			.Skip(offset)
 			.Take(limit)
-			.Select(e => InstitutionConnection.FromEntity(e))
+			.Select(e => e.ToGraphQLType())
 			.ToListAsync(cancellationToken);
 
 		return new ListResult<InstitutionConnection>
@@ -70,7 +70,7 @@ public class InstitutionConnectionController : GraphController
 	{
 		return await _database.Institutions
 			.Where(e => e.Id == connection.InstitutionId)
-			.Select(e => Institution.FromEntity(e))
+			.Select(e => e.ToGraphQLType())
 			.SingleAsync(cancellationToken);
 	}
 
@@ -81,7 +81,7 @@ public class InstitutionConnectionController : GraphController
 			.InstitutionConnectionAccounts
 			.Where(e => e.InstitutionConnectionId == connection.Id)
 			.OrderBy(e => e.CreatedAt)
-			.Select(e => InstitutionConnectionAccount.FromEntity(e))
+			.Select(e => e.ToGraphQLType())
 			.ToListAsync(cancellationToken);
 	}
 
@@ -92,7 +92,7 @@ public class InstitutionConnectionController : GraphController
 		try
 		{
 			var entity = await _createService.Connect(institutionId, returnUrl, cancellationToken);
-			return Ok(InstitutionConnection.FromEntity(entity));
+			return Ok(entity.ToGraphQLType());
 		}
 		catch (ArgumentOutOfRangeException exception)
 		{
@@ -107,7 +107,7 @@ public class InstitutionConnectionController : GraphController
 		try
 		{
 			var entity = await _refreshService.Refresh(externalId, cancellationToken);
-			return Ok(InstitutionConnection.FromEntity(entity));
+			return Ok(entity.ToGraphQLType());
 		}
 		catch (InvalidOperationException)
 		{
@@ -122,7 +122,7 @@ public class InstitutionConnectionController : GraphController
 		try
 		{
 			var entity = await _refreshService.Refresh(id, cancellationToken);
-			return Ok(InstitutionConnection.FromEntity(entity));
+			return Ok(entity.ToGraphQLType());
 		}
 		catch (InvalidOperationException)
 		{
