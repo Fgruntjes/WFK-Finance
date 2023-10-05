@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Reflection;
 using App.Backend.Data.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace App.Backend.Data;
 
@@ -19,7 +20,9 @@ public class DatabaseContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		builder.HasPostgresEnum<UserRole>();
+		builder.Entity<OrganisationUserEntity>()
+			.Property(e => e.Role)
+			.HasConversion(new EnumToStringConverter<UserRole>());
 
 		// Strip entity from table names
 		foreach (var entity in builder.Model.GetEntityTypes())

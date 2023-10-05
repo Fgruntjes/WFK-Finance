@@ -1,10 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using NodaTime;
 
 #nullable disable
 
-namespace App.Backend.src.Data.Migrations
+namespace App.Backend.src.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -12,19 +11,16 @@ namespace App.Backend.src.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:user_role", "user,admin");
-
             migrationBuilder.CreateTable(
                 name: "Institutions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
-                    ExternalId = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Logo = table.Column<string>(type: "text", nullable: true),
-                    CountryIso2 = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CountryIso2 = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,8 +31,8 @@ namespace App.Backend.src.Data.Migrations
                 name: "Organisations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Slug = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,8 +43,8 @@ namespace App.Backend.src.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ExternalId = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,12 +55,12 @@ namespace App.Backend.src.Data.Migrations
                 name: "InstitutionConnections",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
-                    ExternalId = table.Column<string>(type: "text", nullable: false),
-                    ConnectUrl = table.Column<string>(type: "text", nullable: false),
-                    OrganisationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    InstitutionId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConnectUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrganisationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InstitutionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,9 +83,9 @@ namespace App.Backend.src.Data.Migrations
                 name: "OrganisationUser",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OrganisationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrganisationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,17 +108,17 @@ namespace App.Backend.src.Data.Migrations
                 name: "InstitutionConnectionAccounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
-                    ExternalId = table.Column<string>(type: "text", nullable: false),
-                    InstitutionConnectionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Iban = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    InstitutionConnectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Iban = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InstitutionConnectionAccounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InstitutionConnectionAccounts_InstitutionConnections_Instit~",
+                        name: "FK_InstitutionConnectionAccounts_InstitutionConnections_InstitutionConnectionId",
                         column: x => x.InstitutionConnectionId,
                         principalTable: "InstitutionConnections",
                         principalColumn: "Id",
@@ -130,7 +126,7 @@ namespace App.Backend.src.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_InstitutionConnectionAccounts_ExternalId_InstitutionConnect~",
+                name: "IX_InstitutionConnectionAccounts_ExternalId_InstitutionConnectionId",
                 table: "InstitutionConnectionAccounts",
                 columns: new[] { "ExternalId", "InstitutionConnectionId" },
                 unique: true);

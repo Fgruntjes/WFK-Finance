@@ -9,6 +9,11 @@ if (builder.Environment.IsDevelopment())
 	builder.Configuration.AddDotNetEnv(".local.env");
 }
 
+builder.Configuration
+	.AddEnvironmentVariables()
+	.AddJsonFile("appsettings.json", true)
+	.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true);
+
 builder.Services.AddAuth(
 	builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),
 	builder.Configuration["Auth0:Audience"] ?? throw new InvalidOperationException("Missing 'Auth0:Audience' setting.")
@@ -28,7 +33,6 @@ builder.Services.AddCors(options =>
 				.AllowAnyMethod();
 		});
 });
-
 
 // App configuration
 builder.Services.AddDatabase(
