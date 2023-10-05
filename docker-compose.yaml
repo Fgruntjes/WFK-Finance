@@ -2,12 +2,12 @@
 version: "3.2"
 services:
   database:
-    image: postgres:15.3
+    image: mcr.microsoft.com/mssql/rhel/server:2022-latest
     ports:
-      - 5432:5432
+      - 1433:1433
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: myLeet123Password!
     volumes:
       - database:/var/lib/postgresql/data
 

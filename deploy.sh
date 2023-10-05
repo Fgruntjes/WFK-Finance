@@ -13,45 +13,33 @@ test -f .local.env && source .local.env
 eval "${CURRENT_ENV}"
 set +a
 
-pulumi login gs://${GOOGLE_PROJECT_SLUG}-pulumi \
-    --non-interactive \
-    -v=5
+# Enter terraform dir
+cd "terraform";
 
-pulumi stack select "${APP_ENVIRONMENT}" \
-    --cwd "App.Deploy" \
-    --create \
-    --non-interactive
-PULUMI_ACTION=${1:-"up"}
+# Init and plan
+ARM_STORAGE_ACCOUNT_NAME=$(echo "${APP_PROJECT_SLUG}-terraform" | sed "s/-//g")
+terraform init \
+    -backend-config="resource_group_name=${APP_PROJECT_SLUG}" \
+    -backend-config="storage_account_name=${ARM_STORAGE_ACCOUNT_NAME}"
 
-if [[ "${PULUMI_ACTION}" == "up" ]]; then
-    pulumi ${PULUMI_ACTION} \
-        --cwd "App.Deploy" \
-        --non-interactive \
-        --yes \
-        --stack "${APP_ENVIRONMENT}" \
-        --config "backend.url=gs://${GOOGLE_PROJECT_SLUG}-pulumi" \
-        --config "gcp:project=${GOOGLE_PROJECT_SLUG}" \
-        --config "gcp:region=${GOOGLE_REGION}" \
-        --config "app:auth_domain=${MONGODB_PROJECT_ID}" \
-        --config "app:mongodb_project_id=${MONGODB_PROJECT_ID}" \
-        --config "app:google_region=${GOOGLE_REGION}" \
-        --config "app:google_project_slug=${GOOGLE_PROJECT_SLUG}" \
-        --config "app:environment=${APP_ENVIRONMENT}" \
-        --config "app:version=${APP_VERSION}" \
-        --config "app:auth0_domain=${AUTH0_DOMAIN}" \
-        --config "app:nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
-        --config "app:nordigen_secret_key=${NORDIGEN_SECRET_KEY}" \
-        --config "app:cloudflare_account_id=${CLOUDFLARE_ACCOUNT_ID}" \
-        --config "app:cloudflare_api_token=${CLOUDFLARE_API_TOKEN}" \
-        --show-full-output \
-        --show-config \
-        --diff \
-        "${@:2}"
+ACTION=${1:-"apply"}
+
+if [[ "${ACTION}" == "apply" ]]; then
+    terraform plan \
+        -out=tfplan \
+        -var "app_project_slug=${APP_PROJECT_SLUG}" \
+        -var "app_environment=${APP_ENVIRONMENT}" \
+        -var "app_version=${APP_VERSION}" \
+        -var "arm_location=${ARM_LOCATION}" \
+        -var "arm_tenant_id=${ARM_TENANT_ID}" \
+        -var "arm_subscription_id=${ARM_SUBSCRIPTION_ID}" \
+        -var "arm_client_id=${ARM_CLIENT_ID}" \
+        -var "arm_client_secret=${ARM_CLIENT_SECRET}" \
+        -var "auth0_domain=${AUTH0_DOMAIN}" \
+        -var "nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
+        -var "nordigen_secret_key=${NORDIGEN_SECRET_KEY}"
+        
+    terraform apply "tfplan"
 else
-    pulumi ${PULUMI_ACTION} \
-        --cwd "App.Deploy" \
-        --non-interactive \
-        --yes \
-        --stack "${APP_ENVIRONMENT}" \
-        "${@:2}"
+    terraform destroy
 fi

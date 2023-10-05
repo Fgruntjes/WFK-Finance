@@ -2,10 +2,22 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "StartDev",
-            "command": "./start-dev.sh",
+            "label": "dev",
+            "command": "./dev.sh",
             "type": "process",
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "deploy",
+            "command": "./deploy.sh",
+            "type": "process",
+            "options": {
+                "env": {
+                    "PULUMI_DEBUG": "true"
+                }
+            },
+            "problemMatcher": "$msCompile",
+            "isBackground": true,
         }
     ]
 }
