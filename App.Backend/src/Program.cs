@@ -15,8 +15,7 @@ builder.Configuration
 	.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true);
 
 builder.Services.AddAuth(
-	builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),
-	builder.Configuration["Auth0:Audience"] ?? throw new InvalidOperationException("Missing 'Auth0:Audience' setting.")
+	builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting.")
 );
 builder.Services.AddProblemDetails();
 builder.Services.AddResponseCompression(options =>

@@ -19,3 +19,10 @@ provider "azurerm" {
   subscription_id = var.arm_subscription_id
   tenant_id       = var.arm_tenant_id
 }
+
+data "azurerm_client_config" "current" {}
+data "azurerm_container_registry" "app" {
+  name                = replace(var.app_project_slug, "-", "")
+  resource_group_name = var.app_project_slug
+}
+

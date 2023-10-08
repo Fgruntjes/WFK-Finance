@@ -2,6 +2,7 @@
 
 set -e
 
+
 cd "$(dirname "$(realpath "$0")")";
 
 # TODO ensure required cli tools are installed / configured: az (Microsoft azure), gh (Github cli)
@@ -15,15 +16,16 @@ set +a
 
 export MSYS_NO_PATHCONV=1
 
-# Check if service principal exists
+# Create service principal
 ARM_PRINCIPAL_NAME="github-actions-${APP_PROJECT_SLUG}"
 ARM_SUBSCRIPTION_ID=$(az account show | jq -r '.id')
 
 ARM_SERVICE_PROVIDER_INFO=$(az ad sp create-for-rbac \
     --name "${ARM_PRINCIPAL_NAME}" \
-    --role "Contributor" \
+    --role "Owner" \
     --scopes "/subscriptions/${ARM_SUBSCRIPTION_ID}"
 )
+
 ARM_TENANT_ID=$(echo "${ARM_SERVICE_PROVIDER_INFO}" | jq -r '.tenant')
 ARM_CLIENT_ID=$(echo "${ARM_SERVICE_PROVIDER_INFO}" | jq -r '.appId')
 ARM_CLIENT_SECRET=$(echo "${ARM_SERVICE_PROVIDER_INFO}" | jq -r '.password')
@@ -31,12 +33,13 @@ ARM_CLIENT_SECRET=$(echo "${ARM_SERVICE_PROVIDER_INFO}" | jq -r '.password')
 # Register required resource providers
 az provider register --subscription "${ARM_SUBSCRIPTION_ID}" --namespace Microsoft.Storage
 
-# Create storage for terraform state
+# Create resource group
 if [[ $(az group exists --name "${APP_PROJECT_SLUG}") == false ]]; then
     az group create --name "${APP_PROJECT_SLUG}" --location "${ARM_LOCATION}"
     echo "Created azure resource group ${APP_PROJECT_SLUG}"
 fi
 
+# Create storage account for terraform state
 ARM_STORAGE_ACCOUNT_NAME=$(echo "${APP_PROJECT_SLUG}-terraform" | sed "s/-//g")
 az storage account create \
     --name "${ARM_STORAGE_ACCOUNT_NAME}" \
@@ -48,6 +51,13 @@ az storage account create \
 az storage container create \
     --name terraform \
     --account-name "${ARM_STORAGE_ACCOUNT_NAME}"
+
+# Create registry for docker images
+az acr create \
+    --resource-group "${APP_PROJECT_SLUG}" \
+    --name "$(echo "${APP_PROJECT_SLUG}" | sed "s/-//g")" \
+    --location "${ARM_LOCATION}" \
+    --sku Basic
 
 # Ensure Github secrets are set
 echo "Creating github secrets"
