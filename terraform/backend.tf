@@ -45,6 +45,14 @@ resource "azurerm_container_app" "backend" {
     environment = var.app_environment
   }
 
+  ingress {
+    external_enabled = true
+    target_port      = 8080
+    traffic_weight {
+      percentage = 100
+    }
+  }
+
   identity {
     type = "UserAssigned"
     identity_ids = [
@@ -63,6 +71,7 @@ resource "azurerm_container_app" "backend" {
       image  = "${data.azurerm_container_registry.app.login_server}/${var.app_environment}/backend:${var.app_version}"
       cpu    = 0.5
       memory = "1Gi"
+
 
       dynamic "env" {
         for_each = local.backend_env
