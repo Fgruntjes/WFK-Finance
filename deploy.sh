@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Terraform wrapper that loads env variables and passes them to terraform
 
 set -e
 
@@ -16,6 +17,8 @@ set +a
 # Enter terraform dir
 cd "terraform";
 
+set -x
+
 # Init and plan
 ARM_STORAGE_ACCOUNT_NAME=$(echo "${APP_PROJECT_SLUG}-terraform" | sed "s/-//g")
 terraform init \
@@ -24,22 +27,32 @@ terraform init \
 
 ACTION=${1:-"apply"}
 
-if [[ "${ACTION}" == "apply" ]]; then
-    terraform plan \
-        -out=tfplan \
-        -var "app_project_slug=${APP_PROJECT_SLUG}" \
-        -var "app_environment=${APP_ENVIRONMENT}" \
-        -var "app_version=${APP_VERSION}" \
-        -var "arm_location=${ARM_LOCATION}" \
-        -var "arm_tenant_id=${ARM_TENANT_ID}" \
-        -var "arm_subscription_id=${ARM_SUBSCRIPTION_ID}" \
-        -var "arm_client_id=${ARM_CLIENT_ID}" \
-        -var "arm_client_secret=${ARM_CLIENT_SECRET}" \
-        -var "auth0_domain=${AUTH0_DOMAIN}" \
-        -var "nordigen_secret_id=${NORDIGEN_SECRET_ID}" \
-        -var "nordigen_secret_key=${NORDIGEN_SECRET_KEY}"
-        
-    terraform apply "tfplan"
+cat > variables.tfvars <<EOF
+app_project_slug = "${APP_PROJECT_SLUG}"
+app_environment = "${APP_ENVIRONMENT}"
+app_version = "${APP_VERSION}"
+arm_location = "${ARM_LOCATION}"
+arm_tenant_id = "${ARM_TENANT_ID}"
+arm_subscription_id = "${ARM_SUBSCRIPTION_ID}"
+arm_client_id = "${ARM_CLIENT_ID}"
+arm_client_secret = "${ARM_CLIENT_SECRET}"
+auth0_domain = "${AUTH0_DOMAIN}"
+nordigen_secret_id = "${NORDIGEN_SECRET_ID}"
+nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
+EOF
+
+if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
+    terraform "plan" \
+        -out="tfplan" \
+        -var-file="variables.tfvars" \
+        "${@:2}"
+    if [[ "${ACTION}" == "apply" ]]; then
+        terraform apply "tfplan"
+    fi
+elif [[ "${ACTION}" == "import" ]]; then
+    terraform import \
+        -var-file="variables.tfvars" \
+        "${@:2}"
 else
-    terraform destroy
+    terraform "${@:1}"
 fi

@@ -1,9 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 
-namespace App.Backend.Data.Entity;
+namespace App.Data.Entity;
 
 [Index(nameof(ExternalId), IsUnique = true)]
 public class InstitutionConnectionEntity

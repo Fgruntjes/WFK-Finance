@@ -1,4 +1,4 @@
-using App.Backend.Data.Entity;
+using App.Data.Entity;
 
 namespace App.Backend.GraphQL.Type;
 

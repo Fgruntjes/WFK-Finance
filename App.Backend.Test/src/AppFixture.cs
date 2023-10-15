@@ -1,4 +1,4 @@
-using App.Backend.Data;
+using App.Data;
 using App.Backend.Startup;
 using GraphQL.AspNet.Controllers;
 using GraphQL.AspNet.Execution.Contexts;

@@ -1,4 +1,4 @@
-namespace App.Backend.Data;
+namespace App.Data;
 
 public enum UserRole
 {

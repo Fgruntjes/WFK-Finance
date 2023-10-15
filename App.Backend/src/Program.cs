@@ -2,6 +2,7 @@ using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
 using DotNetEnv.Configuration;
 using GraphQL.AspNet.Security;
+using App.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())

@@ -1,9 +1,10 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 
-namespace App.Backend.Data.Entity;
+namespace App.Data.Entity;
 
 [Index(nameof(ExternalId), IsUnique = true)]
 public class InstitutionEntity
@@ -18,7 +19,7 @@ public class InstitutionEntity
 
 	public string Name { get; set; } = null!;
 
-	public Uri? Logo { get; set; }
+	public Uri Logo { get; set; }
 
 	public string CountryIso2 { get; set; } = null!;
 

@@ -13,12 +13,32 @@ test -f .local.env && source .local.env
 eval "${CURRENT_ENV}"
 set +a
 
-set +x
+set -x
 
-APP_PROJECT_CONTAINER_REGISTRY=$(echo "${APP_PROJECT_SLUG}" | sed "s/-//g")
-APP_VERSION_IMAGE="${APP_PROJECT_CONTAINER_REGISTRY}.azurecr.io/${APP_ENVIRONMENT}/backend:${APP_VERSION}"
+CONTAINER_REGISTRY_HOSTNAME="$(echo "${APP_PROJECT_SLUG}" | sed "s/-//g").azurecr.io"
+CONTAINER_REGISTRY="${CONTAINER_REGISTRY_HOSTNAME}/${APP_ENVIRONMENT}"
 
-docker build App.Backend \
-    --tag "${APP_VERSION_IMAGE}" \
-    --provenance=false \
-    --push
+# check if we need to login, if so do it
+# az acr login --name ${APP_PROJECT_CONTAINER_REGISTRY}
+
+function docker_build {
+    TARGET=$1
+    IMAGE=$(echo "${TARGET}" | tr '[:upper:]' '[:lower:]')
+    REGISTRY="${CONTAINER_REGISTRY}"
+    docker build . \
+        --file "${TARGET}/Dockerfile" \
+        --tag "${REGISTRY}/${IMAGE}:${APP_VERSION}" \
+        --tag "${IMAGE}:${APP_VERSION}" \
+        --tag "${IMAGE}" \
+        --provenance=false
+    docker push "${REGISTRY}/${IMAGE}:${APP_VERSION}"
+}
+
+if [ "$#" -ne 0 ]; then
+    for arg in "$@"; do
+        docker_build $arg
+    done
+else
+    docker_build App.Backend
+    docker_build App.Data.Migrations
+fi

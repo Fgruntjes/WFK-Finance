@@ -1,10 +1,8 @@
-using System.ComponentModel;
-using System.Reflection;
-using App.Backend.Data.Entity;
+using App.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace App.Backend.Data;
+namespace App.Data;
 
 public class DatabaseContext : DbContext
 {

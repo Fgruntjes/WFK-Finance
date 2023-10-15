@@ -1,6 +1,46 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
+provider "registry.terraform.io/betr-io/mssql" {
+  version     = "0.2.7"
+  constraints = "0.2.7"
+  hashes = [
+    "h1:QHD9qo0weoc/8LrCe7+y+mHLNo+2hY7Tf4kmzq9SWMo=",
+    "zh:0ccd189ef3c03fb0ab08dbdff5c4e925cc70ede677fe811704799913f6ee8c48",
+    "zh:1ea185325f9ee3885b806d4f3db1b50b7d494e24bb52fa0f7235c8924f25b122",
+    "zh:3486d689616ce4973239d7c84417b00df511c7814e5416df40bb6b41a0dde14b",
+    "zh:4d47c679c887f7990c079fb4a280c2fc3bd8f408b1db956f3a777c73f9e0a62e",
+    "zh:614ed353b45610d17b4e207072a2d301b36f98b5335765e7c1c4c36ec4b342e3",
+    "zh:859fe6f88be27059ce675a5eb29e0f29e34bb0a6b65a16c46562142a2d72c388",
+    "zh:9992607e4fbb0d5d66d7b9623067e5be0becf421fe6df5702735dba229bbaa62",
+    "zh:9fb8c9a7ba450522a3ca5d50afcbcdb34f25ecf2b3009de81a1d82e0c5d93ae8",
+    "zh:a3b35dd0986465cf988e5b5d8daa83e17762ad85424efb562ae5c2e69f7cfb1f",
+    "zh:c1ff2829382bf227de04df4cfeebe77b29db0b0f8b7c6f42c321cd4b7f41bd87",
+    "zh:c47a6e3ad3127bed0c45542cbe0ba589ef448e6354083753183217280949cd55",
+    "zh:e7cb1d17b5020837070ccee253791821bab8443ba649a156a5514b1bf1162e30",
+  ]
+}
+
+provider "registry.terraform.io/hashicorp/azuread" {
+  version     = "2.43.0"
+  constraints = "2.43.0"
+  hashes = [
+    "h1:bp9HeofaEJDiWtyLMwIEYVgxP5yoMs/dQhjCYsbXU34=",
+    "zh:1c3e89cf19118fc07d7b04257251fc9897e722c16e0a0df7b07fcd261f8c12e7",
+    "zh:2225e2e97ccba4ed1d84f1d430f1ebd837943fe187e57f24f1763172dda61556",
+    "zh:24708cb09411a766ff397e05cae49058ca38edc718db303a7faef9823402737d",
+    "zh:3a61167ff58d585abd56233731a8fd649c7c04272bd5b878f963883496e19192",
+    "zh:433f557634b5e663caaeb68c504c7771c186eba7ecf5d4030437956bc6599ecb",
+    "zh:5e8cc3b3bcc22d217cf588c821ce091c7d40f0815aecc1addde5355c17cb381d",
+    "zh:7b008c376097cd60259d43f58fcb33fee56fe9aebb4a94ed7958868ee501d7d0",
+    "zh:908907fd38537583ea60dccbf73055ae1a2963acc399be4f8e9a6616a9a537db",
+    "zh:966586cfd850606bab7dd2242c5b9e35d3a7178f64eaac0b44dea54c104c8169",
+    "zh:a624286401913d3ec44b4825e2c5ae38ac94fb4950aeed8f4b91d09c898f8cce",
+    "zh:b5171a4463fd0d9b0ce2a08605499b6d99fe93d6fc3f4143e9a26201065cc90a",
+    "zh:cdcfeeb9db4dbdc6f1fb5644453b37dbd0025b4f3127e9ff348f1e62d66b493e",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/azurerm" {
   version     = "3.75.0"
   constraints = "3.75.0"

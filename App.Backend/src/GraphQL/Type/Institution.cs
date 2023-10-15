@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using App.Backend.Data.Entity;
 using GraphQL.AspNet.Attributes;
 
 namespace App.Backend.GraphQL.Type;

@@ -1,4 +1,4 @@
-using App.Backend.Data;
+using App.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace App;
@@ -18,7 +18,7 @@ public class AppHttpContext
     public async Task<Guid> OrganisationIdAsync(CancellationToken cancellationToken = default)
     {
         await _database.Organisations
-            .Upsert(new Backend.Data.Entity.OrganisationEntity
+            .Upsert(new Data.Entity.OrganisationEntity
             {
                 Id = TempOrganisationId,
                 Slug = "single-organisation"

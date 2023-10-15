@@ -1,7 +1,8 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Backend.Data.Entity;
+namespace App.Data.Entity;
 
 [PrimaryKey(nameof(UserId), nameof(OrganisationId))]
 public class OrganisationUserEntity

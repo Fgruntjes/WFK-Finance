@@ -1,5 +1,5 @@
 using App.Backend.Controllers;
-using App.Backend.Data.Entity;
+using App.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using VMelnalksnis.NordigenDotNet;
