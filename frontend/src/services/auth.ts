@@ -3,7 +3,6 @@ import {
 	Auth0Client,
 	User,
 	createAuth0Client,
-	type GetTokenSilentlyOptions,
 	type LogoutOptions,
 	type RedirectLoginOptions
 } from '@auth0/auth0-spa-js';

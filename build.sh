@@ -21,6 +21,16 @@ CONTAINER_REGISTRY="${CONTAINER_REGISTRY_HOSTNAME}/${APP_ENVIRONMENT}"
 # check if we need to login, if so do it
 # az acr login --name ${APP_PROJECT_CONTAINER_REGISTRY}
 
+function build {
+    TARGET=$1
+    if [[ "${TARGET}" == "frontend" ]]; then
+        cd frontend
+        npm run build
+    else
+        docker_build $TARGET
+    fi
+}
+
 function docker_build {
     TARGET=$1
     IMAGE=$(echo "${TARGET}" | tr '[:upper:]' '[:lower:]')
@@ -36,9 +46,10 @@ function docker_build {
 
 if [ "$#" -ne 0 ]; then
     for arg in "$@"; do
-        docker_build $arg
+        build $arg
     done
 else
-    docker_build App.Backend
-    docker_build App.Data.Migrations
+    build App.Backend
+    build App.Data.Migrations
+    build frontend
 fi
