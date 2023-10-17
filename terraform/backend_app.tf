@@ -12,7 +12,6 @@ locals {
       "MultipleActiveResultSets=False",
       "Encrypt=True",
     ]),
-    ASPNETCORE_HTTP_PORTS = "8080",
   }
 }
 
@@ -118,11 +117,16 @@ resource "azurerm_container_app" "backend_app" {
         }
       }
     }
+
+    http_scale_rule {
+      name                = "concurrency"
+      concurrent_requests = 10
+    }
   }
 }
 
 locals {
-  backend_url = "https://${azurerm_container_app.backend_app.latest_revision_fqdn}"
+  backend_url = "https://${azurerm_container_app.backend_app.ingress[0].fqdn}"
 }
 
 output "backend_url" {

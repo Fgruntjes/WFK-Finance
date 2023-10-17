@@ -62,4 +62,4 @@ if (app.Environment.IsDevelopment())
 
 app.UseGraphQL();
 
-app.Run();
+app.Run("http://*:8080");
