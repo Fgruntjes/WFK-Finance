@@ -6,6 +6,23 @@ import houdini from 'houdini/vite'
 export default defineConfig(({ mode }) => {
 	// Load app-level env vars to node-level env vars.
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
+	const isProduction = process.env.NODE_ENV === 'production';
+
+	if (!isProduction) {
+		console.log("Starting env", process.env);
+	}
+
+	function envVal(name: string) {
+		if (isProduction) {
+			return `__${name}__`;
+		}
+
+		if (!process.env[name]) {
+			throw new Error(`Missing environment variable: ${name}`);
+		}
+
+		return JSON.stringify(process.env[name]);
+	}
 
 	return {
 		server: {
@@ -14,15 +31,14 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			houdini(),
 			sveltekit(),
-			process.env.NODE_ENV === 'production' && optimizeCss()
+			isProduction && optimizeCss()
 		],
 		define: {
 			'process.env': {},
-			'import.meta.env.APP_API_URI': JSON.stringify(process.env.APP_API_URI),
-			'import.meta.env.AUTH0_DOMAIN': JSON.stringify(process.env.AUTH0_DOMAIN),
-			'import.meta.env.AUTH0_AUDIENCE': JSON.stringify(process.env.AUTH0_AUDIENCE),
-			'import.meta.env.AUTH0_SCOPE': JSON.stringify(process.env.AUTH0_SCOPE),
-			'import.meta.env.AUTH0_CLIENT_ID': JSON.stringify(process.env.AUTH0_CLIENT_ID)
+			'import.meta.env.APP_API_URI': envVal("APP_API_URI"),
+			'import.meta.env.AUTH0_DOMAIN': envVal("AUTH0_DOMAIN"),
+			'import.meta.env.AUTH0_CLIENT_ID': envVal("AUTH0_CLIENT_ID"),
+			'import.meta.env.AUTH0_AUDIENCE': envVal("AUTH0_AUDIENCE"),
 		},
 		optimizeDeps: {
 			exclude: ['@urql/svelte'],

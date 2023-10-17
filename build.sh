@@ -24,6 +24,7 @@ CONTAINER_REGISTRY="${CONTAINER_REGISTRY_HOSTNAME}/${APP_ENVIRONMENT}"
 function build {
     TARGET=$1
     if [[ "${TARGET}" == "frontend" ]]; then
+        export NODE_ENV=production;
         cd frontend
         npm run build
     else

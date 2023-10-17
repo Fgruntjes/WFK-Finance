@@ -32,7 +32,7 @@ resource "azurerm_mssql_server" "backend_database" {
 }
 
 resource "azurerm_mssql_database" "backend_database" {
-  name         = "${var.app_project_slug}-${var.app_environment}-backend"
+  name         = "${var.app_environment}-backend"
   server_id    = azurerm_mssql_server.backend_database.id
   collation    = "SQL_Latin1_General_CP1_CI_AS"
   license_type = "LicenseIncluded"
@@ -47,7 +47,7 @@ resource "azurerm_mssql_database" "backend_database" {
 
 # We need to provide access from the CICD servers somehow
 resource "azurerm_mssql_firewall_rule" "backend_database_public" {
-  name             = "${var.app_project_slug}-${var.app_environment}-backend"
+  name             = "${var.app_environment}-backend"
   server_id        = azurerm_mssql_server.backend_database.id
   start_ip_address = "0.0.0.0"
   end_ip_address   = "255.255.255.255"

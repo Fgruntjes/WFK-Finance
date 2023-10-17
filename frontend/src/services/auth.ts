@@ -34,8 +34,7 @@ const initializeUseAuth0 = () => {
 				useRefreshTokens: true,
 				authorizationParams: {
 					redirect_uri: window.location.origin,
-					scope: import.meta.env.AUTH0_SCOPE,
-					audience: import.meta.env.AUTH0_AUDIENCE
+					audience: import.meta.env.AUTH0_AUDIENCE,
 				}
 			});
 			auth0ClientStore.set(auth0Client);

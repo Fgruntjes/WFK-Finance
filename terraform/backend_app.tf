@@ -1,7 +1,7 @@
 locals {
   backend_app_env = {
-    Auth0__Domain = var.auth0_domain,
-    //Auth0__Audience                      = var.auth0_audience,
+    Auth0__Domain       = var.auth0_domain,
+    Auth0__Audience     = auth0_resource_server.backend.identifier,
     Nordigen__SecretId  = var.nordigen_secret_id,
     Nordigen__SecretKey = var.nordigen_secret_key,
     ConnectionStrings__DefaultConnection = join(";", [
@@ -11,8 +11,18 @@ locals {
       "Persist Security Info=False",
       "MultipleActiveResultSets=False",
       "Encrypt=True",
-    ])
+    ]),
+    ASPNETCORE_HTTP_PORTS = "8080",
   }
+}
+
+resource "local_file" "dev_env_backend" {
+  content = join("\n", [for env, value in local.backend_app_env :
+    env == "ConnectionStrings__DefaultConnection" ?
+    "Server=localhost,1433; Database=development; User Id=sa; Password=myLeet123Password!; Encrypt=False" :
+    "${env}=${value}"]
+  )
+  filename = "../App.Backend/.local.env"
 }
 
 resource "azurerm_container_app_environment" "backend_app" {
@@ -109,4 +119,12 @@ resource "azurerm_container_app" "backend_app" {
       }
     }
   }
+}
+
+locals {
+  backend_url = "https://${azurerm_container_app.backend_app.latest_revision_fqdn}"
+}
+
+output "backend_url" {
+  value = local.backend_url
 }

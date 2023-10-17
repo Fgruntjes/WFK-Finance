@@ -12,6 +12,10 @@ terraform {
       source  = "betr-io/mssql"
       version = "0.2.7"
     }
+    auth0 = {
+      source  = "auth0/auth0"
+      version = "1.0.0"
+    }
   }
   backend "azurerm" {
     container_name = "terraform"
@@ -33,6 +37,7 @@ provider "azuread" {
   tenant_id     = var.arm_tenant_id
 }
 provider "mssql" {}
+provider "auth0" {}
 
 data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
