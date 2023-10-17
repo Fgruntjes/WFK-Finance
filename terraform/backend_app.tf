@@ -16,7 +16,7 @@ locals {
 }
 
 resource "azurerm_container_app_environment" "backend_app" {
-  name                = "${var.app_project_slug}-${var.app_environment}-backend-app"
+  name                = "${var.app_environment}-backend-app"
   location            = var.arm_location
   resource_group_name = var.app_project_slug
 
@@ -26,12 +26,12 @@ resource "azurerm_container_app_environment" "backend_app" {
 }
 
 resource "azurerm_user_assigned_identity" "backend_app" {
-  name                = "${var.app_project_slug}-${var.app_environment}-backend-app"
+  name                = "${var.app_environment}-backend-app"
   resource_group_name = var.app_project_slug
   location            = var.arm_location
 }
 
-resource "azurerm_role_assignment" "backend_app_assignment" {
+resource "azurerm_role_assignment" "backend_app" {
   scope                = data.azurerm_container_registry.app.id
   role_definition_name = "AcrPull"
   principal_id         = azurerm_user_assigned_identity.backend_app.principal_id
@@ -56,7 +56,7 @@ resource "mssql_user" "backend_app" {
 }
 
 resource "azurerm_container_app" "backend_app" {
-  name                         = "${var.app_project_slug}-${var.app_environment}-backend"
+  name                         = "${var.app_environment}-backend-app"
   container_app_environment_id = azurerm_container_app_environment.backend_app.id
   resource_group_name          = var.app_project_slug
   revision_mode                = "Single"
@@ -69,7 +69,9 @@ resource "azurerm_container_app" "backend_app" {
     external_enabled = true
     target_port      = 8080
     traffic_weight {
-      percentage = 100
+      # Keep @see https://github.com/hashicorp/terraform-provider-azurerm/issues/21022
+      latest_revision = true
+      percentage      = 100
     }
   }
 
@@ -85,6 +87,11 @@ resource "azurerm_container_app" "backend_app" {
     identity = azurerm_user_assigned_identity.backend_app.id
   }
 
+  secret {
+    name  = "${var.app_environment}-backend-app-settings"
+    value = jsonencode(local.backend_app_env)
+  }
+
   template {
     container {
       name   = "app"
@@ -97,14 +104,9 @@ resource "azurerm_container_app" "backend_app" {
         for_each = local.backend_app_env
         content {
           name        = env.key
-          secret_name = "appsettings"
+          secret_name = "${var.app_environment}-backend-app-settings"
         }
       }
     }
-  }
-
-  secret {
-    name  = "appsettings"
-    value = jsonencode(local.backend_app_env)
   }
 }
