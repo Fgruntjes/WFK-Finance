@@ -2,7 +2,8 @@
 
 cd "$(dirname "$0")"
 
-# TODO: Should no longer clean all migrations, instead just run the latest once we have some production data.
+set +x
+set -e
 
 function cleanup {
     echo "### Cleaning database"
@@ -46,4 +47,15 @@ function updateDatabaseDocker {
         --data-dir ./
 }
 
-updateDatabaseDocker
+ACTION=${1:-"update"}
+if [[ "${ACTION}" == "cleanup" ]]; then
+    cleanup
+elif [[ "${ACTION}" == "new-migration" ]]; then
+    newMigration "${@:2}"
+elif [[ "${ACTION}" == "update" ]]; then
+    updateDatabase "${@:2}"
+elif [[ "${ACTION}" == "update-docker" ]]; then
+    updateDatabaseDocker "${@:2}"
+else
+    echo "Supported actions: database-tools.sh {update, update-docker, cleanup, new-migration}"
+fi

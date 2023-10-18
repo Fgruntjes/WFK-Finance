@@ -10,6 +10,12 @@ services:
       MSSQL_SA_PASSWORD: myLeet123Password!
     volumes:
       - database:/var/lib/postgresql/data
+  database-init:
+    image: mcr.microsoft.com/mssql/rhel/server:2022-latest
+    network_mode: service:database
+    command: bash -c 'until /opt/mssql-tools/bin/sqlcmd -U sa -P myLeet123Password! -Q "CREATE DATABASE development"; do echo retry && sleep 1; done'
+    depends_on:
+      - database
 
 volumes:
   database: {}
