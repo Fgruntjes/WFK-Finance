@@ -2,11 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.75.0"
-    }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "2.43.0"
+      version = "3.78.0"
     }
     mssql = {
       source  = "betr-io/mssql"
@@ -31,13 +27,16 @@ provider "azurerm" {
   subscription_id = var.arm_subscription_id
   tenant_id       = var.arm_tenant_id
 }
-provider "azuread" {
-  client_id     = var.arm_client_id
-  client_secret = var.arm_client_secret
-  tenant_id     = var.arm_tenant_id
+provider "mssql" {
+  debug = true
+
 }
-provider "mssql" {}
-provider "auth0" {}
+provider "auth0" {
+  domain        = var.auth0_domain
+  client_id     = var.auth0_client_id
+  client_secret = var.auth0_client_secret
+  debug         = true
+}
 
 data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}

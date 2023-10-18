@@ -3,6 +3,7 @@
 
 ### App ###
 tfplan
+*.log
 
 ### Terraform ###
 # Local .terraform directories

@@ -15,12 +15,6 @@ resource "azurerm_storage_account" "frontend_app" {
   }
 }
 
-resource "azurerm_storage_container" "frontend_app" {
-  name                  = "$web"
-  storage_account_name  = azurerm_storage_account.frontend_app.name
-  container_access_type = "private"
-}
-
 locals {
   frontend_files = {
     for file in fileset(path.module, "../frontend/build/**") : file => {
@@ -55,7 +49,7 @@ resource "azurerm_storage_blob" "frontend_app" {
 
   name                   = each.value.name
   storage_account_name   = azurerm_storage_account.frontend_app.name
-  storage_container_name = azurerm_storage_container.frontend_app.name
+  storage_container_name = "$web"
   type                   = "Block"
   source_content = each.value.extension == "js" || each.value.extension == "html" ? replace(
     replace(

@@ -74,6 +74,8 @@ resource "azurerm_container_app" "backend_app" {
     environment = var.app_environment
   }
 
+  depends_on = [azurerm_role_assignment.backend_app]
+
   ingress {
     external_enabled = true
     target_port      = 8080
@@ -96,9 +98,12 @@ resource "azurerm_container_app" "backend_app" {
     identity = azurerm_user_assigned_identity.backend_app.id
   }
 
-  secret {
-    name  = "${var.app_environment}-backend-app-settings"
-    value = jsonencode(local.backend_app_env)
+  dynamic "secret" {
+    for_each = local.backend_app_env
+    content {
+      name  = lower(replace(secret.key, "_", "-"))
+      value = secret.value
+    }
   }
 
   template {
@@ -108,12 +113,11 @@ resource "azurerm_container_app" "backend_app" {
       cpu    = 0.5
       memory = "1Gi"
 
-
       dynamic "env" {
         for_each = local.backend_app_env
         content {
           name        = env.key
-          secret_name = "${var.app_environment}-backend-app-settings"
+          secret_name = lower(replace(env.key, "_", "-"))
         }
       }
     }
