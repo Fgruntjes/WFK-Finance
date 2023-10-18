@@ -2,7 +2,7 @@
 
 set -e
 
-cd "$(dirname "$(realpath "$0")")";
+cd "$(dirname "$(realpath "$0")")"
 
 # Load env variables
 set -a
@@ -24,7 +24,7 @@ CONTAINER_REGISTRY="${CONTAINER_REGISTRY_HOSTNAME}/${APP_ENVIRONMENT}"
 function build {
     TARGET=$1
     if [[ "${TARGET}" == "frontend" ]]; then
-        export NODE_ENV=production;
+        export NODE_ENV=production
         cd frontend
         npm run build
     else
@@ -41,6 +41,9 @@ function docker_build {
         --tag "${REGISTRY}/${IMAGE}:${APP_VERSION}" \
         --tag "${IMAGE}:${APP_VERSION}" \
         --tag "${IMAGE}" \
+        --label "org.opencontainers.image.created=$(date --rfc-3339=seconds --utc)" \
+        --label "org.opencontainers.image.revision=${APP_VERSION}" \
+        --label "environment=${APP_ENVIRONMENT}" \
         --provenance=false
     docker push "${REGISTRY}/${IMAGE}:${APP_VERSION}"
 }
