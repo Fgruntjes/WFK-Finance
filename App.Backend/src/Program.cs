@@ -1,19 +1,13 @@
 using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
-using DotNetEnv.Configuration;
 using GraphQL.AspNet.Security;
 using App.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-if (builder.Environment.IsDevelopment())
-{
-	builder.Configuration.AddDotNetEnv(".local.env");
-}
-
 builder.Configuration
 	.AddEnvironmentVariables()
 	.AddJsonFile("appsettings.json", true)
-	.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true);
+	.AddJsonFile("appsettings.local.json", true);
 
 builder.Services.AddAuth(
 	builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),

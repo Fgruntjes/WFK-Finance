@@ -3,6 +3,7 @@ resource "azurerm_mssql_server" "backend_database" {
   resource_group_name = var.app_project_slug
   location            = var.arm_location
   version             = "12.0"
+  connection_policy   = "Proxy"
 
   azuread_administrator {
     azuread_authentication_only = true
@@ -34,7 +35,7 @@ resource "azurerm_mssql_database" "backend_database" {
   }
 }
 
-# We need to provide access from the CICD servers somehow
+# We need to provide access from the CICD servers, so that they can create the users
 resource "azurerm_mssql_firewall_rule" "backend_database_public" {
   name             = "${var.app_environment}-backend"
   server_id        = azurerm_mssql_server.backend_database.id

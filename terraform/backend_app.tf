@@ -1,27 +1,6 @@
-locals {
-  backend_app_env = {
-    Auth0__Domain       = var.auth0_domain,
-    Auth0__Audience     = auth0_resource_server.backend.identifier,
-    Nordigen__SecretId  = var.nordigen_secret_id,
-    Nordigen__SecretKey = var.nordigen_secret_key,
-    ConnectionStrings__DefaultConnection = join(";", [
-      "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
-      "Database=${azurerm_mssql_database.backend_database.name}",
-      "Authentication=Active Directory Managed Identity",
-      "Persist Security Info=False",
-      "MultipleActiveResultSets=False",
-      "Encrypt=True",
-    ]),
-  }
-}
-
 resource "local_file" "dev_env_backend" {
-  content = join("\n", [for env, value in local.backend_app_env :
-    env == "ConnectionStrings__DefaultConnection" ?
-    "Server=localhost,1433; Database=development; User Id=sa; Password=myLeet123Password!; Encrypt=False" :
-    "${env}=${value}"]
-  )
-  filename = "../App.Backend/.local.env"
+  content  = jsonencode(local.backend_settings_local)
+  filename = "../App.Backend/appsettings.local.json"
 }
 
 resource "azurerm_container_app_environment" "backend_app" {
@@ -34,36 +13,6 @@ resource "azurerm_container_app_environment" "backend_app" {
   }
 }
 
-resource "azurerm_user_assigned_identity" "backend_app" {
-  name                = "${var.app_environment}-backend-app"
-  resource_group_name = var.app_project_slug
-  location            = var.arm_location
-}
-
-resource "azurerm_role_assignment" "backend_app" {
-  scope                = data.azurerm_container_registry.app.id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_user_assigned_identity.backend_app.principal_id
-}
-
-resource "mssql_user" "backend_app" {
-  server {
-    host = azurerm_mssql_server.backend_database.fully_qualified_domain_name
-    azure_login {
-      client_id     = var.arm_client_id
-      tenant_id     = var.arm_tenant_id
-      client_secret = var.arm_client_secret
-    }
-  }
-  depends_on = [azurerm_mssql_firewall_rule.backend_database_public]
-
-  database  = azurerm_mssql_database.backend_database.name
-  username  = azurerm_user_assigned_identity.backend_app.name
-  object_id = azurerm_user_assigned_identity.backend_app.client_id
-
-  roles = ["db_datareader", "db_datawriter"]
-}
-
 resource "azurerm_container_app" "backend_app" {
   name                         = "${var.app_environment}-backend-app"
   container_app_environment_id = azurerm_container_app_environment.backend_app.id
@@ -74,7 +23,7 @@ resource "azurerm_container_app" "backend_app" {
     environment = var.app_environment
   }
 
-  depends_on = [azurerm_role_assignment.backend_app]
+  depends_on = [azurerm_role_assignment.container_registry_pull]
 
   ingress {
     external_enabled = true
@@ -89,38 +38,52 @@ resource "azurerm_container_app" "backend_app" {
   identity {
     type = "UserAssigned"
     identity_ids = [
-      azurerm_user_assigned_identity.backend_app.id
+      azurerm_user_assigned_identity.backend_database_read_write.id,
+      azurerm_user_assigned_identity.container_registry_pull.id,
     ]
   }
 
   registry {
     server   = data.azurerm_container_registry.app.login_server
-    identity = azurerm_user_assigned_identity.backend_app.id
+    identity = azurerm_user_assigned_identity.container_registry_pull.id
   }
 
-  dynamic "secret" {
-    for_each = local.backend_app_env
-    content {
-      name  = lower(replace(secret.key, "_", "-"))
-      value = secret.value
-    }
+  secret {
+    name  = "settings"
+    value = jsonencode(local.backend_settings)
   }
 
   template {
     container {
-      name   = "app"
-      image  = "${data.azurerm_container_registry.app.login_server}/${var.app_environment}/app.backend:${var.app_version}"
+      name  = "app"
+      image = "${data.azurerm_container_registry.app.login_server}/${var.app_environment}/app.backend:${var.app_version}"
+      command = [
+        "bash",
+        "-c",
+        "echo \"$${AppSettings}\" > appsettings.local.json && dotnet App.Backend.dll",
+      ]
       cpu    = 0.5
       memory = "1Gi"
-
-      dynamic "env" {
-        for_each = local.backend_app_env
-        content {
-          name        = env.key
-          secret_name = lower(replace(env.key, "_", "-"))
-        }
+      env {
+        name        = "AppSettings"
+        secret_name = "settings"
       }
     }
+    # container {
+    #   name   = "dev"
+    #   image  = "mcr.microsoft.com/powershell:lts-alpine-3.10"
+    #   cpu    = 0.5
+    #   memory = "1Gi"
+    #   command = [
+    #     "sh",
+    #     "-c",
+    #     "while true; do echo 'sleep...'; sleep 2; done",
+    #   ]
+    #   env {
+    #     name        = "AppSettings"
+    #     secret_name = "settings"
+    #   }
+    # }
 
     http_scale_rule {
       name                = "concurrency"

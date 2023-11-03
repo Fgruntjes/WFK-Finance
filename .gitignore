@@ -1,6 +1,7 @@
 ## App
 .local.env
 .deploy.env
+appsettings.local.json
 
 Pulumi.*.yaml
 
