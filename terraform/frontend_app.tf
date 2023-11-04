@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "frontend_app" {
 
   static_website {
     index_document     = "index.html"
-    error_404_document = "404.html"
+    error_404_document = "index.html"
   }
 
   tags = {
@@ -71,12 +71,4 @@ resource "azurerm_storage_blob" "frontend_app" {
   source        = each.value.extension != "js" && each.value.extension != "html" ? each.key : null
   cache_control = startswith(each.value.name, "_app/immutable") ? "public, max-age=31536000, immutable" : "private, max-age=0, no-cache"
   content_type  = lookup(local.mime_types, each.value.extension, "application/octet-stream")
-}
-
-locals {
-  frontend_url = "https://${azurerm_storage_account.frontend_app.primary_web_host}"
-}
-
-output "frontend_url" {
-  value = local.frontend_url
 }

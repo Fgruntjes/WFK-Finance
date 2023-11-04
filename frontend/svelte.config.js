@@ -16,6 +16,9 @@ const config = {
 		alias: {
 			'@': 'src',
 			'$houdini': '$houdini'
+		},
+		paths: {
+			relative: false
 		}
 	}
 };
