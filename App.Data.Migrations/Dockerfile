@@ -23,3 +23,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /root/.nuget/packages/microsoft.entityframeworkcore.tools/*/tools/*/any/ef.dll .
 COPY --from=publish /app/publish .
+
+ENTRYPOINT [ "/app/migrate.sh" ]
+CMD [ "update-assembly" ]

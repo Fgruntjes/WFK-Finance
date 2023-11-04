@@ -11,18 +11,6 @@ resource "azurerm_container_group" "backend_database_migrations" {
     cpu    = "1"
     memory = "2"
 
-    # Command duplicated for local testing
-    # @see ../database-tools.sh
-    commands = [
-      "dotnet", "exec",
-      "--runtimeconfig", "./App.Data.Migrations.runtimeconfig.json",
-      "--depsfile", "./App.Data.Migrations.deps.json",
-      "ef.dll", "--verbose", "database", "update",
-      "--context", "App.Data.DatabaseContext",
-      "--assembly", "./App.Data.Migrations.dll",
-      "--startup-assembly", "./App.Data.Migrations.dll",
-    ]
-
     ports {
       port = 8080
     }

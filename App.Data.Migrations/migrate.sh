@@ -30,6 +30,18 @@ function updateDatabase {
         --project App.Data.Migrations
 }
 
+function updateFromAssembly {
+    echo "### Updating database from assembly"
+    dotnet exec \
+        --runtimeconfig "./App.Data.Migrations.runtimeconfig.json" \
+        --depsfile "./App.Data.Migrations.deps.json" "ef.dll" \
+        --verbose database update \
+        --context "App.Data.DatabaseContext" \
+        --assembly "./App.Data.Migrations.dll" \
+        --startup-assembly "./App.Data.Migrations.dll" \
+        --data-dir "./" \
+}
+
 function updateDatabaseDocker {
     echo "### Updating database using docker container"
     # Command used for local testing of running database migrations from final assembly
@@ -39,12 +51,12 @@ function updateDatabaseDocker {
         --add-host=host.docker.internal:host-gateway \
         app.data.migrations \
         exec \
-        --runtimeconfig ./App.Data.Migrations.runtimeconfig.json \
-        --depsfile ./App.Data.Migrations.deps.json ef.dll \
-        --verbose database update --context App.Data.DatabaseContext \
-        --assembly ./App.Data.Migrations.dll  \
-        --startup-assembly ./App.Data.Migrations.dll \
-        --data-dir ./
+            --runtimeconfig ./App.Data.Migrations.runtimeconfig.json \
+            --depsfile ./App.Data.Migrations.deps.json ef.dll \
+            --verbose database update --context App.Data.DatabaseContext \
+            --assembly ./App.Data.Migrations.dll \
+            --startup-assembly ./App.Data.Migrations.dll \
+            --data-dir ./
 }
 
 ACTION=${1:-"update"}
@@ -53,6 +65,8 @@ if [[ "${ACTION}" == "cleanup" ]]; then
 elif [[ "${ACTION}" == "new-migration" ]]; then
     newMigration "${@:2}"
 elif [[ "${ACTION}" == "update" ]]; then
+    updateDatabase "${@:2}"
+elif [[ "${ACTION}" == "update-assembly" ]]; then
     updateDatabase "${@:2}"
 elif [[ "${ACTION}" == "update-docker" ]]; then
     updateDatabaseDocker "${@:2}"
