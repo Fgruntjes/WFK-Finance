@@ -39,24 +39,17 @@ function updateFromAssembly {
         --context "App.Data.DatabaseContext" \
         --assembly "./App.Data.Migrations.dll" \
         --startup-assembly "./App.Data.Migrations.dll" \
-        --data-dir "./" \
+        --data-dir "./"
 }
 
 function updateDatabaseDocker {
     echo "### Updating database using docker container"
     # Command used for local testing of running database migrations from final assembly
     # Used in terraform/backend_database_migrations.tf
-    docker run --entrypoint="dotnet" \
+    docker run \
         --env "ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433; Database=development; User Id=sa; Password=myLeet123Password!; Encrypt=False" \
         --add-host=host.docker.internal:host-gateway \
-        app.data.migrations \
-        exec \
-            --runtimeconfig ./App.Data.Migrations.runtimeconfig.json \
-            --depsfile ./App.Data.Migrations.deps.json ef.dll \
-            --verbose database update --context App.Data.DatabaseContext \
-            --assembly ./App.Data.Migrations.dll \
-            --startup-assembly ./App.Data.Migrations.dll \
-            --data-dir ./
+        app.data.migrations
 }
 
 ACTION=${1:-"update"}
@@ -67,7 +60,7 @@ elif [[ "${ACTION}" == "new-migration" ]]; then
 elif [[ "${ACTION}" == "update" ]]; then
     updateDatabase "${@:2}"
 elif [[ "${ACTION}" == "update-assembly" ]]; then
-    updateDatabase "${@:2}"
+    updateFromAssembly "${@:2}"
 elif [[ "${ACTION}" == "update-docker" ]]; then
     updateDatabaseDocker "${@:2}"
 else
