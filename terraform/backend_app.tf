@@ -1,5 +1,15 @@
 resource "local_file" "dev_env_backend" {
-  content  = jsonencode(local.backend_settings_local)
+  content = jsonencode(merge(local.backend_settings, {
+    ConnectionStrings = {
+      DefaultConnection = join(";", [
+        "Server=localhost,1433",
+        "Database=development",
+        "User Id=sa",
+        "Password=myLeet123Password!",
+        "Encrypt=False",
+      ]),
+    }
+  }))
   filename = "../App.Backend/appsettings.local.json"
 }
 
@@ -49,8 +59,18 @@ resource "azurerm_container_app" "backend_app" {
   }
 
   secret {
-    name  = "settings"
-    value = jsonencode(local.backend_settings)
+    name = "settings"
+    value = jsonencode(merge(local.backend_settings, {
+      ConnectionStrings = {
+        DefaultConnection = join(";", [
+          "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
+          "Database=${azurerm_mssql_database.backend_database.name}",
+          "Authentication=Active Directory Managed Identity",
+          "User Id=${azurerm_user_assigned_identity.backend_database_read_write.client_id}",
+          "Encrypt=True",
+        ]),
+      }
+    }))
   }
 
   template {
@@ -69,21 +89,6 @@ resource "azurerm_container_app" "backend_app" {
         secret_name = "settings"
       }
     }
-    # container {
-    #   name   = "dev"
-    #   image  = "mcr.microsoft.com/powershell:lts-alpine-3.10"
-    #   cpu    = 0.5
-    #   memory = "1Gi"
-    #   command = [
-    #     "sh",
-    #     "-c",
-    #     "while true; do echo 'sleep...'; sleep 2; done",
-    #   ]
-    #   env {
-    #     name        = "AppSettings"
-    #     secret_name = "settings"
-    #   }
-    # }
 
     http_scale_rule {
       name                = "concurrency"
