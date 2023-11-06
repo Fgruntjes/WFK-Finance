@@ -7,10 +7,9 @@ using GraphQL.AspNet.Tests.Framework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.Core;
-using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
-using App.Backend.Test.Logging;
 using GraphQL.AspNet.Configuration;
+using Xunit.DependencyInjection.Logging;
 
 namespace App.Backend.Test;
 
@@ -36,8 +35,7 @@ public class AppFixture<TController>
 		// Pass logging to xunit output
 		builder.AddLogging(loggingBuilder =>
 		{
-			loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceLocator =>
-				new XUnitLoggerProvider(logMessageSink));
+			loggingBuilder.AddXunitOutput();
 		});
 
 		// Load database
