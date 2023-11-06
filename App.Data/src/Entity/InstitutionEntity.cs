@@ -19,7 +19,7 @@ public class InstitutionEntity
 
 	public string Name { get; set; } = null!;
 
-	public Uri Logo { get; set; }
+	public Uri? Logo { get; set; }
 
 	public string CountryIso2 { get; set; } = null!;
 

@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Data.Entity;
 
+[Index(nameof(Slug), IsUnique = true)]
 public class OrganisationEntity
 {
 	[Key]
