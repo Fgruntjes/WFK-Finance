@@ -7,6 +7,10 @@ using GraphQL.AspNet.Tests.Framework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.Core;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
+using App.Backend.Test.Logging;
+using GraphQL.AspNet.Configuration;
 
 namespace App.Backend.Test;
 
@@ -14,38 +18,46 @@ public class AppFixture<TController>
 	where TController : GraphController
 {
 	private readonly ISnapshotFullNameReader _testNameResolver;
-	public TestServer<GraphSchema> Server { get; private set; }
-	public DatabaseContext Database { get; private set; }
+	private readonly TestServerBuilder<GraphSchema> _builder;
+	private TestServer<GraphSchema>? _server;
 
+	public TestServer<GraphSchema> Server => _server ??= _builder.Build();
+	public DatabaseContext Database => Server.ServiceProvider.GetRequiredService<DatabaseContext>();
 	public Guid OrganisationId => Server.ServiceProvider.GetRequiredService<AppHttpContext>().OrganisationId();
 
-	public AppFixture()
+	public AppFixture(IMessageSink logMessageSink)
 	{
 		_testNameResolver = new XunitSnapshotFullNameReader();
 
-		var services = new ServiceCollection();
-		services.AddDbContext<DatabaseContext>(options =>
+		var builder = new TestServerBuilder<GraphSchema>();
+		// Allow other fixutres to register mocks
+		RegisterMocks(builder);
+
+		// Pass logging to xunit output
+		builder.AddLogging(loggingBuilder =>
+		{
+			loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceLocator =>
+				new XUnitLoggerProvider(logMessageSink));
+		});
+
+		// Load database
+		builder.AddDbContext<DatabaseContext>(options =>
 		{
 			options.UseInMemoryDatabase(Guid.NewGuid().ToString());
 		});
-		services.AddAppServices();
-		RegisterMocks(services);
 
-		var builder = new TestServerBuilder<GraphSchema>(serviceCollection: services);
-		builder.AddGraphQL(o =>
+		// App configuration
+		builder.AddAppServices();
+		builder.AddGraphQL(options =>
 		{
-			o.AddController<TController>();
-			o.ResponseOptions.ExposeExceptions = true;
+			ConfigureGraphQL(options);
 		});
 
 		// TODO handle non authorized test cases
 		builder.UserContext.Authenticate();
 
-		Server = builder.Build();
-
-		Database = Server.ServiceProvider.GetRequiredService<DatabaseContext>();
+		_builder = builder;
 	}
-
 
 	public async Task<string> ExecuteQuery(string? queryFile, object? variables = null)
 	{
@@ -64,11 +76,18 @@ public class AppFixture<TController>
 
 	}
 
+	protected virtual void ConfigureGraphQL(SchemaOptions options)
+	{
+		options.AddController<TController>();
+		options.ResponseOptions.ExposeExceptions = true;
+	}
+
 	private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)
 	{
 		var queryText = LoadQueryFile(queryFile);
 		var queryBuilder = Server.CreateQueryContextBuilder();
 		queryBuilder.AddQueryText(queryText);
+		//queryBuilder.AddUserSecurityContext();
 		if (variables != null)
 		{
 			queryBuilder.AddVariableData(variables);

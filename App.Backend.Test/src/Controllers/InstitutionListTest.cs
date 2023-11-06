@@ -3,45 +3,31 @@ using VMelnalksnis.NordigenDotNet.Institutions;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionQueryTest : IClassFixture<InstitutionQueryFixture>
+public class InstitutionListTest : IClassFixture<InstitutionListFixture>
 {
-	private readonly InstitutionQueryFixture _fixture;
+	private readonly InstitutionListFixture _fixture;
 
-	public InstitutionQueryTest(InstitutionQueryFixture fixture)
+	public InstitutionListTest(InstitutionListFixture fixture)
 	{
 		_fixture = fixture;
 	}
 
 	[Fact]
-	public async Task ById_Success()
-	{
-		var result = await _fixture.ExecuteQuery(new { Id = _fixture.InstitutionIdNldLinked });
-		result.MatchSnapshot();
-	}
-
-	[Fact]
-	public async Task ById_NotFound()
-	{
-		var result = await _fixture.ExecuteQuery(new { Id = Guid.NewGuid() });
-		result.MatchSnapshot();
-	}
-
-	[Fact]
-	public async Task List_CountryLinkedNld()
+	public async Task CountryLinkedNld()
 	{
 		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "NL" });
 		result.MatchSnapshot();
 	}
 
 	[Fact]
-	public async Task List_CountryLinkedUsa()
+	public async Task CountryLinkedUsa()
 	{
 		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "US" });
 		result.MatchSnapshot();
 	}
 
 	[Fact]
-	public async Task List_CallRefreshWhenMissing()
+	public async Task CallRefreshWhenMissing()
 	{
 		var institutionsMock = new Mock<IInstitutionClient>();
 		institutionsMock

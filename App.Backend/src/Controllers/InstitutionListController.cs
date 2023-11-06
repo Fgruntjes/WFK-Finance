@@ -1,35 +1,19 @@
-using App.Data;
 using App.Backend.GraphQL.Type;
 using App.Backend.Service;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
 [GraphRoute("institution")]
-public class InstitutionController : GraphController
+public class InstitutionListController : GraphController
 {
-	private readonly DatabaseContext _database;
 	private readonly InstitutionSearchService _searchService;
 
-	public InstitutionController(DatabaseContext database, InstitutionSearchService searchService)
+	public InstitutionListController(InstitutionSearchService searchService)
 	{
-		_database = database;
 		_searchService = searchService;
-	}
-
-	[Authorize]
-	[Query("get")]
-	public Task<Institution?> Get(Guid id, CancellationToken cancellationToken = default)
-	{
-		return _database.Institutions
-			.Where(e => e.Id == id)
-			.OrderBy(e => e.CreatedAt)
-			.Take(1)
-			.Select(e => e.ToGraphQLType())
-			.SingleOrDefaultAsync(cancellationToken);
 	}
 
 	[Authorize]

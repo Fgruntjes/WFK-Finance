@@ -5,32 +5,26 @@ using Moq;
 using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Accounts;
 using VMelnalksnis.NordigenDotNet.Requisitions;
+using Xunit.Abstractions;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnectionController>
+public class InstitutionConnectionRefreshFixture : AppFixture<InstitutionConnectionRefreshController>
 {
-    public Mock<INordigenClient> NordigenClientMoq { get; private set; }
-
-    public Requisition NordigenRequisitionResult { get; private set; }
+    private readonly Mock<INordigenClient> _nordigenClientMoq;
 
     public InstitutionConnectionEntity InstitutionConnectionEntity { get; private set; }
 
-    public InstitutionEntity InstitutionEntity { get; private set; }
-
-    public Guid InstitutionId => InstitutionEntity.Id;
-
-    public Guid InstitutionConnectionDeleteId { get; internal set; }
-
-    public InstitutionConnectionMutationFixture() : base()
+    public InstitutionConnectionRefreshFixture(IMessageSink logMessageSink)
+        : base(logMessageSink)
     {
-        InstitutionEntity = new InstitutionEntity
+        var institutionEntity = new InstitutionEntity
         {
             ExternalId = "SomeExternalId",
             Name = "Some Institution Name",
             CountryIso2 = "NL",
         };
-        Database.Institutions.Add(InstitutionEntity);
+        Database.Institutions.Add(institutionEntity);
 
         InstitutionConnectionEntity = new InstitutionConnectionEntity
         {
@@ -41,52 +35,40 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
         };
         Database.InstitutionConnections.Add(InstitutionConnectionEntity);
 
-        InstitutionConnectionDeleteId = new Guid("56612691-dcf7-44e2-b506-ba83b60de5a9");
-        var institutionConnectionDeleteEntity = new InstitutionConnectionEntity
-        {
-            Id = InstitutionConnectionDeleteId,
-            OrganisationId = OrganisationId,
-            ConnectUrl = new Uri("https://www.example.com/connect-url/refresh"),
-            ExternalId = "ed69f988-a1fb-4e89-8d56-66b42e43a675"
-        };
-        Database.InstitutionConnections.Add(institutionConnectionDeleteEntity);
-
-        NordigenClientMoq = new Mock<INordigenClient>();
+        _nordigenClientMoq = new Mock<INordigenClient>();
 
         var requisitionsMock = new Mock<IRequisitionClient>();
         var accountsMock = new Mock<IAccountClient>();
-        NordigenClientMoq
+        _nordigenClientMoq
             .SetupGet(c => c.Requisitions)
             .Returns(requisitionsMock.Object);
-        NordigenClientMoq
+        _nordigenClientMoq
             .SetupGet(c => c.Accounts)
             .Returns(accountsMock.Object);
 
         var nordigenAccounts = new List<Account> {
             new() {
                 Id = new Guid("93328c83-3cae-49f9-bbe6-3ff5dfc38359"),
-                InstitutionId = InstitutionEntity.ExternalId,
+                InstitutionId = institutionEntity.ExternalId,
                 Iban = "IBAN-1",
             },
             new() {
                 Id = new Guid("8e2ff322-1a0a-4bd7-a88c-728e0816c43f"),
-                InstitutionId = InstitutionEntity.ExternalId,
+                InstitutionId = institutionEntity.ExternalId,
                 Iban = "IBAN-2",
             },
         };
 
-        NordigenRequisitionResult = new Requisition
+        var nordigenRequisitionResult = new Requisition
         {
             Link = new Uri("https://www.example.com/connect-url/nordigen-requisition"),
             Id = new Guid("2ee63e58-5e7e-4bf2-820f-646f85876bac"),
             Accounts = nordigenAccounts.Select(a => a.Id).ToList(),
         };
-        requisitionsMock
-            .Setup(r => r.Post(It.IsAny<RequisitionCreation>()))
-            .ReturnsAsync(NordigenRequisitionResult);
+
         requisitionsMock
             .Setup(r => r.Get(Guid.Parse(InstitutionConnectionEntity.ExternalId), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(NordigenRequisitionResult);
+            .ReturnsAsync(nordigenRequisitionResult);
 
         foreach (var account in nordigenAccounts)
         {
@@ -100,6 +82,6 @@ public class InstitutionConnectionMutationFixture : AppFixture<InstitutionConnec
 
     protected override void RegisterMocks(IServiceCollection services)
     {
-        services.AddScoped((_) => NordigenClientMoq.Object);
+        services.AddScoped((_) => _nordigenClientMoq.Object);
     }
 }

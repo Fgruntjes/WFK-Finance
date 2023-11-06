@@ -1,17 +1,9 @@
 ﻿{
   "data": {
     "institutionConnection": {
-      "refreshExternalId": {
+      "refreshId": {
         "externalId": "ed69f988-a1fb-4e89-8d56-66b42e43a675",
         "connectUrl": "https://www.example.com/connect-url/refresh",
-        "accounts": [
-          {
-            "iban": "IBAN-1"
-          },
-          {
-            "iban": "IBAN-2"
-          }
-        ]
       }
     }
   }

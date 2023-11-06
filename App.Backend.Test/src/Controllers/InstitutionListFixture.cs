@@ -3,15 +3,16 @@ using App.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using VMelnalksnis.NordigenDotNet;
+using Xunit.Abstractions;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionQueryFixture : AppFixture<InstitutionController>
+public class InstitutionListFixture : AppFixture<InstitutionListController>
 {
     public Guid InstitutionIdNldLinked { get; private set; }
     public Mock<INordigenClient> NordigenClientMoq { get; private set; } = null!;
 
-    public InstitutionQueryFixture() : base()
+    public InstitutionListFixture(IMessageSink logMessageSink) : base(logMessageSink)
     {
         var institutionNldLinked = new InstitutionEntity()
         {
