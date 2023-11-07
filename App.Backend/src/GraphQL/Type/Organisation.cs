@@ -4,8 +4,8 @@ namespace App.Backend.GraphQL.Type;
 
 public class Organisation
 {
-	public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-	[GraphField(TypeExpression = $"{nameof(String)}!")]
-	public string Slug { get; set; } = null!;
+    [GraphField(TypeExpression = $"{nameof(String)}!")]
+    public string Slug { get; set; } = null!;
 }

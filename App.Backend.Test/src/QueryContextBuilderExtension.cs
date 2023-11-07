@@ -5,8 +5,8 @@ namespace App.Backend.Test;
 
 public static class QueryContextBuilderExtension
 {
-	public static QueryContextBuilder AddVariableData<TValue>(this QueryContextBuilder builder, TValue value)
-	{
-		return builder.AddVariableData(JsonSerializer.Serialize(value));
-	}
+    public static QueryContextBuilder AddVariableData<TValue>(this QueryContextBuilder builder, TValue value)
+    {
+        return builder.AddVariableData(JsonSerializer.Serialize(value));
+    }
 }

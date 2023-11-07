@@ -10,25 +10,25 @@ namespace App.Backend.Controllers;
 [GraphRoute("institutionConnection")]
 public class InstitutionConnectionCreateController : GraphController
 {
-	private readonly InstitutionConnectionCreateService _createService;
+    private readonly InstitutionConnectionCreateService _createService;
 
-	public InstitutionConnectionCreateController(InstitutionConnectionCreateService createService)
-	{
-		_createService = createService;
-	}
+    public InstitutionConnectionCreateController(InstitutionConnectionCreateService createService)
+    {
+        _createService = createService;
+    }
 
-	[Authorize]
-	[Mutation("create", typeof(InstitutionConnection))]
-	public async Task<IGraphActionResult> Create(Guid institutionId, [FromGraphQL(TypeExpression = "Type!")] Uri returnUrl, CancellationToken cancellationToken = default)
-	{
-		try
-		{
-			var entity = await _createService.Connect(institutionId, returnUrl, cancellationToken);
-			return Ok(entity.ToGraphQLType());
-		}
-		catch (ArgumentOutOfRangeException exception)
-		{
-			return BadRequest(exception.Message);
-		}
-	}
+    [Authorize]
+    [Mutation("create", typeof(InstitutionConnection))]
+    public async Task<IGraphActionResult> Create(Guid institutionId, [FromGraphQL(TypeExpression = "Type!")] Uri returnUrl, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var entity = await _createService.Connect(institutionId, returnUrl, cancellationToken);
+            return Ok(entity.ToGraphQLType());
+        }
+        catch (ArgumentOutOfRangeException exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
 }

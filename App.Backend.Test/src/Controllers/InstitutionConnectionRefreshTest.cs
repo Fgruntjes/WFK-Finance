@@ -2,72 +2,72 @@ namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnectionRefreshFixture>
 {
-	private readonly InstitutionConnectionRefreshFixture _fixture;
+    private readonly InstitutionConnectionRefreshFixture _fixture;
 
-	public InstitutionConnectionRefreshTest(InstitutionConnectionRefreshFixture fixture)
-	{
-		_fixture = fixture;
-	}
+    public InstitutionConnectionRefreshTest(InstitutionConnectionRefreshFixture fixture)
+    {
+        _fixture = fixture;
+    }
 
-	[Fact]
-	public async Task ByExternalId_Success()
-	{
-		// Act
-		var result = await _fixture.ExecuteQuery(new
-		{
-			_fixture.InstitutionConnectionEntity.ExternalId
-		});
+    [Fact]
+    public async Task ByExternalId_Success()
+    {
+        // Act
+        var result = await _fixture.ExecuteQuery(new
+        {
+            _fixture.InstitutionConnectionEntity.ExternalId
+        });
 
-		// Assert
-		result.MatchSnapshot();
-	}
+        // Assert
+        result.MatchSnapshot();
+    }
 
-	[Fact]
-	public async Task ByExternalId_MissingConnection()
-	{
-		// Act
-		var result = await _fixture.ExecuteQuery(new
-		{
-			ExternalId = "SomeExternalIdMissing"
-		});
+    [Fact]
+    public async Task ByExternalId_MissingConnection()
+    {
+        // Act
+        var result = await _fixture.ExecuteQuery(new
+        {
+            ExternalId = "SomeExternalIdMissing"
+        });
 
-		// Assert
-		result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
-	}
+        // Assert
+        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
+    }
 
-	[Fact]
-	public async Task ById_Success()
-	{
-		// Act
-		var result = await _fixture.ExecuteQuery(new
-		{
-			_fixture.InstitutionConnectionEntity.Id
-		});
+    [Fact]
+    public async Task ById_Success()
+    {
+        // Act
+        var result = await _fixture.ExecuteQuery(new
+        {
+            _fixture.InstitutionConnectionEntity.Id
+        });
 
-		// Assert response
-		result.MatchSnapshot();
+        // Assert response
+        result.MatchSnapshot();
 
-		// Assert database
-		_fixture.WithData(async context =>
-		{
-			var connectionEntity = await context.InstitutionConnections
-				.FindAsync(_fixture.InstitutionConnectionEntity.Id);
+        // Assert database
+        _fixture.WithData(async context =>
+        {
+            var connectionEntity = await context.InstitutionConnections
+                .FindAsync(_fixture.InstitutionConnectionEntity.Id);
 
-			connectionEntity.Should().NotBeNull();
-			connectionEntity?.Accounts.Should().HaveCount(2);
-		});
-	}
+            connectionEntity.Should().NotBeNull();
+            connectionEntity?.Accounts.Should().HaveCount(2);
+        });
+    }
 
-	[Fact]
-	public async Task ById_MissingConnection()
-	{
-		// Act
-		var result = await _fixture.ExecuteQuery(new
-		{
-			Id = new Guid("59a35c45-6e8d-4dc7-bacc-f151f94da93d")
-		});
+    [Fact]
+    public async Task ById_MissingConnection()
+    {
+        // Act
+        var result = await _fixture.ExecuteQuery(new
+        {
+            Id = new Guid("59a35c45-6e8d-4dc7-bacc-f151f94da93d")
+        });
 
-		// Assert
-		result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
-	}
+        // Assert
+        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
+    }
 }

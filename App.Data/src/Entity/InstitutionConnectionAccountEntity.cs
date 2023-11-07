@@ -9,24 +9,24 @@ namespace App.Data.Entity;
 [Index(nameof(ExternalId), nameof(InstitutionConnectionId), IsUnique = true)]
 public class InstitutionConnectionAccountEntity
 {
-	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.None)]
-	public Guid Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
-	public Instant CreatedAt { get; set; }
+    public Instant CreatedAt { get; set; }
 
-	public string ExternalId { get; set; } = null!;
+    public string ExternalId { get; set; } = null!;
 
-	[Required]
-	public Guid InstitutionConnectionId { get; set; }
+    [Required]
+    public Guid InstitutionConnectionId { get; set; }
 
-	public InstitutionConnectionEntity InstitutionConnection { get; set; } = null!;
+    public InstitutionConnectionEntity InstitutionConnection { get; set; } = null!;
 
-	public string Iban { get; set; } = null!;
+    public string Iban { get; set; } = null!;
 
-	public InstitutionConnectionAccountEntity()
-	{
-		Id = Guid.NewGuid();
-		CreatedAt = SystemClock.Instance.GetCurrentInstant();
-	}
+    public InstitutionConnectionAccountEntity()
+    {
+        Id = Guid.NewGuid();
+        CreatedAt = SystemClock.Instance.GetCurrentInstant();
+    }
 }

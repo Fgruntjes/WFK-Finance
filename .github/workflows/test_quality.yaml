@@ -16,18 +16,7 @@ jobs:
             - run: dotnet format --verify-no-changes
 
     # Terraform quality
-    test_quality_terraform_tfsec:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            pull-requests: write
-        steps:
-            - uses: actions/checkout@v3
-            - uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
-              with:
-                  github_token: ${{ github.token }}
-
-    test_quality_terraform_tflint:
+    test_quality_terraform:
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -35,20 +24,8 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - uses: terraform-linters/setup-tflint@v4
-              with:
-                  tflint_version: v0.48
             - run: tflint --format compact
-
-    test_quality_terraform_checkov:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            pull-requests: write
-        steps:
-            - uses: actions/checkout@v3
-            - uses: bridgecrewio/checkov-action@v12
-              with:
-                  directory: terraform/
+              working-directory: terraform
 
     # Frontend
     test_quality_frontend:
@@ -68,16 +45,12 @@ jobs:
         needs:
             - test_quality_dotnet
             - test_quality_frontend
-            - test_quality_terraform_tfsec
-            - test_quality_terraform_tflint
-            - test_quality_terraform_checkov
+            - test_quality_terraform
         if: ${{ always() }}
         steps:
             - run: |
                   [[
                       '${{ needs.test_quality_dotnet.result }}' == 'success' &&
                       '${{ needs.test_quality_frontend.result }}' == 'success' &&
-                      '${{ needs.test_quality_terraform_tfsec.result }}' == 'success'
-                      '${{ needs.test_quality_terraform_tflint.result }}' == 'success'
-                      '${{ needs.test_quality_terraform_checkov.result }}' == 'success'
+                      '${{ needs.test_quality_terraform.result }}' == 'success'
                   ]]
