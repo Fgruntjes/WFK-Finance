@@ -9,16 +9,16 @@ namespace App.Backend.Service;
 public class InstitutionConnectionCreateService
 {
     private readonly DatabaseContext _database;
-    private readonly AppHttpContext _httpContext;
+    private readonly OrganisationIdProvider _organisationIdProvider;
     private readonly INordigenClient _nordigenClient;
 
     public InstitutionConnectionCreateService(
         DatabaseContext database,
-        AppHttpContext httpContext,
+        OrganisationIdProvider organisationIdProvider,
         INordigenClient nordigenClient)
     {
         _database = database;
-        _httpContext = httpContext;
+        _organisationIdProvider = organisationIdProvider;
         _nordigenClient = nordigenClient;
     }
 
@@ -45,7 +45,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity?> GetConnectUrl(InstitutionEntity institution, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
 
         return await _database.InstitutionConnections
             .AsQueryable()
@@ -57,7 +57,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
         var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,

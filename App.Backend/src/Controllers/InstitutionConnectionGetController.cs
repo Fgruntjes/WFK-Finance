@@ -11,19 +11,19 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionGetController : GraphController
 {
 	private readonly DatabaseContext _database;
-	private readonly AppHttpContext _httpContext;
+	private readonly OrganisationIdProvider _organisationIdProvider;
 
-	public InstitutionConnectionGetController(DatabaseContext database, AppHttpContext httpContext)
+	public InstitutionConnectionGetController(DatabaseContext database, OrganisationIdProvider organisationIdProvider)
 	{
 		_database = database;
-		_httpContext = httpContext;
+		_organisationIdProvider = organisationIdProvider;
 	}
 
 	[Authorize]
 	[Query("get")]
 	public async Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
 	{
-		var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+		var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
 		return await _database.InstitutionConnections
 			.Where(e => e.Id == id && e.OrganisationId == organisationId)
 			.OrderBy(e => e.CreatedAt)

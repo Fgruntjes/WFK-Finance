@@ -9,16 +9,16 @@ namespace App.Backend.Service;
 public class InstitutionConnectionRefreshService
 {
     private DatabaseContext _database;
-    private readonly AppHttpContext _httpContext;
+    private readonly OrganisationIdProvider _organisationIdProvider;
     private INordigenClient _nordigenClient;
 
     public InstitutionConnectionRefreshService(
         DatabaseContext database,
-        AppHttpContext httpContext,
+        OrganisationIdProvider organisationIdProvider,
         INordigenClient nordigenClient)
     {
         _database = database;
-        _httpContext = httpContext;
+        _organisationIdProvider = organisationIdProvider;
         _nordigenClient = nordigenClient;
     }
 
@@ -34,7 +34,7 @@ public class InstitutionConnectionRefreshService
 
     private async Task<InstitutionConnectionEntity> Refresh(Expression<Func<InstitutionConnectionEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
         var entity = await _database.InstitutionConnections
             .OrderBy(e => e.CreatedAt)
             .Take(1)

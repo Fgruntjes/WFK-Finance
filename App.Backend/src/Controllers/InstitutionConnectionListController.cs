@@ -12,19 +12,19 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionListController : GraphController
 {
 	private readonly DatabaseContext _database;
-	private readonly AppHttpContext _httpContext;
+	private readonly OrganisationIdProvider _organisationIdProvider;
 
-	public InstitutionConnectionListController(DatabaseContext database, AppHttpContext httpContext)
+	public InstitutionConnectionListController(DatabaseContext database, OrganisationIdProvider organisationIdProvider)
 	{
 		_database = database;
-		_httpContext = httpContext;
+		_organisationIdProvider = organisationIdProvider;
 	}
 
 	[Authorize]
 	[Query("list")]
 	public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
 	{
-		var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+		var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
 		var query = _database.InstitutionConnections
 			.Where(e => e.OrganisationId == organisationId);
 

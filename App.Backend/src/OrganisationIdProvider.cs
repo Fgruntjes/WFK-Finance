@@ -3,14 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App;
 
-public class AppHttpContext
+public class OrganisationIdProvider
 {
     // As long as we have all users under the same organisation
     private readonly Guid TempOrganisationId = new("ae7113f0-1b52-40e5-9e77-5acb10e7fdad");
 
     private readonly DatabaseContext _database;
 
-    public AppHttpContext(DatabaseContext database)
+    public Guid OrganisationId => OrganisationIdAsync().Result;
+
+    public OrganisationIdProvider(DatabaseContext database)
     {
         _database = database;
     }
@@ -27,10 +29,5 @@ public class AppHttpContext
             .RunAsync(cancellationToken);
 
         return TempOrganisationId;
-    }
-
-    public Guid OrganisationId()
-    {
-        return OrganisationIdAsync().Result;
     }
 }

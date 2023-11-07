@@ -10,19 +10,19 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionDeleteController : GraphController
 {
 	private readonly DatabaseContext _database;
-	private readonly AppHttpContext _httpContext;
+	private readonly OrganisationIdProvider _organisationIdProvider;
 
-	public InstitutionConnectionDeleteController(DatabaseContext database, AppHttpContext httpContext)
+	public InstitutionConnectionDeleteController(DatabaseContext database, OrganisationIdProvider organisationIdProvider)
 	{
 		_database = database;
-		_httpContext = httpContext;
+		_organisationIdProvider = organisationIdProvider;
 	}
 
 	[Authorize]
 	[Mutation("delete")]
 	public async Task<int> Delete(ICollection<Guid> connectionIds, CancellationToken cancellationToken = default)
 	{
-		var organisationId = await _httpContext.OrganisationIdAsync(cancellationToken);
+		var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
 		var entities = _database.InstitutionConnections
 				.Where(e => e.OrganisationId == organisationId)
 				.Where(e => connectionIds.Contains(e.Id));

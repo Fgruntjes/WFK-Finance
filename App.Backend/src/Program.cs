@@ -62,3 +62,8 @@ if (app.Environment.IsDevelopment())
 app.UseGraphQL();
 
 app.Run("http://*:8080");
+
+public partial class Program
+{
+
+}
