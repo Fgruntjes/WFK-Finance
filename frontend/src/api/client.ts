@@ -2,8 +2,6 @@ import { HoudiniClient } from '$houdini';
 import { auth } from '@/services/auth';
 import { get } from 'svelte/store';
 
-console.log(import.meta.env.APP_API_URI);
-
 export default new HoudiniClient({
 	url: `${import.meta.env.APP_API_URI}/graphql`,
 	fetchParams() {

@@ -7,6 +7,7 @@
 	import { Form, FormGroup } from 'carbon-components-svelte';
 	import InstitutionSelect from './InstitutionSelect.svelte';
 	import { graphql } from '$houdini';
+	import type { Guid } from '@/api/types/scalar';
 
 	let selectedCountry: string;
 	let selectedInstitutionId: Guid | undefined;
@@ -36,7 +37,7 @@
 
 	$: {
 		const connectUrl = $connectMutation.data?.institutionConnection?.create?.connectUrl;
-		if (!!connectUrl) {
+		if (connectUrl) {
 			window.location.href = connectUrl;
 		}
 	}

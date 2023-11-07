@@ -3,7 +3,7 @@
 	import { i18n } from '@/services/i18n';
 	import { Renew as RenewIcon } from 'carbon-icons-svelte';
 
-	export let isLoading: boolean = false;
+	export let isLoading = false;
 	// export let institutionConnection: InstitutionConnection | DataTableRow;
 
 	// const dispatch = createEventDispatcher();

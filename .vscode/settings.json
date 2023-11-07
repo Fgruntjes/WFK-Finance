@@ -1,7 +1,11 @@
 {
   "cSpell.userWords": [], // only use words from .cspell.json
   "cSpell.enabled": true,
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "files.autoSave": "onFocusChange",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "git.ignoreLimitWarning": true,
