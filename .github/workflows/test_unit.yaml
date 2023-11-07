@@ -14,11 +14,18 @@ jobs:
             with:
                 dotnet-version: 7.0
         -   run: |
-                echo "title=Test Run for PR #${{github.event.number}} Run #${{github.run_number}}" >> $GITHUB_ENV
-                echo "file_name=TestReport.${{ matrix.project }}.${{github.sha}}.md" >> $GITHUB_ENV  
-        -   run: dotnet test --verbosity detailed
+                dotnet test \
+                    --verbosity diag \
+                    --blame \
+                    --blame-hang-timeout 5m
             env:
                 DOTNET_ENVIRONMENT: Production
+        - uses: actions/upload-artifact@v3
+          if: failure()
+          with:
+              name: test_logs
+              path: ./*/TestResults/**/*
+              retention-days: 7
     
     test_unit_success:
         runs-on: ubuntu-latest

@@ -12,5 +12,8 @@ public sealed class DatabasePool
         _pool = poolFactory.Create(policy);
     }
 
-    public PooledDatabase Get() => new(_pool);
+    public PooledDatabase Get()
+    {
+        return new(_pool);
+    }
 }

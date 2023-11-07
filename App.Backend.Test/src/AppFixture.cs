@@ -11,11 +11,13 @@ using App.Backend.Controllers;
 using Moq;
 using VMelnalksnis.NordigenDotNet;
 using App.Data.Migrations;
+using GraphQL.AspNet.Configuration;
 
 namespace App.Backend.Test;
 
 public class AppFixture : IAsyncDisposable
 {
+    private static readonly SemaphoreSlim _bootSemaphore = new(1, Environment.ProcessorCount);
     private readonly ISnapshotFullNameReader _testNameResolver;
     private readonly PooledDatabase _pooledDatabase;
     private readonly ILoggerProvider _loggerProvider;
@@ -46,6 +48,7 @@ public class AppFixture : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await _pooledDatabase.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 
     public void SeedData(Action<DatabaseContext> seedAction)
@@ -78,48 +81,57 @@ public class AppFixture : IAsyncDisposable
 
     private TestServer<GraphSchema> CreateServer()
     {
-        var builder = new TestServerBuilder<GraphSchema>();
-
-        // Mocks
-        builder.AddScoped((_) => NordigenClientMoq.Object);
-
-        // Load database
-        builder.RegisterDatabaseContainer();
-        builder.RegisterMigrationInitializer<DatabaseContext>();
-        builder.AddDatabase(
-            _pooledDatabase.ConnectionString,
-            o => o.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName));
-
-        // Configure logging
-        builder.AddLogging(loggingBuilder =>
+        _bootSemaphore.Wait();
+        try
         {
-            loggingBuilder.ClearProviders();
-            loggingBuilder.Services.AddSingleton(_loggerProvider);
-        });
+            var builder = new TestServerBuilder<GraphSchema>();
 
-        // App configuration
-        builder.AddAppServices();
-        builder.AddGraphQL(options =>
+            // Mocks
+            builder.AddScoped((_) => NordigenClientMoq.Object);
+
+            // Load database
+            builder.RegisterDatabaseContainer();
+            builder.RegisterMigrationInitializer<DatabaseContext>();
+            builder.AddDatabase(
+                _pooledDatabase.ConnectionString,
+                o => o.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName));
+
+            // Configure logging
+            builder.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.Services.AddSingleton(_loggerProvider);
+            });
+
+            // App configuration
+            builder.AddAppServices();
+            builder.AddGraphQL(options =>
+            {
+                options.AddController<InstitutionConnectionGetController>();
+                options.AddController<InstitutionConnectionListController>();
+                options.AddController<InstitutionConnectionCreateController>();
+                options.AddController<InstitutionConnectionDeleteController>();
+                options.AddController<InstitutionConnectionRefreshController>();
+                options.AddController<InstitutionConnectionExtensionController>();
+                options.AddController<InstitutionGetController>();
+                options.AddController<InstitutionListController>();
+                options.ResponseOptions.ExposeExceptions = true;
+                options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
+            });
+
+            // TODO handle non authorized test cases
+            builder.UserContext.Authenticate();
+
+            // Start server
+            var app = builder.Build();
+            _pooledDatabase.EnsureInitialized(app.ServiceProvider);
+
+            return app;
+        }
+        finally
         {
-            options.AddController<InstitutionConnectionGetController>();
-            options.AddController<InstitutionConnectionListController>();
-            options.AddController<InstitutionConnectionCreateController>();
-            options.AddController<InstitutionConnectionDeleteController>();
-            options.AddController<InstitutionConnectionRefreshController>();
-            options.AddController<InstitutionConnectionExtensionController>();
-            options.AddController<InstitutionGetController>();
-            options.AddController<InstitutionListController>();
-            options.ResponseOptions.ExposeExceptions = true;
-        });
-
-        // TODO handle non authorized test cases
-        builder.UserContext.Authenticate();
-
-        // Start server
-        var app = builder.Build();
-        _pooledDatabase.EnsureInitialized(app.ServiceProvider);
-
-        return app;
+            _bootSemaphore.Release();
+        }
     }
 
     private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)

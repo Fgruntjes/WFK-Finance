@@ -19,7 +19,10 @@ public class InstitutionConnectionCreateController : GraphController
 
     [Authorize]
     [Mutation("create", typeof(InstitutionConnection))]
-    public async Task<IGraphActionResult> Create(Guid institutionId, [FromGraphQL(TypeExpression = "Type!")] Uri returnUrl, CancellationToken cancellationToken = default)
+    public async Task<IGraphActionResult> Create(
+        Guid institutionId,
+        [FromGraphQL(TypeExpression = "Type!")] Uri returnUrl,
+        CancellationToken cancellationToken = default)
     {
         try
         {
