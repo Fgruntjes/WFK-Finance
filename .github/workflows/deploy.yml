@@ -47,9 +47,9 @@ jobs:
                   version: 8
                   run_install: false
                   package_json_file: frontend/package.json
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@v4
               with:
-                  node-version: 18
+                  node-version-file: frontend/package.json
                   cache: "pnpm"
                   cache-dependency-path: frontend/pnpm-lock.yaml
             - uses: benjlevesque/short-sha@v2.2
@@ -80,6 +80,9 @@ jobs:
             - uses: azure/login@v1
               with:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "~1.6.3"
             - uses: benjlevesque/short-sha@v2.2
               id: short-sha
               with:

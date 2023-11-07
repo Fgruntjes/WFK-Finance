@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Button, InlineLoading } from 'carbon-components-svelte';
 
-	export let isLoading: boolean = false;
-	export let disabled: boolean = false;
-	export let iconOnly: boolean = false;
+	export let isLoading = false;
+	export let disabled = false;
+	export let iconOnly = false;
 	export let icon: typeof import('svelte').SvelteComponent | undefined = undefined;
 	export let title: string;
 

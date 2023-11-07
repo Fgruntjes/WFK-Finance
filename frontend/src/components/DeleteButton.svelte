@@ -5,9 +5,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import Button from './Button.svelte';
 
-	type TQueryFunctionData = $$Generic;
-	type TQueryKey = $$Generic<QueryKey>;
-
 	export let title: string;
 	export let confirmation: string = $i18n.t('components.deletebutton.confirmation');
 	const showConfirmation = !!confirmation;

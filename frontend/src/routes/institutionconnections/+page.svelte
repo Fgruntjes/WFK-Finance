@@ -3,7 +3,6 @@
 	import PageBreadcrumbs from '@/components/PageBreadcrumbs.svelte';
 	import DeleteButton from '@/components/DeleteButton.svelte';
 	import { i18n } from '@/services/i18n';
-	import { SkeletonText } from 'carbon-components-svelte';
 	import RefreshButton from './+page/RefreshButton.svelte';
 	import AddButton from '@/components/AddButton.svelte';
 	import {
@@ -15,7 +14,6 @@
 		ToolbarContent
 	} from 'carbon-components-svelte';
 	import { graphql } from '$houdini';
-	import type { InstitutionConnectionsVariables } from './$houdini';
 	import { onMount } from 'svelte';
 
 	const tableHeaders = [
@@ -25,8 +23,8 @@
 	];
 
 	let selectedRowIds: ReadonlyArray<string> = [];
-	let page: number = 1;
-	let pageSize: number = 25;
+	let page = 1;
+	let pageSize = 25;
 
 	// TODO: If somebody is in the mood, please change to using fragments here. Sorry I am tired.
 	const data = graphql(`
@@ -70,7 +68,6 @@
 		}
 	`);
 
-	const handleDelete = (ids: string[]) => {};
 	const loadData = async () => {
 		await data.fetch({
 			variables: {
@@ -105,11 +102,8 @@
 				<DeleteButton
 					title={$i18n.t('institutionconnections:list.actions.delete.title')}
 					confirmation={$i18n.t('institutionconnections:list.actions.delete.confirmation', {
-						institution: selectedRowIds
-							.map((id) => $data.data?.institutionConnection?.list)
-							.join(', ')
+						institution: selectedRowIds.join(', ')
 					})}
-					on:delete={() => handleDelete(selectedRowIds.concat())}
 				/>
 			</ToolbarContent>
 		</Toolbar>
@@ -146,7 +140,6 @@
 					confirmation={$i18n.t('institutionconnections:list.actions.delete.confirmation', {
 						institution: institution?.name
 					})}
-					on:delete={() => handleDelete([row.id])}
 				/>
 			{:else}
 				{cell.value}

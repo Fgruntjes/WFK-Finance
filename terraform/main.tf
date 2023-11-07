@@ -7,7 +7,7 @@ terraform {
       version = "~> 3.78.0"
     }
     azuread = {
-      source  = "hashicorp/azurerm"
+      source  = "hashicorp/azuread"
       version = "~> 2.45.0"
     }
     mssql = {
@@ -38,8 +38,6 @@ provider "azurerm" {
   tenant_id       = var.arm_tenant_id
 }
 provider "azuread" {
-  features {}
-
   client_id     = var.arm_client_id
   client_secret = var.arm_client_secret
   tenant_id     = var.arm_tenant_id

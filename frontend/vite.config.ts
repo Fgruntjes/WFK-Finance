@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
 		}
 
 		if (!process.env[name]) {
-			throw new Error(`Missing environment variable: ${name}`);
+			return `__MISSING__${name}__`;
 		}
 
 		return JSON.stringify(process.env[name]);

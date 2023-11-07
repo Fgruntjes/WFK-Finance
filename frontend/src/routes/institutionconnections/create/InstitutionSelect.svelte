@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { graphql } from '$houdini';
+	import type { Guid } from '@/api/types/scalar';
 	import type { InstitutionsVariables } from './$houdini';
 	import { i18n } from '@/services/i18n';
 	import { Select, SelectItem, SelectSkeleton } from 'carbon-components-svelte';
 
-	export let countryIso2: string;
 	export let selectedId: Guid | undefined = undefined;
 	export const _InstitutionsVariables: InstitutionsVariables = ({ props: { countryIso2 } }) => {
 		return { countryIso2 };
@@ -29,12 +29,12 @@
 				const nameA = a.name;
 				const nameB = b.name;
 				if (!nameA) {
-					if (!!nameB) return -1;
+					if (nameB) return -1;
 					return 0;
 				}
 
 				if (!nameB) {
-					if (!!nameA) return 1;
+					if (nameA) return 1;
 					return 0;
 				}
 
