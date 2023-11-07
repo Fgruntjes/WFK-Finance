@@ -34,7 +34,7 @@ const initializeUseAuth0 = () => {
 				useRefreshTokens: true,
 				authorizationParams: {
 					redirect_uri: window.location.origin,
-					audience: import.meta.env.AUTH0_AUDIENCE,
+					audience: import.meta.env.AUTH0_AUDIENCE
 				}
 			});
 			auth0ClientStore.set(auth0Client);
@@ -45,7 +45,9 @@ const initializeUseAuth0 = () => {
 				if ((search.includes('code=') || search.includes('error=')) && search.includes('state=')) {
 					const loginResult = await auth0Client.handleRedirectCallback<AppState>();
 
-					goto(loginResult?.appState?.targetUrl ?? window.location.pathname, { replaceState: true });
+					goto(loginResult?.appState?.targetUrl ?? window.location.pathname, {
+						replaceState: true
+					});
 				}
 			} catch (err) {
 				errorStore.set(err as Error);
@@ -53,7 +55,7 @@ const initializeUseAuth0 = () => {
 				const isAuthenticated = await auth0Client.isAuthenticated();
 				isAuthenticatedStore.set(isAuthenticated || false);
 				if (isAuthenticated) {
-					accessTokenStore.set(await auth0Client.getTokenSilently() || null);
+					accessTokenStore.set((await auth0Client.getTokenSilently()) || null);
 				} else {
 					accessTokenStore.set(null);
 				}
@@ -70,7 +72,7 @@ const initializeUseAuth0 = () => {
 		},
 		logout: async (options?: LogoutOptions) => {
 			get(auth0ClientStore)?.logout(options);
-		},
+		}
 	};
 };
 

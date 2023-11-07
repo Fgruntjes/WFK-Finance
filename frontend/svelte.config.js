@@ -15,7 +15,7 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			'@': 'src',
-			'$houdini': '$houdini'
+			$houdini: '$houdini'
 		},
 		paths: {
 			relative: false
