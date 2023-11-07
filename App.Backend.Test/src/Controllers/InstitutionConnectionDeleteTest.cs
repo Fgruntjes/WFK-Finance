@@ -1,10 +1,12 @@
+using App.Data.Entity;
+
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnectionDeleteFixture>
+public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnectionFixture>
 {
-	private readonly InstitutionConnectionDeleteFixture _fixture;
+	private readonly InstitutionConnectionFixture _fixture;
 
-	public InstitutionConnectionDeleteTest(InstitutionConnectionDeleteFixture fixture)
+	public InstitutionConnectionDeleteTest(InstitutionConnectionFixture fixture)
 	{
 		_fixture = fixture;
 	}
@@ -12,10 +14,26 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
 	[Fact]
 	public async Task Success()
 	{
+		// Arrange
+		var institutionConnectionEntity = new InstitutionConnectionEntity
+		{
+			OrganisationId = _fixture.OrganisationId,
+			ConnectUrl = new Uri("https://www.example.com/connect-url/refresh"),
+			InstitutionId = _fixture.InstitutionEntity.Id,
+			ExternalId = "ed69f988-a1fb-4e89-8d56-66b42e43a675"
+		};
+		_fixture.SeedData(context =>
+		{
+			context.InstitutionConnections.Add(institutionConnectionEntity);
+		});
+
+		// Act
 		var result = await _fixture.ExecuteQuery(new
 		{
-			ConnectionIds = new List<Guid> { _fixture.InstitutionConnectionId }
+			ConnectionIds = new List<Guid> { institutionConnectionEntity.Id }
 		});
+
+		// Assert
 		result.MatchSnapshot();
 	}
 

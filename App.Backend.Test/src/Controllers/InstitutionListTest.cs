@@ -1,34 +1,51 @@
+using App.Data.Entity;
 using Moq;
 using VMelnalksnis.NordigenDotNet.Institutions;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionListTest : IClassFixture<InstitutionListFixture>
+public class InstitutionListTest : IClassFixture<AppFixture>
 {
-	private readonly InstitutionListFixture _fixture;
+	private readonly AppFixture _fixture;
 
-	public InstitutionListTest(InstitutionListFixture fixture)
+	public InstitutionListTest(AppFixture fixture)
 	{
 		_fixture = fixture;
 	}
 
 	[Fact]
-	public async Task CountryLinkedNld()
+	public async Task CountryLinked()
 	{
-		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "NL" });
-		result.MatchSnapshot();
-	}
+		// Arrange
+		var institutionNldLinked = new InstitutionEntity()
+		{
+			Name = "MyFakeName-NL",
+			ExternalId = "SomeExternalId-NL",
+			CountryIso2 = "NL"
+		};
+		var institutionUsaLinked = new InstitutionEntity()
+		{
+			Name = "MyFakeName-US",
+			ExternalId = "SomeExternalId-US",
+			CountryIso2 = "US"
+		};
+		_fixture.SeedData(context =>
+		{
+			context.Institutions.Add(institutionNldLinked);
+			context.Institutions.Add(institutionUsaLinked);
+		});
 
-	[Fact]
-	public async Task CountryLinkedUsa()
-	{
-		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "US" });
+		// Act
+		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "NL" });
+
+		// Assert
 		result.MatchSnapshot();
 	}
 
 	[Fact]
 	public async Task CallRefreshWhenMissing()
 	{
+		// Arrange
 		var institutionsMock = new Mock<IInstitutionClient>();
 		institutionsMock
 			.Setup(i => i.GetByCountry("GBR", It.IsAny<CancellationToken>()))
@@ -43,7 +60,10 @@ public class InstitutionListTest : IClassFixture<InstitutionListFixture>
 			.SetupGet(c => c.Institutions)
 			.Returns(institutionsMock.Object);
 
+		// Act
 		var result = await _fixture.ExecuteQuery(new { CountryIso2 = "GBR" });
+
+		// Arrange
 		result.MatchSnapshot();
 	}
 }

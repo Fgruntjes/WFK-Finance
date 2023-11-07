@@ -1,32 +1,29 @@
-using App.Backend.Controllers;
+using App.Backend.Test.Database;
 using App.Data.Entity;
-using Xunit.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionConnectionListFixture : AppFixture<InstitutionConnectionListController>
+public class InstitutionConnectionListFixture : InstitutionConnectionFixture
 {
-    public InstitutionConnectionListFixture(IMessageSink logMessageSink)
-        : base(logMessageSink)
+    public InstitutionConnectionListFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
+        : base(databasePool, loggerProvider)
     {
-        var institutionsAddResult = Database.Institutions.Add(new InstitutionEntity()
-        {
-            ExternalId = "SomeExternalId",
-            Name = "Some Institution Name",
-            CountryIso2 = "NL",
-        });
-
+        var connectionList = new List<InstitutionConnectionEntity>();
         for (int i = 0; i < 30; i++)
         {
-            var entity = Database.InstitutionConnections.Add(new InstitutionConnectionEntity()
+            connectionList.Add(new InstitutionConnectionEntity()
             {
-                ExternalId = $"SomeExternalId-organisation-match-{i}",
-                ConnectUrl = new Uri($"https://www.example-organisation-match-{i}.com/"),
-                InstitutionId = institutionsAddResult.Entity.Id,
+                ExternalId = $"SomeExternalId-organisation-list-{i}",
+                ConnectUrl = new Uri($"https://www.example-organisation-list-{i}.com/"),
+                InstitutionId = InstitutionEntity.Id,
                 OrganisationId = OrganisationId,
             });
         }
 
-        Database.SaveChanges();
+        SeedData(context =>
+        {
+            context.InstitutionConnections.AddRange(connectionList);
+        });
     }
 }

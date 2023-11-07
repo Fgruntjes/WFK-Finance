@@ -1,60 +1,67 @@
 using App.Data;
 using App.Backend.Startup;
-using GraphQL.AspNet.Controllers;
 using GraphQL.AspNet.Execution.Contexts;
 using GraphQL.AspNet.Schemas;
 using GraphQL.AspNet.Tests.Framework;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.Core;
-using Xunit.Abstractions;
-using GraphQL.AspNet.Configuration;
-using Xunit.DependencyInjection.Logging;
+using App.Backend.Test.Database;
+using Microsoft.Extensions.Logging;
+using App.Backend.Controllers;
+using Moq;
+using VMelnalksnis.NordigenDotNet;
+using App.Data.Migrations;
 
 namespace App.Backend.Test;
 
-public class AppFixture<TController>
-	where TController : GraphController
+public class AppFixture : IAsyncDisposable
 {
 	private readonly ISnapshotFullNameReader _testNameResolver;
-	private readonly TestServerBuilder<GraphSchema> _builder;
+	private readonly PooledDatabase _pooledDatabase;
+	private readonly ILoggerProvider _loggerProvider;
 	private TestServer<GraphSchema>? _server;
 
-	public TestServer<GraphSchema> Server => _server ??= _builder.Build();
-	public DatabaseContext Database => Server.ServiceProvider.GetRequiredService<DatabaseContext>();
-	public Guid OrganisationId => Server.ServiceProvider.GetRequiredService<AppHttpContext>().OrganisationId();
+	public TestServer<GraphSchema> Server
+	{
+		get
+		{
+			_server ??= CreateServer();
 
-	public AppFixture(IMessageSink logMessageSink)
+			return _server;
+		}
+	}
+	public IServiceProvider Services => Server.ServiceProvider;
+	public Mock<INordigenClient> NordigenClientMoq { get; private set; }
+	public Guid OrganisationId => Services.GetRequiredService<OrganisationIdProvider>().OrganisationId;
+
+	public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
 	{
 		_testNameResolver = new XunitSnapshotFullNameReader();
+		_pooledDatabase = databasePool.Get();
+		_loggerProvider = loggerProvider;
 
-		var builder = new TestServerBuilder<GraphSchema>();
-		// Allow other fixutres to register mocks
-		RegisterMocks(builder);
+		NordigenClientMoq = new Mock<INordigenClient>();
+	}
 
-		// Pass logging to xunit output
-		builder.AddLogging(loggingBuilder =>
+	public async ValueTask DisposeAsync()
+	{
+		await _pooledDatabase.DisposeAsync();
+	}
+
+	public void SeedData(Action<DatabaseContext> seedAction)
+	{
+		WithData(context =>
 		{
-			loggingBuilder.AddXunitOutput();
+			seedAction(context);
+			context.SaveChanges();
 		});
+	}
 
-		// Load database
-		builder.AddDbContext<DatabaseContext>(options =>
-		{
-			options.UseInMemoryDatabase(Guid.NewGuid().ToString());
-		});
-
-		// App configuration
-		builder.AddAppServices();
-		builder.AddGraphQL(options =>
-		{
-			ConfigureGraphQL(options);
-		});
-
-		// TODO handle non authorized test cases
-		builder.UserContext.Authenticate();
-
-		_builder = builder;
+	public void WithData(Action<DatabaseContext> assertAction)
+	{
+		using var scope = Services.CreateScope();
+		var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+		assertAction(context);
 	}
 
 	public async Task<string> ExecuteQuery(string? queryFile, object? variables = null)
@@ -69,15 +76,50 @@ public class AppFixture<TController>
 		return await Server.RenderResult(context);
 	}
 
-	protected virtual void RegisterMocks(IServiceCollection services)
+	private TestServer<GraphSchema> CreateServer()
 	{
+		var builder = new TestServerBuilder<GraphSchema>();
 
-	}
+		// Mocks
+		builder.AddScoped((_) => NordigenClientMoq.Object);
 
-	protected virtual void ConfigureGraphQL(SchemaOptions options)
-	{
-		options.AddController<TController>();
-		options.ResponseOptions.ExposeExceptions = true;
+		// Load database
+		builder.RegisterDatabaseContainer();
+		builder.RegisterMigrationInitializer<DatabaseContext>();
+		builder.AddDatabase(
+			_pooledDatabase.ConnectionString,
+			o => o.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName));
+
+		// Configure logging
+		builder.AddLogging(loggingBuilder =>
+		{
+			loggingBuilder.ClearProviders();
+			loggingBuilder.Services.AddSingleton(_loggerProvider);
+		});
+
+		// App configuration
+		builder.AddAppServices();
+		builder.AddGraphQL(options =>
+		{
+			options.AddController<InstitutionConnectionGetController>();
+			options.AddController<InstitutionConnectionListController>();
+			options.AddController<InstitutionConnectionCreateController>();
+			options.AddController<InstitutionConnectionDeleteController>();
+			options.AddController<InstitutionConnectionRefreshController>();
+			options.AddController<InstitutionConnectionExtensionController>();
+			options.AddController<InstitutionGetController>();
+			options.AddController<InstitutionListController>();
+			options.ResponseOptions.ExposeExceptions = true;
+		});
+
+		// TODO handle non authorized test cases
+		builder.UserContext.Authenticate();
+
+		// Start server
+		var app = builder.Build();
+		_pooledDatabase.EnsureInitialized(app.ServiceProvider);
+
+		return app;
 	}
 
 	private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)

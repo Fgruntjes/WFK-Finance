@@ -2,8 +2,8 @@
   "data": {
     "institutionConnection": {
       "refreshId": {
-        "externalId": "ed69f988-a1fb-4e89-8d56-66b42e43a675",
-        "connectUrl": "https://www.example.com/connect-url/refresh",
+        "externalId": "82185ec1-75d6-43dc-96ec-9d54ee7bc683",
+        "connectUrl": "https://www.example-organisation-match-0.com/"
       }
     }
   }
