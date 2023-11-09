@@ -17,7 +17,7 @@ namespace App.Backend.Test;
 
 public class AppFixture : IAsyncDisposable
 {
-    private static readonly SemaphoreSlim _bootSemaphore = new(1, Environment.ProcessorCount);
+    private static readonly SemaphoreSlim _bootSemaphore = new(Environment.ProcessorCount);
     private readonly ISnapshotFullNameReader _testNameResolver;
     private readonly PooledDatabase _pooledDatabase;
     private readonly ILoggerProvider _loggerProvider;

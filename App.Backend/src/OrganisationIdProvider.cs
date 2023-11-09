@@ -19,6 +19,10 @@ public class OrganisationIdProvider
 
     public async Task<Guid> OrganisationIdAsync(CancellationToken cancellationToken = default)
     {
+        Console.WriteLine(
+            "### Started OrganisationIdProvider.OrganisationIdAsync on ContextId {0} Database {1}",
+            _database.ContextId,
+            _database.Database.GetDbConnection().Database);
         await _database.Organisations
             .Upsert(new Data.Entity.OrganisationEntity
             {

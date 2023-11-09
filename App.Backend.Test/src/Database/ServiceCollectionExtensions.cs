@@ -29,7 +29,10 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPooledObjectPolicy<IDatabase>, MsSqlDatabasePoolPolicy>();
 
         var container = new MsSqlBuilder().Build();
-        Utils.RunWithoutSynchronizationContext(() => container.StartAsync().Wait());
+        Utils.RunWithoutSynchronizationContext(() =>
+        {
+            container.StartAsync().Wait();
+        });
         services.AddSingleton(container);
     }
 }

@@ -1,5 +1,8 @@
+using System.Diagnostics;
 using App.Backend.Test.Database;
 using App.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
 
