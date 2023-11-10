@@ -1,8 +1,6 @@
-using System.Diagnostics;
+using App.Backend.Test.Controllers;
 using App.Backend.Test.Database;
 using App.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
 
@@ -16,6 +14,9 @@ public static class Startup
         services.AddLogging(x => x.AddXunitOutput());
 
         services.AddScoped<AppFixture>();
+        services.AddScoped<InstitutionConnectionFixture>();
+        services.AddScoped<InstitutionConnectionListFixture>();
+        services.AddScoped<InstitutionConnectionRefreshFixture>();
         services.RegisterMigrationInitializer<DatabaseContext>();
     }
 }
