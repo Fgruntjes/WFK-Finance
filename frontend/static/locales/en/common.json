@@ -1,0 +1,26 @@
+{
+	"routes": {
+		"home": "Dashboard",
+		"create": "Create",
+		"institutionconnections": "Bank accounts"
+	},
+	"table": {
+		"actions": {
+			"delete": "Delete",
+			"add": "Add"
+		}
+	},
+	"components": {
+		"addbutton": {
+			"label": "Add"
+		},
+		"deletebutton": {
+			"delete": "Delete",
+			"cancel": "Cancel",
+			"confirmation": "This is a permanent action and cannot be undone."
+		},
+		"countryselect": {
+			"label": "Select country"
+		}
+	}
+}

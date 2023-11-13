@@ -1,0 +1,10 @@
+query institutionConnections($Id: Guid!){
+	institutionConnection {
+		get(id: $Id) {
+			externalId
+            institution {
+                name
+            }
+		}
+	}
+}

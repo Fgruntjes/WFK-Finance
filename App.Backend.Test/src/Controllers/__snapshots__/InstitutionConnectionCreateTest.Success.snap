@@ -1,0 +1,10 @@
+﻿{
+  "data": {
+    "institutionConnection": {
+      "create": {
+        "externalId": "SomeExternalId-organisation-match-0",
+        "connectUrl": "https://www.example-organisation-match-0.com/"
+      }
+    }
+  }
+}

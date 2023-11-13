@@ -1,0 +1,29 @@
+{
+	"list": {
+		"title": "Bank connections",
+		"description": "Manage connected bank accounts",
+		"header": {
+			"institution": "Institusion",
+			"accounts": "Accounts",
+			"actions": "Actions"
+		},
+		"actions": {
+			"refresh": "Refresh",
+			"delete": {
+				"title": "Delete",
+				"confirmation": "Are you sure you want to connection to {{institution}}? This action cannot be undone."
+			}
+		}
+	},
+	"create": {
+		"title": "Connect bank account(s)",
+		"bankselect": "Select your bank",
+		"submit": "Connect"
+	},
+	"create-return": {
+		"title": "Connected bank account(s)",
+		"institution": "Institution",
+		"account": "Account",
+		"return": "Return to list"
+	}
+}

@@ -1,35 +1,38 @@
-# vue
+# create-svelte
 
-This template should help get you started developing with Vue 3 in Vite.
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-## Recommended IDE Setup
+## Creating a project
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur).
+If you're seeing this, you've probably already done this step. Congrats!
 
-## Type Support for `.vue` Imports in TS
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates.
-
-However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can run `Volar: Switch TS Plugin on/off` from VSCode command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+# create a new project in my-app
+npm create svelte@latest my-app
 ```
 
-### Compile and Hot-Reload for Development
+## Developing
 
-```sh
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
 npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-### Type-Check, Compile and Minify for Production
+## Building
 
-```sh
+To create a production version of your app:
+
+```bash
 npm run build
 ```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

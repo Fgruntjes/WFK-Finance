@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "backend",
+            "type": "dotnetwatchattach",
+            "request": "launch",
+            "args": {
+                "env": {
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                }
+            },
+            "task": "dev",
+            "program": "App.Backend"
+        },
+        {
+            "name": "deploy",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "justMyCode": false,
+            "preLaunchTask": "deploy",
+        }
+    ]
+}

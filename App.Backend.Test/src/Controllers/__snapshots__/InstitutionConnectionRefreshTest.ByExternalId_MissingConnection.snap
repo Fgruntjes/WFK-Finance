@@ -1,0 +1,27 @@
+﻿{
+  "errors": [
+    {
+      "message": "Connection not found",
+      "locations": [
+        {
+          "line": 3,
+          "column": 3
+        }
+      ],
+      "path": [
+        "institutionConnection",
+        "refreshExternalId"
+      ],
+      "extensions": {
+        "code": "BAD_REQUEST",
+        "timestamp": "2023-09-19T19:44:20.927+02:00",
+        "severity": "CRITICAL"
+      }
+    }
+  ],
+  "data": {
+    "institutionConnection": {
+      "refreshExternalId": null
+    }
+  }
+}

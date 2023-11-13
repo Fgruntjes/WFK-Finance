@@ -1,0 +1,116 @@
+name: Deploy
+on:
+    push:
+        branches:
+            - main
+            - beta
+            - alpha
+
+permissions:
+    contents: read
+    id-token: write
+    deployments: write
+
+jobs:
+    build_backend:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: true
+            matrix:
+                target:
+                    - App.Backend
+                    - App.Data.Migrations
+        steps:
+            - uses: actions/checkout@v3
+            - uses: docker/setup-buildx-action@v2
+            - uses: crazy-max/ghaction-github-runtime@v3
+            - uses: azure/login@v1
+              with:
+                  creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
+            - uses: benjlevesque/short-sha@v2.2
+              id: short-sha
+              with:
+                  length: 6
+            - run: ./build.sh ${{ matrix.target }}
+              env:
+                  APP_VERSION: "${{ steps.short-sha.outputs.sha }}"
+                  APP_ENVIRONMENT: "${{ github.ref_name }}"
+
+    build_frontend:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v3
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+                  run_install: false
+                  package_json_file: frontend/package.json
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: frontend/package.json
+                  cache: "pnpm"
+                  cache-dependency-path: frontend/pnpm-lock.yaml
+            - uses: benjlevesque/short-sha@v2.2
+              id: short-sha
+              with:
+                  length: 6
+            - run: ./build.sh frontend
+              env:
+                  APP_VERSION: "${{ steps.short-sha.outputs.sha }}"
+                  APP_ENVIRONMENT: "${{ github.ref_name }}"
+            - uses: actions/upload-artifact@v3
+              with:
+                  name: frontend_build
+                  path: frontend/build
+
+    deploy:
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        permissions:
+            contents: read
+            pull-requests: write
+        needs:
+            - build_backend
+            - build_frontend
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/download-artifact@v3
+              with:
+                  name: frontend_build
+                  path: frontend/build
+            - uses: azure/login@v1
+              with:
+                  creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "~1.6.3"
+            - uses: benjlevesque/short-sha@v2.2
+              id: short-sha
+              with:
+                  length: 6
+            - run: ./deploy.sh
+              env:
+                  APP_VERSION: "${{ steps.short-sha.outputs.sha }}"
+                  APP_ENVIRONMENT: "${{ github.ref_name }}"
+                  ARM_LOCATION: "${{ vars.ARM_LOCATION }}"
+                  ARM_CLIENT_ID: "${{ vars.ARM_CLIENT_ID }}"
+                  ARM_CLIENT_SECRET: "${{ secrets.ARM_CLIENT_SECRET }}"
+                  ARM_SUBSCRIPTION_ID: "${{ vars.ARM_SUBSCRIPTION_ID }}"
+                  ARM_TENANT_ID: "${{ vars.ARM_TENANT_ID }}"
+                  AUTH0_DOMAIN: "${{ vars.AUTH0_DOMAIN }}"
+                  AUTH0_CLIENT_ID: "${{ vars.AUTH0_CLIENT_ID }}"
+                  AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+                  NORDIGEN_SECRET_ID: "${{ vars.NORDIGEN_SECRET_ID }}"
+                  NORDIGEN_SECRET_KEY: "${{ secrets.NORDIGEN_SECRET_KEY }}"
+            - uses: actions/upload-artifact@v3
+              if: failure()
+              with:
+                  name: deploy_logs
+                  path: terraform/*.log
+                  retention-days: 7
