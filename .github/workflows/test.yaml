@@ -1,4 +1,4 @@
-name: Code quality
+name: Test
 on:
     pull_request:
 
@@ -76,3 +76,37 @@ jobs:
                       '${{ needs.test_quality_frontend.result }}' == 'success' &&
                       '${{ needs.test_quality_terraform.result }}' == 'success'
                   ]]
+
+    #########################################################
+    # Project tests
+    #########################################################
+    test_dotnet:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        permissions:
+            contents: read
+            checks: write
+            pull-requests: write
+            statuses: write
+        steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-dotnet@v3
+          with:
+              dotnet-version: 7.0
+        - run: dotnet build App.Backend.Test
+        - run: |
+            dotnet test \
+                --no-build \
+                --blame \
+                --blame-hang-timeout 2m
+
+    test_success:
+        runs-on: ubuntu-latest
+        needs:
+        - test_dotnet
+        if: ${{ always() }}
+        steps:
+        -   run: |
+                [[
+                    '${{ needs.test_dotnet.result }}' == 'success'
+                ]]
