@@ -44,7 +44,8 @@ public class AppFixture : IAsyncDisposable
 
         NordigenClientMoq = new Mock<INordigenClient>();
 
-        SeedData(context => {
+        SeedData(context =>
+        {
             var orgId = Server.ServiceProvider.GetRequiredService<OrganisationIdProvider>().OrganisationId;
             context.Organisations.Add(new Data.Entity.OrganisationEntity
             {
@@ -99,7 +100,8 @@ public class AppFixture : IAsyncDisposable
         builder.RegisterMigrationInitializer<DatabaseContext>();
         builder.AddDatabase(
             _database.ConnectionString,
-            databaseOptions => {
+            databaseOptions =>
+            {
                 databaseOptions.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName);
             });
 
