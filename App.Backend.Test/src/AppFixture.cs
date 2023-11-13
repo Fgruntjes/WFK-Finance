@@ -18,7 +18,7 @@ namespace App.Backend.Test;
 public class AppFixture : IAsyncDisposable
 {
     private readonly ISnapshotFullNameReader _testNameResolver;
-    private readonly PooledDatabase _pooledDatabase;
+    private readonly PooledDatabase _database;
     private readonly ILoggerProvider _loggerProvider;
     private TestServer<GraphSchema>? _server;
     private static readonly object _buildLock = new();
@@ -39,7 +39,7 @@ public class AppFixture : IAsyncDisposable
     public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
         _testNameResolver = new XunitSnapshotFullNameReader();
-        _pooledDatabase = databasePool.Get();
+        _database = databasePool.Get();
         _loggerProvider = loggerProvider;
 
         NordigenClientMoq = new Mock<INordigenClient>();
@@ -56,7 +56,7 @@ public class AppFixture : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await _pooledDatabase.DisposeAsync();
+        await _database.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 
@@ -96,11 +96,12 @@ public class AppFixture : IAsyncDisposable
         builder.AddScoped((_) => NordigenClientMoq.Object);
 
         // Load database
-        builder.RegisterDatabaseContainer();
         builder.RegisterMigrationInitializer<DatabaseContext>();
         builder.AddDatabase(
-            _pooledDatabase.ConnectionString,
-            o => o.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName));
+            _database.ConnectionString,
+            databaseOptions => {
+                databaseOptions.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName);
+            });
 
         // Configure logging
         builder.AddLogging(loggingBuilder =>
@@ -134,7 +135,7 @@ public class AppFixture : IAsyncDisposable
         {
             app = builder.Build();
         }
-        _pooledDatabase.EnsureInitialized(app.ServiceProvider);
+        _database.EnsureInitialized(app.ServiceProvider);
 
         return app;
     }

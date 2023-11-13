@@ -6,12 +6,15 @@ namespace App.Data;
 
 public static class DatabaseConfiguration
 {
-    public static void AddDatabase(this IServiceCollection services, string connectionString, Action<SqlServerDbContextOptionsBuilder>? configAction = null)
+    public static void AddDatabase(
+        this IServiceCollection services,
+        string connectionString,
+        Action<SqlServerDbContextOptionsBuilder>? configAction = null)
     {
-        services.AddSqlServer<DatabaseContext>(connectionString, o =>
+        services.AddSqlServer<DatabaseContext>(connectionString, optionsBuilder =>
         {
-            o.UseNodaTime();
-            configAction?.Invoke(o);
+            optionsBuilder.UseNodaTime();
+            configAction?.Invoke(optionsBuilder);
         });
     }
 }

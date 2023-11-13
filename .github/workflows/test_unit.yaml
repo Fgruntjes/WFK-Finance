@@ -21,7 +21,7 @@ jobs:
               dotnet-version: 7.0
         - run: dotnet build App.Backend.Test
         - run: |
-            dotnet test
+            dotnet test \
                 --no-build \
                 --blame \
                 --blame-hang-timeout 2m
