@@ -64,20 +64,34 @@ jobs:
               env:
                   APP_VERSION: "${{ steps.short-sha.outputs.sha }}"
                   APP_ENVIRONMENT: "${{ github.ref_name }}"
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-pages-artifact@v2
               with:
-                  name: frontend_build
                   path: frontend/build
+    
+    # Deploy
+    deploy_frontend:
+        needs: build_frontend
+    
+        permissions:
+            pages: write
+            id-token: write
+    
+        environment:
+            name: ${{ github.ref_name }}
+            url: ${{ steps.deployment.outputs.page_url }}
 
-    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - id: deployment
+              uses: actions/deploy-pages@v2
+
+    deploy_backend:
         runs-on: ubuntu-latest
         timeout-minutes: 60
         permissions:
             contents: read
             pull-requests: write
-        needs:
-            - build_backend
-            - build_frontend
+        needs: build_backend
         steps:
             - uses: actions/checkout@v3
             - uses: actions/download-artifact@v3
