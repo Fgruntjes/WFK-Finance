@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 
 # Cleanup when exit
 function clean_up {
@@ -37,7 +37,7 @@ function run_backend {
 
 function run_frontend {
     echo "### Starting frontend"
-    cd frontend
+    cd frontend || exit 1
     npm run dev
     echo "### Frontend closed"
 
