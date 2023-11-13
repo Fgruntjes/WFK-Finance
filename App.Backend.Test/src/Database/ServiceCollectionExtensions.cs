@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
         Utils.RunWithoutSynchronizationContext(() =>
         {
             container.StartAsync().Wait();
-        });https://www.youtube.com/watch?v=slL7AW9q8Fchttps://www.youtube.com/watch?v=slL7AW9q8Fc
+        });
         services.AddSingleton(container);
     }
 }
