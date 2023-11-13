@@ -37,7 +37,6 @@ public sealed class MsSqlDatabase : IDatabase
             await conn.OpenAsync();
 
             _respawner ??= await Respawner.CreateAsync(conn, _respawnerOptions);
-
             await _respawner.ResetAsync(conn);
         }
     }

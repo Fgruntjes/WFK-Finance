@@ -11,15 +11,17 @@ using App.Backend.Controllers;
 using Moq;
 using VMelnalksnis.NordigenDotNet;
 using App.Data.Migrations;
+using GraphQL.AspNet.Configuration;
 
 namespace App.Backend.Test;
 
 public class AppFixture : IAsyncDisposable
 {
     private readonly ISnapshotFullNameReader _testNameResolver;
-    private readonly PooledDatabase _pooledDatabase;
+    private readonly PooledDatabase _database;
     private readonly ILoggerProvider _loggerProvider;
     private TestServer<GraphSchema>? _server;
+    private static readonly object _buildLock = new();
 
     public TestServer<GraphSchema> Server
     {
@@ -37,15 +39,26 @@ public class AppFixture : IAsyncDisposable
     public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
         _testNameResolver = new XunitSnapshotFullNameReader();
-        _pooledDatabase = databasePool.Get();
+        _database = databasePool.Get();
         _loggerProvider = loggerProvider;
 
         NordigenClientMoq = new Mock<INordigenClient>();
+
+        SeedData(context =>
+        {
+            var orgId = Server.ServiceProvider.GetRequiredService<OrganisationIdProvider>().OrganisationId;
+            context.Organisations.Add(new Data.Entity.OrganisationEntity
+            {
+                Id = orgId,
+                Slug = "single-organisation"
+            });
+        });
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _pooledDatabase.DisposeAsync();
+        await _database.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 
     public void SeedData(Action<DatabaseContext> seedAction)
@@ -84,11 +97,13 @@ public class AppFixture : IAsyncDisposable
         builder.AddScoped((_) => NordigenClientMoq.Object);
 
         // Load database
-        builder.RegisterDatabaseContainer();
         builder.RegisterMigrationInitializer<DatabaseContext>();
         builder.AddDatabase(
-            _pooledDatabase.ConnectionString,
-            o => o.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName));
+            _database.ConnectionString,
+            databaseOptions =>
+            {
+                databaseOptions.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName);
+            });
 
         // Configure logging
         builder.AddLogging(loggingBuilder =>
@@ -110,14 +125,19 @@ public class AppFixture : IAsyncDisposable
             options.AddController<InstitutionGetController>();
             options.AddController<InstitutionListController>();
             options.ResponseOptions.ExposeExceptions = true;
+            options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
         });
 
         // TODO handle non authorized test cases
         builder.UserContext.Authenticate();
 
         // Start server
-        var app = builder.Build();
-        _pooledDatabase.EnsureInitialized(app.ServiceProvider);
+        TestServer<GraphSchema> app;
+        lock (_buildLock)
+        {
+            app = builder.Build();
+        }
+        _database.EnsureInitialized(app.ServiceProvider);
 
         return app;
     }
@@ -127,7 +147,7 @@ public class AppFixture : IAsyncDisposable
         var queryText = LoadQueryFile(queryFile);
         var queryBuilder = Server.CreateQueryContextBuilder();
         queryBuilder.AddQueryText(queryText);
-        //queryBuilder.AddUserSecurityContext();
+
         if (variables != null)
         {
             queryBuilder.AddVariableData(variables);

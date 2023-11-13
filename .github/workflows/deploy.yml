@@ -15,6 +15,8 @@ jobs:
     build_backend:
         runs-on: ubuntu-latest
         timeout-minutes: 10
+        permissions:
+            contents: read
         strategy:
             fail-fast: true
             matrix:
@@ -40,6 +42,8 @@ jobs:
     build_frontend:
         runs-on: ubuntu-latest
         timeout-minutes: 10
+        permissions:
+            contents: read
         steps:
             - uses: actions/checkout@v3
             - uses: pnpm/action-setup@v2
@@ -68,6 +72,9 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         timeout-minutes: 60
+        permissions:
+            contents: read
+            pull-requests: write
         needs:
             - build_backend
             - build_frontend
@@ -101,9 +108,8 @@ jobs:
                   AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
                   NORDIGEN_SECRET_ID: "${{ vars.NORDIGEN_SECRET_ID }}"
                   NORDIGEN_SECRET_KEY: "${{ secrets.NORDIGEN_SECRET_KEY }}"
-            - name: Upload artifacts on failure
+            - uses: actions/upload-artifact@v3
               if: failure()
-              uses: actions/upload-artifact@v3
               with:
                   name: deploy_logs
                   path: terraform/*.log

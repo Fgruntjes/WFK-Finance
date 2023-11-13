@@ -1,3 +1,4 @@
+using App.Backend.Test.Controllers;
 using App.Backend.Test.Database;
 using App.Data;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,9 @@ public static class Startup
         services.AddLogging(x => x.AddXunitOutput());
 
         services.AddScoped<AppFixture>();
+        services.AddScoped<InstitutionConnectionFixture>();
+        services.AddScoped<InstitutionConnectionListFixture>();
+        services.AddScoped<InstitutionConnectionRefreshFixture>();
         services.RegisterMigrationInitializer<DatabaseContext>();
     }
 }
