@@ -68,6 +68,9 @@ az role assignment create \
     --scope "${ARM_ACR_REGISTRY_ID}" \
     --role AcrPush
 
+# Ensure pages is set to workflow
+gh api -X PUT "/repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow
+
 # Ensure Github secrets are set
 echo "Creating github secrets"
 function storeSecret {

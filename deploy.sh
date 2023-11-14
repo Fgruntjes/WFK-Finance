@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # Terraform wrapper that loads env variables and passes them to terraform
 
-set -e
-
 cd "$(dirname "$(realpath "$0")")"
 
 # Load env variables
@@ -18,6 +16,7 @@ set +a
 cd "terraform"
 
 set -x
+set -e
 
 ARM_STORAGE_ACCOUNT_NAME=$(echo "${APP_PROJECT_SLUG}-terraform" | sed "s/-//g")
 ACTION=${1:-"apply"}
@@ -38,10 +37,14 @@ else
         -input=false
 fi
 
+GITHUB_REPOSITORY_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1 | tr '[:upper:]' '[:lower:]')
+GITHUB_REPOSITORY_NAME=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f2)
+
 cat >variables.tfvars <<EOF
 app_project_slug = "${APP_PROJECT_SLUG}"
 app_environment = "${APP_ENVIRONMENT}"
 app_version = "${APP_VERSION}"
+app_frontend_url = "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY_NAME}"
 arm_location = "${ARM_LOCATION}"
 arm_tenant_id = "${ARM_TENANT_ID}"
 arm_subscription_id = "${ARM_SUBSCRIPTION_ID}"
@@ -56,24 +59,36 @@ EOF
 cat variables.tfvars
 
 function doAction {
+    set -e
+
     if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
         terraform "plan" \
             -out="tfplan" \
             -var-file="variables.tfvars" \
             -input=false \
-            "${@:2}"
+            "${@:2}" || exit 1
 
         if [[ "${ACTION}" == "apply" ]]; then
             terraform apply \
                 -auto-approve \
-                "tfplan"
+                "tfplan" || exit 1
+
+            # Output variables to github ci
+            if [[ -z "${GITHUB_OUTPUT}" ]]; then
+                GITHUB_OUTPUT=".github_output"
+            fi
+
+            terraform output -json | jq -r 'to_entries[] | "\(.key)=\(.value.value)"' | while read -r OUTPUT_LINE; do
+                VARIABLE_KEY=$(echo "$OUTPUT_LINE" | cut -d'=' -f1)
+                VARIABLE_VALUE=$(echo "$OUTPUT_LINE" | cut -d'=' -f2)
+                echo "$VARIABLE_KEY=$VARIABLE_VALUE" >>"$GITHUB_OUTPUT"
+            done
+
+            echo "Github output:"
+            cat "$GITHUB_OUTPUT"
         fi
     elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
         terraform "${ACTION}" \
-            -var-file="variables.tfvars" \
-            "${@:2}"
-    elif [[ "${ACTION}" == "destroy" ]]; then
-        terraform import \
             -var-file="variables.tfvars" \
             "${@:2}"
     else
@@ -86,7 +101,7 @@ if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
     if ! doAction "${@}"; then
         echo "# Terraform failed, try again"
 
-        doAction "${@}"
+        doAction "${@}" || exit 1
     fi
 else
     doAction "${@}"

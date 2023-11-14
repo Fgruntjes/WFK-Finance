@@ -1,0 +1,25 @@
+name: Cleanup Registry
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 * * *'
+
+jobs:
+    cleanup:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: azure/login@v1
+              with:
+                  creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
+            - uses: azure/CLI@v1
+              with:
+                  azcliversion: 2.54.0
+                  inlineScript: |
+                      APP_PROJECT_SLUG="${{ vars.APP_PROJECT_SLUG }}"
+                      APP_STORAGE_SLUG=${APP_PROJECT_SLUG//-/}
+                      az acr run \
+                        --registry ${APP_STORAGE_SLUG} \
+                        --cmd \
+                        'acr purge --untagged --keep 2 --filter .*:.* --ago 1h' \
+                         /dev/null
