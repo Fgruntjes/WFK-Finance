@@ -19,7 +19,7 @@ jobs:
                       APP_PROJECT_SLUG="${{ vars.APP_PROJECT_SLUG }}"
                       APP_STORAGE_SLUG=${APP_PROJECT_SLUG//-/}
                       az acr run \
-                        --registry wfkfinance \
+                        --registry ${APP_STORAGE_SLUG} \
                         --cmd \
-                        'acr purge --untagged --keep 2 --filter .*:.*' \
+                        'acr purge --untagged --keep 2 --filter .*:.* --ago 1h' \
                          /dev/null
