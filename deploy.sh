@@ -87,6 +87,14 @@ function doAction {
             echo "Github output:"
             cat "$GITHUB_OUTPUT"
         fi
+    elif [[ "${ACTION}" == "destroy" ]]; then
+        if [[ "${APP_ENVIRONMENT}" == "main" ]]; then
+            echo "Main environment can not be destroyed"
+            exit 1
+        fi
+        terraform destroy \
+            -var-file="variables.tfvars" \
+            "${@:2}"
     elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
         terraform "${ACTION}" \
             -var-file="variables.tfvars" \
