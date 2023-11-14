@@ -1,0 +1,62 @@
+name: Integration tests
+on:
+    pull_request:
+
+jobs:
+    deploy_slug:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: rlespinasse/github-slug-action@v4
+            - id: environment
+              run: echo "var=${{ env.GITHUB_REF_SLUG_URL }}" >> $GITHUB_OUTPUT
+            - id: tag
+              run: echo "var=${{ env.GITHUB_SHA_SHORT }}" >> $GITHUB_OUTPUT
+        outputs:
+            environment: ${{ steps.environment.outputs.var }}
+            tag: ${{ steps.tag.outputs.var }}
+
+    deploy:
+        needs: deploy_slug
+        uses: ./.github/workflows/deploy.yml
+        secrets: inherit
+        with:
+            environment: ${{ needs.deploy_slug.outputs.environment }}
+            tag: ${{ needs.deploy_slug.outputs.tag }}
+
+    test:
+        runs-on: ubuntu-latest
+        needs: deploy
+        steps:
+            - run: echo "Running tests"
+
+    destroy:
+        runs-on: ubuntu-latest
+        needs:
+            - deploy
+            - test
+        permissions:
+            contents: read
+        if: ${{ needs.deploy.result != 'skipped' }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: azure/login@v1
+              with:
+                  creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: '~1.6.3'
+            - run: ./deploy.sh destroy
+              env:
+                  APP_VERSION: '${{ inputs.version }}'
+                  APP_ENVIRONMENT: '${{ inputs.environment }}'
+                  APP_FRONTEND_URL: 'https:///blaat.com'
+                  ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
+                  ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
+                  ARM_CLIENT_SECRET: '${{ secrets.ARM_CLIENT_SECRET }}'
+                  ARM_SUBSCRIPTION_ID: '${{ vars.ARM_SUBSCRIPTION_ID }}'
+                  ARM_TENANT_ID: '${{ vars.ARM_TENANT_ID }}'
+                  AUTH0_DOMAIN: '${{ vars.AUTH0_DOMAIN }}'
+                  AUTH0_CLIENT_ID: '${{ vars.AUTH0_CLIENT_ID }}'
+                  AUTH0_CLIENT_SECRET: '${{ secrets.AUTH0_CLIENT_SECRET }}'
+                  NORDIGEN_SECRET_ID: '${{ vars.NORDIGEN_SECRET_ID }}'
+                  NORDIGEN_SECRET_KEY: '${{ secrets.NORDIGEN_SECRET_KEY }}'
