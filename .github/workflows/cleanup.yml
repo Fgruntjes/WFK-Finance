@@ -1,0 +1,2 @@
+#az acr run --cmd 'acr purge --untagged --keep 2 --ago 0h --filter .*:.*' --registry wfkfinance /dev/null
+#az acr run --cmd 'acr purge --untagged --keep 2 --filter .*:.*' --registry wfkfinance /dev/null

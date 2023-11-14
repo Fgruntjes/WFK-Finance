@@ -1,11 +1,11 @@
 resource "auth0_client" "frontend" {
-  name        = "${var.app_environment}-backend"
-  description = "My Web App Created Through Terraform"
+  name        = "${var.app_environment}-frontend"
+  description = "Frontend for ${var.app_environment}"
   app_type    = "spa"
   callbacks = var.app_environment == "dev" ? [
     "http://localhost:3000/",
-    "${local.frontend_url}/",
-  ] : ["${local.frontend_url}/"]
+    "${var.app_frontend_url}",
+  ] : ["${var.app_frontend_url}"]
 
   oidc_conformant = true
   grant_types = [
@@ -23,4 +23,8 @@ resource "auth0_client_credentials" "frontend" {
   client_id = auth0_client.frontend.id
 
   authentication_method = "none"
+}
+
+output "frontend_auth0_client_id" {
+  value = auth0_client.frontend.client_id
 }

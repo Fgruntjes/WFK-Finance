@@ -13,12 +13,8 @@ export default defineConfig(({ mode }) => {
 	}
 
 	function envVal(name: string) {
-		if (isProduction) {
-			return `__${name}__`;
-		}
-
 		if (!process.env[name]) {
-			return `__MISSING__${name}__`;
+			throw new Error(`Missing env var ${name}`);
 		}
 
 		return JSON.stringify(process.env[name]);

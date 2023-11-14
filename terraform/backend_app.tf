@@ -98,9 +98,9 @@ resource "azurerm_container_app" "backend_app" {
 }
 
 locals {
-  backend_url = "https://${azurerm_container_app.backend_app.ingress[0].fqdn}"
+  app_api_url = "https://${azurerm_container_app.backend_app.ingress[0].fqdn}"
 }
 
-output "backend_url" {
-  value = local.backend_url
+output "app_api_url" {
+  value = local.app_api_url
 }

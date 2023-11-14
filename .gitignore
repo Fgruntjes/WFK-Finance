@@ -2,6 +2,7 @@
 .local.env
 .deploy.env
 appsettings.local.json
+.github_output
 
 Pulumi.*.yaml
 
