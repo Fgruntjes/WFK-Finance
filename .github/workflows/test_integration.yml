@@ -19,24 +19,31 @@ jobs:
         needs: deploy_slug
         uses: ./.github/workflows/deploy.yml
         secrets: inherit
+        permissions:
+            contents: read
+            id-token: write
+            pages: write
         with:
             environment: ${{ needs.deploy_slug.outputs.environment }}
-            tag: ${{ needs.deploy_slug.outputs.tag }}
+            version: ${{ needs.deploy_slug.outputs.tag }}
 
     test:
         runs-on: ubuntu-latest
+        timeout-minutes: 30
         needs: deploy
         steps:
-            - run: echo "Running tests"
+            - run: echo "::warning file=.github/workflows/test_integration.yml,::No integration tests implemented"
 
-    destroy:
+    destroy_backend:
         runs-on: ubuntu-latest
+        timeout-minutes: 30
         needs:
+            - deploy_slug
             - deploy
             - test
         permissions:
             contents: read
-        if: ${{ needs.deploy.result != 'skipped' }}
+        if: ${{ always() && needs.deploy.result != 'skipped' }}
         steps:
             - uses: actions/checkout@v3
             - uses: azure/login@v1
@@ -45,10 +52,10 @@ jobs:
             - uses: hashicorp/setup-terraform@v3
               with:
                   terraform_version: '~1.6.3'
-            - run: ./deploy.sh destroy
+            - run: ./deploy.sh destroy -auto-approve
               env:
-                  APP_VERSION: '${{ inputs.version }}'
-                  APP_ENVIRONMENT: '${{ inputs.environment }}'
+                  APP_VERSION: '${{ needs.deploy_slug.outputs.tag }}'
+                  APP_ENVIRONMENT: '${{ needs.deploy_slug.outputs.environment }}'
                   APP_FRONTEND_URL: 'https:///blaat.com'
                   ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
                   ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
@@ -60,3 +67,19 @@ jobs:
                   AUTH0_CLIENT_SECRET: '${{ secrets.AUTH0_CLIENT_SECRET }}'
                   NORDIGEN_SECRET_ID: '${{ vars.NORDIGEN_SECRET_ID }}'
                   NORDIGEN_SECRET_KEY: '${{ secrets.NORDIGEN_SECRET_KEY }}'
+
+    destroy_frontend:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        needs:
+            - deploy_slug
+            - deploy
+            - test
+        permissions:
+            pages: write
+            id-token: write
+        if: ${{ always() && needs.deploy.result != 'skipped' }}
+        environment:
+            name: ${{ needs.deploy_slug.outputs.environment }}
+        steps:
+            - run: echo "::warning file=.github/workflows/test_integration.yml,::Destroy frontend not implemented"

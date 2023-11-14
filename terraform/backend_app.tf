@@ -14,7 +14,7 @@ resource "local_file" "dev_env_backend" {
 }
 
 resource "azurerm_container_app_environment" "backend_app" {
-  name                = "${var.app_environment}-backend-app"
+  name                = "v${var.app_environment}-backend-app"
   location            = var.arm_location
   resource_group_name = var.app_project_slug
 
@@ -24,7 +24,7 @@ resource "azurerm_container_app_environment" "backend_app" {
 }
 
 resource "azurerm_container_app" "backend_app" {
-  name                         = "${var.app_environment}-backend-app"
+  name                         = "v${var.app_environment}-backend-app"
   container_app_environment_id = azurerm_container_app_environment.backend_app.id
   resource_group_name          = var.app_project_slug
   revision_mode                = "Single"
