@@ -5,6 +5,8 @@ resource "azurerm_container_group" "backend_database_migrations" {
   os_type             = "Linux"
   restart_policy      = "OnFailure"
 
+  depends_on = [azurerm_role_assignment.container_registry_pull]
+
   container {
     name   = "app"
     image  = "${data.azurerm_container_registry.app.login_server}/${var.app_environment}/app.data.migrations:${var.app_version}"

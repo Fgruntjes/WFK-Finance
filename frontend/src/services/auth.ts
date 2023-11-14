@@ -1,4 +1,5 @@
 import { goto } from '$app/navigation';
+import { base } from '$app/paths';
 import {
 	Auth0Client,
 	User,
@@ -33,7 +34,7 @@ const initializeUseAuth0 = () => {
 				clientId: import.meta.env.AUTH0_CLIENT_ID,
 				useRefreshTokens: true,
 				authorizationParams: {
-					redirect_uri: window.location.origin,
+					redirect_uri: window.location.origin + base,
 					audience: import.meta.env.AUTH0_AUDIENCE
 				}
 			});

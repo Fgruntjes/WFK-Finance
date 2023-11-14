@@ -11,3 +11,6 @@ dotnet_naming_style.prefix_underscore.required_prefix = _
 [*.{yaml,yml}]
 indent_size = 4
 indent_style = space
+[*.json]
+indent_size = 2
+indent_style = space
