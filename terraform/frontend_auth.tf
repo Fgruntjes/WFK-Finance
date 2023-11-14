@@ -4,8 +4,8 @@ resource "auth0_client" "frontend" {
   app_type    = "spa"
   callbacks = var.app_environment == "dev" ? [
     "http://localhost:3000/",
-    "${var.app_frontend_url}",
-  ] : ["${var.app_frontend_url}"]
+    var.app_frontend_url,
+  ] : [var.app_frontend_url]
 
   oidc_conformant = true
   grant_types = [
