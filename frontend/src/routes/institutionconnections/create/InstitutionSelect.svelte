@@ -6,6 +6,7 @@
 	import { Select, SelectItem, SelectSkeleton } from 'carbon-components-svelte';
 
 	export let selectedId: Guid | undefined = undefined;
+	export let countryIso2: string;
 	export const _InstitutionsVariables: InstitutionsVariables = ({ props: { countryIso2 } }) => {
 		return { countryIso2 };
 	};
