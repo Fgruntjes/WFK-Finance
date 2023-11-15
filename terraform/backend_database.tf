@@ -1,3 +1,8 @@
+resource "random_password" "backend_database_administrator" {
+  length  = 16
+  special = false
+}
+
 resource "azurerm_mssql_server" "backend_database" {
   name                                 = "${var.app_project_slug}-${var.app_environment}-server"
   resource_group_name                  = var.app_project_slug
@@ -7,8 +12,11 @@ resource "azurerm_mssql_server" "backend_database" {
   outbound_network_restriction_enabled = false
   public_network_access_enabled        = true
 
+  administrator_login          = "appadmin"
+  administrator_login_password = random_password.backend_database_administrator.result
+
   azuread_administrator {
-    azuread_authentication_only = true
+    azuread_authentication_only = false
     tenant_id                   = var.arm_tenant_id
     object_id                   = var.arm_client_id
     login_username              = "cicd-admin"
@@ -43,4 +51,14 @@ resource "azurerm_mssql_firewall_rule" "backend_database_public" {
   server_id        = azurerm_mssql_server.backend_database.id
   start_ip_address = "0.0.0.0"
   end_ip_address   = "255.255.255.255"
+}
+
+output "app_db_connection_string" {
+  value = join(";", [
+    "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
+    "Database=${azurerm_mssql_database.backend_database.name}",
+    "User Id=${azurerm_mssql_server.backend_database.administrator_login}",
+    "Password=${azurerm_mssql_server.backend_database.administrator_login_password}",
+    "Encrypt=True",
+  ])
 }

@@ -125,7 +125,7 @@ public class AppFixture : IAsyncDisposable
             options.AddController<InstitutionGetController>();
             options.AddController<InstitutionListController>();
             options.ResponseOptions.ExposeExceptions = true;
-            options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
+            options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.All;
         });
 
         // TODO handle non authorized test cases

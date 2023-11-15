@@ -45,3 +45,7 @@ jobs:
                       --no-build \
                       --blame \
                       --blame-hang-timeout 2m
+              env:
+                  APP_URL: ${{ needs.deploy.outputs.app_url }}
+                  APP_ENVIRONMENT: ${{ needs.deploy_slug.outputs.environment }}
+                  APP_DB_CONNECTION_STRING: ${{ needs.deploy.outputs.app_db_connection_string }}

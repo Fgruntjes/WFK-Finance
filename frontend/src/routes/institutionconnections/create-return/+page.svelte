@@ -77,7 +77,9 @@
 			{#each accounts as account}
 				<StructuredListRow>
 					<StructuredListCell>
-						<img alt={institution?.name} src={institution?.logo} class="institution-logo" />
+						{#if institution?.logo}
+							<img alt={institution?.name} src={institution?.logo} class="institution-logo" />
+						{/if}
 						{institution?.name}
 					</StructuredListCell>
 					<StructuredListCell>
