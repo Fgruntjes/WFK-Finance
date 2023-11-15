@@ -58,59 +58,41 @@ nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
 EOF
 cat variables.tfvars
 
-function doAction {
-    set -e
-
-    if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
-        terraform "plan" \
-            -out="tfplan" \
-            -var-file="variables.tfvars" \
-            -input=false \
-            "${@:2}" || exit 1
-
-        if [[ "${ACTION}" == "apply" ]]; then
-            terraform apply \
-                -auto-approve \
-                "tfplan" || exit 1
-
-            # Output variables to github ci
-            if [[ -z "${GITHUB_OUTPUT}" ]]; then
-                GITHUB_OUTPUT=".github_output"
-            fi
-
-            terraform output -json | jq -r 'to_entries[] | "\(.key)=\(.value.value)"' | while read -r OUTPUT_LINE; do
-                VARIABLE_KEY=$(echo "$OUTPUT_LINE" | cut -d'=' -f1)
-                VARIABLE_VALUE=$(echo "$OUTPUT_LINE" | cut -d'=' -f2)
-                echo "$VARIABLE_KEY=$VARIABLE_VALUE" >>"$GITHUB_OUTPUT"
-            done
-
-            echo "Github output:"
-            cat "$GITHUB_OUTPUT"
-        fi
-    elif [[ "${ACTION}" == "destroy" ]]; then
-        if [[ "${APP_ENVIRONMENT}" == "main" ]]; then
-            echo "Main environment can not be destroyed"
-            exit 1
-        fi
-        terraform destroy \
-            -var-file="variables.tfvars" \
-            "${@:2}"
-    elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
-        terraform "${ACTION}" \
-            -var-file="variables.tfvars" \
-            "${@:2}"
-    else
-        terraform "${@:1}"
-    fi
-}
-
-# Run terraform
 if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
-    if ! doAction "${@}"; then
-        echo "# Terraform failed, try again"
+    terraform "plan" \
+        -out="tfplan" \
+        -var-file="variables.tfvars" \
+        -input=false \
+        "${@:2}"
 
-        doAction "${@}" || exit 1
+    if [[ "${ACTION}" == "apply" ]]; then
+        terraform apply \
+            -auto-approve \
+            "tfplan"
+
+        # Output variables to github ci
+        if [[ -z "${GITHUB_OUTPUT}" ]]; then
+            GITHUB_OUTPUT=".github_output"
+        fi
+
+        terraform output -json | jq -r 'to_entries[] | "\(.key)=\(.value.value)"' | while read -r OUTPUT_LINE; do
+            VARIABLE_KEY=$(echo "$OUTPUT_LINE" | cut -d'=' -f1)
+            VARIABLE_VALUE=$(echo "$OUTPUT_LINE" | cut -d'=' -f2)
+            echo "$VARIABLE_KEY=$VARIABLE_VALUE" >>"$GITHUB_OUTPUT"
+        done
     fi
+elif [[ "${ACTION}" == "destroy" ]]; then
+    if [[ "${APP_ENVIRONMENT}" == "main" ]]; then
+        echo "Main environment can not be destroyed"
+        exit 1
+    fi
+    terraform destroy \
+        -var-file="variables.tfvars" \
+        "${@:2}"
+elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
+    terraform "${ACTION}" \
+        -var-file="variables.tfvars" \
+        "${@:2}"
 else
-    doAction "${@}"
+    terraform "${@:1}"
 fi
