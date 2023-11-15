@@ -88,6 +88,10 @@ resource "azurerm_container_app" "backend_app" {
         name        = "AppSettings"
         secret_name = "settings"
       }
+      env {
+        name  = "ASPNETCORE_ENVIRONMENT"
+        value = var.app_environment == "main" ? "Production" : "Staging"
+      }
     }
 
     http_scale_rule {

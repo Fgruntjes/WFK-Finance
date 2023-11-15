@@ -28,6 +28,7 @@ function run_backend {
     echo "### Starting backend"
     dotnet watch run \
         --project App.Backend \
+        --environment Development \
         --non-interactive \
         ./App.Backend/App.Backend.csproj \
         /property:GenerateFullPaths=true \
