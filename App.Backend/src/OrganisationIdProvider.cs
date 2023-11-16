@@ -10,34 +10,43 @@ public class OrganisationIdProvider
     private readonly Guid TempOrganisationId = new("ae7113f0-1b52-40e5-9e77-5acb10e7fdad");
     private readonly DatabaseContext _database;
     private bool _organisationStored = false;
+    private static object _lock = new();
 
-    public Guid OrganisationId => OrganisationIdAsync().GetAwaiter().GetResult();
+    public Guid OrganisationId
+    {
+        get
+        {
+            EnsureOrganisationIdInserted();
+            return TempOrganisationId;
+        }
+    }
 
     public OrganisationIdProvider(DatabaseContext database)
     {
         _database = database;
     }
 
-    public async Task<Guid> OrganisationIdAsync(CancellationToken cancellationToken = default)
+    public void EnsureOrganisationIdInserted()
     {
         if (_organisationStored)
         {
-            return TempOrganisationId;
+            return;
         }
 
-        await _database.Organisations
-            .Upsert(new OrganisationEntity
-            {
-                Id = TempOrganisationId,
-                Slug = "only-organisation",
-            })
-            .On(i => new
-            {
-                i.Id,
-            })
-            .RunAsync(cancellationToken);
-        await _database.SaveChangesAsync(cancellationToken);
-
-        return TempOrganisationId;
+        lock(_lock)
+        {
+            _database.Organisations
+                .Upsert(new OrganisationEntity
+                {
+                    Id = TempOrganisationId,
+                    Slug = "only-organisation",
+                })
+                .On(i => new
+                {
+                    i.Id,
+                })
+                .Run();
+            _database.SaveChanges();
+        }
     }
 }
