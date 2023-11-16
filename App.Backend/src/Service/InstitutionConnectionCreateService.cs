@@ -45,7 +45,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity?> GetConnectUrl(InstitutionEntity institution, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
 
         return await _database.InstitutionConnections
             .AsQueryable()
@@ -57,7 +57,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
         var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,

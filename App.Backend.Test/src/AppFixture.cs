@@ -12,6 +12,8 @@ using Moq;
 using VMelnalksnis.NordigenDotNet;
 using App.Data.Migrations;
 using GraphQL.AspNet.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace App.Backend.Test;
 
@@ -43,16 +45,6 @@ public class AppFixture : IAsyncDisposable
         _loggerProvider = loggerProvider;
 
         NordigenClientMoq = new Mock<INordigenClient>();
-
-        SeedData(context =>
-        {
-            var orgId = Server.ServiceProvider.GetRequiredService<OrganisationIdProvider>().OrganisationId;
-            context.Organisations.Add(new Data.Entity.OrganisationEntity
-            {
-                Id = orgId,
-                Slug = "single-organisation"
-            });
-        });
     }
 
     public async ValueTask DisposeAsync()
@@ -113,6 +105,7 @@ public class AppFixture : IAsyncDisposable
         });
 
         // App configuration
+        builder.AddSingleton<IHostEnvironment>(new HostingEnvironment { EnvironmentName = Environments.Production });
         builder.AddAppServices();
         builder.AddGraphQL(options =>
         {

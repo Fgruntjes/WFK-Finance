@@ -10,9 +10,9 @@ public class InstitutionSearchService
     private const string _nordigenTestInstitutionId = "SANDBOXFINANCE_SFIN0000";
     private readonly DatabaseContext _database;
     private readonly INordigenClient _nordigenClient;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IHostEnvironment _environment;
 
-    public InstitutionSearchService(DatabaseContext database, INordigenClient nordigenClient, IWebHostEnvironment environment)
+    public InstitutionSearchService(DatabaseContext database, INordigenClient nordigenClient, IHostEnvironment environment)
     {
         _database = database;
         _nordigenClient = nordigenClient;

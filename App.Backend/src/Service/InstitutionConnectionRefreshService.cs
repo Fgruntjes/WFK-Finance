@@ -36,7 +36,7 @@ public class InstitutionConnectionRefreshService
         Expression<Func<InstitutionConnectionEntity, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
         var entity = await _database.InstitutionConnections
             .OrderBy(e => e.CreatedAt)
             .Take(1)

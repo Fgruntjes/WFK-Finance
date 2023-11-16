@@ -22,7 +22,7 @@ public class InstitutionConnectionDeleteController : GraphController
     [Mutation("delete")]
     public async Task<int> Delete(ICollection<Guid> connectionIds, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
         var entities = _database.InstitutionConnections
                 .Where(e => e.OrganisationId == organisationId)
                 .Where(e => connectionIds.Contains(e.Id));
