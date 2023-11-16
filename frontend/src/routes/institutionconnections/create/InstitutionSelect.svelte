@@ -50,6 +50,7 @@
 {:else}
 	<Select
 		labelText={$i18n.t('institutionconnections:create.bankselect')}
+		data-country={countryIso2}
 		bind:selected={selectedId}
 		{...$$restProps}
 	>
