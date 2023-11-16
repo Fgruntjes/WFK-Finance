@@ -96,9 +96,9 @@ if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
         fi
 
         terraform output -json | jq -r 'to_entries[] | "\(.key)=\(.value.value)"' | while read -r OUTPUT_LINE; do
-            VARIABLE_KEY=$(echo "$OUTPUT_LINE" | cut -d'=' -f1)
-            VARIABLE_VALUE=$(echo "$OUTPUT_LINE" | cut -d'=' -f2)
-            echo "$VARIABLE_KEY=$VARIABLE_VALUE" >>"$GITHUB_OUTPUT"
+            VARIABLE_KEY=$(echo "${OUTPUT_LINE}" | cut -d'=' -f1)
+            VARIABLE_VALUE=$(echo "${OUTPUT_LINE}" | cut -d'=' -f2)
+            echo "${VARIABLE_KEY}='${VARIABLE_VALUE}'" >>"${GITHUB_OUTPUT}"
         done
     fi
 elif [[ "${ACTION}" == "destroy" ]]; then
