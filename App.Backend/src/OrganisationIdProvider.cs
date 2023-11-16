@@ -20,10 +20,11 @@ public class OrganisationIdProvider
 
     public async Task<Guid> OrganisationIdAsync(CancellationToken cancellationToken = default)
     {
-        if (_organisationStored) {
+        if (_organisationStored)
+        {
             return TempOrganisationId;
         }
-        
+
         await _database.Organisations
             .Upsert(new OrganisationEntity
             {

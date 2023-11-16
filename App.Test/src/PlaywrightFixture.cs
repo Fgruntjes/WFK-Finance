@@ -33,7 +33,7 @@ public class PlaywrightFixture : IAsyncDisposable
 
         if (_browser != null)
             await _browser.DisposeAsync();
-        
+
         _playwright?.Dispose();
 
         await _respawner.ResetAsync(DbConnectionString);
@@ -47,9 +47,9 @@ public class PlaywrightFixture : IAsyncDisposable
         {
             Headless = false
         });
-        
+
         _browserContext ??= await _browser.NewContextAsync();
-        
+
         var page = await _browserContext.NewPageAsync();
         await page.GotoAsync(AppUrl);
 

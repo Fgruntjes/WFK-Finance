@@ -12,7 +12,7 @@ public class InstitutionSearchService
     private readonly INordigenClient _nordigenClient;
     private readonly IWebHostEnvironment _environment;
 
-    public InstitutionSearchService(DatabaseContext database, INordigenClient nordigenClient,  IWebHostEnvironment environment)
+    public InstitutionSearchService(DatabaseContext database, INordigenClient nordigenClient, IWebHostEnvironment environment)
     {
         _database = database;
         _nordigenClient = nordigenClient;
@@ -69,7 +69,8 @@ public class InstitutionSearchService
             return;
         }
 
-        var entity = new InstitutionEntity {
+        var entity = new InstitutionEntity
+        {
             ExternalId = _nordigenTestInstitutionId,
             Name = "TEST_INSTITUTION",
             //Logo = "https://cdn.nordigen.com/logos/sandboxfinance.png",
