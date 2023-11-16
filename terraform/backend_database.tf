@@ -54,6 +54,7 @@ resource "azurerm_mssql_firewall_rule" "backend_database_public" {
 }
 
 output "app_db_connection_string" {
+  sensitive = true
   value = join(";", [
     "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
     "Database=${azurerm_mssql_database.backend_database.name}",

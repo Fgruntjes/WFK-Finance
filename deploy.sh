@@ -59,6 +59,26 @@ EOF
 cat variables.tfvars
 
 if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
+    # In case the database or server is deleted outside of terraform we produce this error
+    # to prevent we are recreating the database and server before we are doing a new plan / apply
+    # Error: unable to read user [dev-backend].[dev-backend-database-read-write]: db connection failed after 30s timeout
+    terraform "plan" \
+        -out="database.tfplan" \
+        -var-file="variables.tfvars" \
+        -input=false \
+        -target azurerm_mssql_server.backend_database \
+        -target azurerm_mssql_database.backend_database \
+        -target time_sleep.database_create
+
+    if [[ "${ACTION}" == "apply" ]]; then
+        terraform apply \
+            -auto-approve \
+            -target azurerm_mssql_server.backend_database \
+            -target azurerm_mssql_database.backend_database \
+            -target time_sleep.database_create \
+            "database.tfplan"
+    fi
+
     terraform "plan" \
         -out="tfplan" \
         -var-file="variables.tfvars" \
