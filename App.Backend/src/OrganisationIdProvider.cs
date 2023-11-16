@@ -33,7 +33,7 @@ public class OrganisationIdProvider
             return;
         }
 
-        lock(_lock)
+        lock (_lock)
         {
             _database.Organisations
                 .Upsert(new OrganisationEntity
