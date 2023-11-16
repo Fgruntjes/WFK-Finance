@@ -13,7 +13,11 @@ resource "mssql_user" "read_write" {
       client_secret = var.arm_client_secret
     }
   }
-  depends_on = [azurerm_mssql_firewall_rule.backend_database_public]
+  depends_on = [
+    azurerm_mssql_firewall_rule.backend_database_public,
+    azurerm_mssql_server.azurerm_mssql_server.backend_database,
+    azurerm_mssql_server.azurerm_mssql_database.backend_database,
+  ]
 
   database  = azurerm_mssql_database.backend_database.name
   username  = azurerm_user_assigned_identity.backend_database_read_write.name
@@ -38,7 +42,11 @@ resource "mssql_user" "backend_database_migrations" {
       client_secret = var.arm_client_secret
     }
   }
-  depends_on = [azurerm_mssql_firewall_rule.backend_database_public]
+  depends_on = [
+    azurerm_mssql_firewall_rule.backend_database_public,
+    azurerm_mssql_server.azurerm_mssql_server.backend_database,
+    azurerm_mssql_server.azurerm_mssql_database.backend_database,
+  ]
 
   database  = azurerm_mssql_database.backend_database.name
   username  = azurerm_user_assigned_identity.backend_database_owner.name
