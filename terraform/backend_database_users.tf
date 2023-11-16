@@ -15,8 +15,8 @@ resource "mssql_user" "read_write" {
   }
   depends_on = [
     azurerm_mssql_firewall_rule.backend_database_public,
-    azurerm_mssql_server.azurerm_mssql_server.backend_database,
-    azurerm_mssql_server.azurerm_mssql_database.backend_database,
+    azurerm_mssql_server.backend_database,
+    azurerm_mssql_database.backend_database,
   ]
 
   database  = azurerm_mssql_database.backend_database.name
@@ -44,8 +44,8 @@ resource "mssql_user" "backend_database_migrations" {
   }
   depends_on = [
     azurerm_mssql_firewall_rule.backend_database_public,
-    azurerm_mssql_server.azurerm_mssql_server.backend_database,
-    azurerm_mssql_server.azurerm_mssql_database.backend_database,
+    azurerm_mssql_server.backend_database,
+    azurerm_mssql_database.backend_database,
   ]
 
   database  = azurerm_mssql_database.backend_database.name
