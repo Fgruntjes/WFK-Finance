@@ -15,13 +15,15 @@ set +a
 # Enter terraform dir
 cd "terraform"
 
-set -x
 set -e
 
 ARM_STORAGE_ACCOUNT_NAME=$(echo "${APP_PROJECT_SLUG}-terraform" | sed "s/-//g")
 ACTION=${1:-"apply"}
 
+echo "## Running deploy on ${APP_ENVIRONMENT} ${APP_VERSION} - action ${ACTION} ##"
+
 # Init and plan
+echo "## Terraform init ##"
 if [[ "${ACTION}" == "init" ]]; then
     terraform init \
         -backend-config="resource_group_name=${APP_PROJECT_SLUG}" \
@@ -56,29 +58,42 @@ auth0_client_secret = "${AUTH0_CLIENT_SECRET}"
 nordigen_secret_id = "${NORDIGEN_SECRET_ID}"
 nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
 EOF
-cat variables.tfvars
 
-if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
-    # In case the database or server is deleted outside of terraform we produce this error
-    # to prevent we are recreating the database and server before we are doing a new plan / apply
-    # Error: unable to read user [dev-backend].[dev-backend-database-read-write]: db connection failed after 30s timeout
-    terraform "plan" \
-        -out="database.tfplan" \
+function mssql_user_import {
+    SERVER="${1}"
+    DATABASE="${2}"
+    RESOURCE="${3}"
+    USER="${4}"
+
+    MSSQL_TENANT_ID="" \
+        MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
+        MSSQL_CLIENT_ID="${ARM_CLIENT_ID}" \
+        MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}" \
+        terraform import \
         -var-file="variables.tfvars" \
         -input=false \
-        -target azurerm_mssql_server.backend_database \
-        -target azurerm_mssql_database.backend_database \
-        -target time_sleep.database_create
+        "mssql_user.${RESOURCE}" \
+        "mssql://${SERVER}.database.windows.net/${DATABASE}/${USER}"
+}
 
-    if [[ "${ACTION}" == "apply" ]]; then
-        terraform apply \
-            -auto-approve \
-            -target azurerm_mssql_server.backend_database \
-            -target azurerm_mssql_database.backend_database \
-            -target time_sleep.database_create \
-            "database.tfplan"
-    fi
+if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
+    echo "## Delete / reimport mssql_user states ##"
+    # The mssql_user state is not updated when a server is deleted.
+    # This causes Error: unable to read user [...].[...]: db connection failed after 30s timeout
+    terraform state rm mssql_user.backend_database_migrations || true
+    terraform state rm mssql_user.read_write || true
+    mssql_user_import \
+        "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
+        "${APP_ENVIRONMENT}-backend" \
+        backend_database_migrations \
+        "${APP_ENVIRONMENT}-backend-database-owner" || true
+    mssql_user_import \
+        "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
+        "${APP_ENVIRONMENT}-backend" \
+        read_write \
+        "${APP_ENVIRONMENT}-backend-database-read-write" || true
 
+    echo "## Planning ##"
     terraform "plan" \
         -out="tfplan" \
         -var-file="variables.tfvars" \
@@ -86,19 +101,34 @@ if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
         "${@:2}"
 
     if [[ "${ACTION}" == "apply" ]]; then
+        echo "## Applying ##"
         terraform apply \
             -auto-approve \
             "tfplan"
 
         # Output variables to github ci
         if [[ -z "${GITHUB_OUTPUT}" ]]; then
-            GITHUB_OUTPUT=".github_output"
+            GITHUB_OUTPUT="$(pwd)/.github_output"
+            echo "## Create github output file ${GITHUB_OUTPUT} ##"
+            cat /dev/null >"${GITHUB_OUTPUT}"
         fi
 
-        terraform output -json | jq -r 'to_entries[] | "\(.key)=\(.value.value)"' | while read -r OUTPUT_LINE; do
-            VARIABLE_KEY=$(echo "${OUTPUT_LINE}" | cut -d'=' -f1)
-            VARIABLE_VALUE=$(echo "${OUTPUT_LINE}" | cut -d'=' -f2)
-            echo "${VARIABLE_KEY}='${VARIABLE_VALUE}'" >>"${GITHUB_OUTPUT}"
+        echo "## Setting github outputs"
+        terraform output -json | jq -c -r 'to_entries[]' | while read -r OUTPUT_LINE; do
+            VARIABLE_KEY=$(echo "${OUTPUT_LINE}" | jq -r '.key')
+            VARIABLE_VALUE=$(echo "${OUTPUT_LINE}" | jq -r '.value.value')
+            VARIABLE_SENSITIVE=$(echo "${OUTPUT_LINE}" | jq -r '.value.sensitive')
+
+            if [ "${VARIABLE_SENSITIVE}" = true ]; then
+                echo "::add-mask::${VARIABLE_VALUE}"
+                VARIABLE_VALUE=$(echo -n "$VARIABLE_VALUE" | openssl enc -pbkdf2 -a -salt -pass "pass:$GH_ENCRYPT_KEY" | base64 -w 0)
+
+                echo " - ${VARIABLE_KEY}=****"
+            else
+                echo " - ${VARIABLE_KEY}=${VARIABLE_VALUE}"
+            fi
+
+            echo "${VARIABLE_KEY}=${VARIABLE_VALUE}" >>"${GITHUB_OUTPUT}"
         done
     fi
 elif [[ "${ACTION}" == "destroy" ]]; then
@@ -106,13 +136,17 @@ elif [[ "${ACTION}" == "destroy" ]]; then
         echo "Main environment can not be destroyed"
         exit 1
     fi
+
+    echo "## Destroying environment ##"
     terraform destroy \
         -var-file="variables.tfvars" \
         "${@:2}"
 elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
+    echo "## Running ${ACTION} with var-file ##"
     terraform "${ACTION}" \
         -var-file="variables.tfvars" \
         "${@:2}"
 else
+    echo "## Running ${ACTION} ##"
     terraform "${@:1}"
 fi

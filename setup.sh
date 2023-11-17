@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034
 
 set -e
 set +x
@@ -19,12 +20,20 @@ export MSYS_NO_PATHCONV=1
 ARM_PRINCIPAL_NAME="github-actions-${APP_PROJECT_SLUG}"
 ARM_SUBSCRIPTION_ID=$(az account show | jq -r '.id')
 
-ARM_SERVICE_PROVIDER_INFO=$(
-    az ad sp create-for-rbac \
-        --name "${ARM_PRINCIPAL_NAME}" \
-        --role "Owner" \
-        --scopes "/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${APP_PROJECT_SLUG}"
-)
+ARM_SERVICE_PRINCIPAL_ID=$(az ad sp list --display-name "${ARM_PRINCIPAL_NAME}" | jq -r '.[0].id')
+
+if [ "${ARM_SERVICE_PRINCIPAL_ID}" == "null" ]; then
+    echo "Azure service principal '${ARM_PRINCIPAL_NAME}' does not exist, creating"
+    ARM_SERVICE_PROVIDER_INFO=$(
+        az ad sp create-for-rbac \
+            --name "${ARM_PRINCIPAL_NAME}" \
+            --role "Owner" \
+            --scopes "/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${APP_PROJECT_SLUG}"
+    )
+else
+    echo "Azure service principal '${ARM_PRINCIPAL_NAME}' already exists, resetting credentials"
+    ARM_SERVICE_PROVIDER_INFO=$(az ad sp credential reset --id "${ARM_SERVICE_PRINCIPAL_ID}")
+fi
 
 ARM_TENANT_ID=$(echo "${ARM_SERVICE_PROVIDER_INFO}" | jq -r '.tenant')
 ARM_CLIENT_ID=$(echo "${ARM_SERVICE_PROVIDER_INFO}" | jq -r '.appId')
@@ -69,7 +78,10 @@ az role assignment create \
     --role AcrPush
 
 # Ensure pages is set to workflow
-gh api -X PUT "/repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow
+gh api -X PUT "/repos/${GITHUB_REPOSITORY}/pages" -f build_type=workflow --silent
+
+# Generate randon GH_ENCRYPT_KEY, used to pass sensitive variables between github workflows
+GH_ENCRYPT_KEY=$(openssl rand -hex 32)
 
 # Ensure Github secrets are set
 echo "Creating github secrets"
@@ -83,7 +95,7 @@ function storeSecret {
         exit 1
     fi
 
-    if [ $IS_SECRET ]; then
+    if [ "${IS_SECRET}" = true ]; then
         echo "${SECRET_VALUE}" | gh secret set "${SECRET_NAME}" --app actions
         echo "${SECRET_VALUE}" | gh secret set "${SECRET_NAME}" --app dependabot
     else
@@ -94,6 +106,7 @@ function storeSecret {
 }
 cat /dev/null >.deploy.env
 storeSecret APP_PROJECT_SLUG
+storeSecret GH_ENCRYPT_KEY true
 storeSecret AUTH0_DOMAIN
 storeSecret AUTH0_CLIENT_ID
 storeSecret AUTH0_CLIENT_SECRET true

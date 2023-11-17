@@ -68,6 +68,7 @@ jobs:
                   APP_VERSION: '${{ inputs.version }}'
                   APP_ENVIRONMENT: '${{ inputs.environment }}'
                   APP_FRONTEND_URL: 'https:///blaat.com'
+                  GH_ENCRYPT_KEY: '${{ secrets.GH_ENCRYPT_KEY }}'
                   ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
                   ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
                   ARM_CLIENT_SECRET: '${{ secrets.ARM_CLIENT_SECRET }}'

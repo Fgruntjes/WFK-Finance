@@ -43,6 +43,8 @@ jobs:
             - run: dotnet build App.Test
             - run: pwsh App.Test/bin/Debug/net7.0/playwright.ps1 install --with-deps
             - run: |
+                  APP_DB_CONNECTION_STRING=$(echo "${APP_DB_CONNECTION_STRING_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}")
+                  export APP_DB_CONNECTION_STRING
                   dotnet test App.Test \
                       --no-build \
                       --blame \
@@ -50,4 +52,5 @@ jobs:
               env:
                   APP_URL: ${{ needs.deploy.outputs.app_url }}
                   APP_ENVIRONMENT: ${{ needs.deploy_slug.outputs.environment }}
-                  APP_DB_CONNECTION_STRING: ${{ needs.deploy.outputs.app_db_connection_string }}
+                  APP_DB_CONNECTION_STRING_ENCRYPTED: ${{ needs.deploy.outputs.app_db_connection_string }}
+                  GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}
