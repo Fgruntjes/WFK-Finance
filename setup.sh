@@ -97,7 +97,7 @@ function storeSecret {
 
     if [ "${IS_SECRET}" = true ]; then
         echo "${SECRET_VALUE}" | gh secret set "${SECRET_NAME}" --app actions
-        echo "${SECRET_VALUE}" | gh secret set "${SECRET_NAME}" --app dependabot
+        #echo "${SECRET_VALUE}" | gh secret set "${SECRET_NAME}" --app dependabot
     else
         echo "${SECRET_VALUE}" | gh variable set "${SECRET_NAME}"
     fi
@@ -117,3 +117,5 @@ storeSecret ARM_SUBSCRIPTION_ID
 storeSecret ARM_TENANT_ID
 storeSecret ARM_CLIENT_ID
 storeSecret ARM_CLIENT_SECRET true
+storeSecret CLOUDFLARE_ACCOUNT_ID
+storeSecret CLOUDFLARE_API_TOKEN true

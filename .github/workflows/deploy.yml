@@ -62,12 +62,12 @@ jobs:
             - uses: hashicorp/setup-terraform@v3
               with:
                   terraform_version: '~1.6.3'
+                  terraform_wrapper: false
             - run: ./deploy.sh
               id: deploy
               env:
                   APP_VERSION: '${{ inputs.version }}'
                   APP_ENVIRONMENT: '${{ inputs.environment }}'
-                  APP_FRONTEND_URL: 'https:///blaat.com'
                   GH_ENCRYPT_KEY: '${{ secrets.GH_ENCRYPT_KEY }}'
                   ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
                   ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
@@ -106,29 +106,41 @@ jobs:
                   cache-dependency-path: frontend/pnpm-lock.yaml
             - run: ./build.sh frontend
               env:
-                  APP_VERSION: '${{ inputs.version }}'
-                  APP_ENVIRONMENT: '${{ inputs.environment }}'
-                  APP_API_URI: '${{ needs.deploy_backend.outputs.app_api_url }}'
-                  APP_BASE: '${{ github.event.repository.name }}'
-                  AUTH0_DOMAIN: '${{ vars.AUTH0_DOMAIN }}'
-                  AUTH0_CLIENT_ID: '${{ needs.deploy_backend.outputs.frontend_auth0_client_id }}'
-                  AUTH0_AUDIENCE: '${{ needs.deploy_backend.outputs.backend_auth0_audience }}'
+                  APP_VERSION: ${{ inputs.version }}
+                  APP_ENVIRONMENT: ${{ inputs.environment }}
+                  APP_API_URI: ${{ needs.deploy_backend.outputs.app_api_url }}
+                  APP_BASE: ${{ github.event.repository.name }}
+                  AUTH0_DOMAIN: ${{ vars.AUTH0_DOMAIN }}
+                  AUTH0_CLIENT_ID: ${{ needs.deploy_backend.outputs.frontend_auth0_client_id }}
+                  AUTH0_AUDIENCE: ${{ needs.deploy_backend.outputs.backend_auth0_audience }}
 
-            - uses: actions/upload-pages-artifact@v2
+            - uses: actions/upload-artifact@v3
               with:
+                  name: frontend
                   path: frontend/build
 
     deploy_frontend:
         runs-on: ubuntu-latest
         needs: build_frontend
         outputs:
-            app_url: ${{ steps.deployment.outputs.page_url }}
+            app_url: https://${{ inputs.environment }}.${{ vars.APP_PROJECT_SLUG }}.pages.dev/
         permissions:
-            pages: write
-            id-token: write
+            deployments: write
         environment:
             name: ${{ inputs.environment }}
-            url: ${{ steps.deployment.outputs.page_url }}
+            url: https://${{ inputs.environment }}.${{ vars.APP_PROJECT_SLUG }}.pages.dev/
         steps:
+            - uses: actions/download-artifact@v3
+              with:
+                  name: frontend
+                  path: frontend/build
             - id: deployment
-              uses: actions/deploy-pages@v2
+              uses: cloudflare/pages-action@v1
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+                  projectName: ${{ vars.APP_PROJECT_SLUG }}
+                  directory: frontend/build
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                  branch: ${{ inputs.environment }}
+                  wranglerVersion: '3'

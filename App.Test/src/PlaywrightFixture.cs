@@ -43,10 +43,7 @@ public class PlaywrightFixture : IAsyncDisposable
     public async Task<IPage> WithPage()
     {
         _playwright ??= await Playwright.CreateAsync();
-        _browser ??= await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-        {
-            Headless = false
-        });
+        _browser ??= await _playwright.Chromium.LaunchAsync();
 
         _browserContext ??= await _browser.NewContextAsync();
 

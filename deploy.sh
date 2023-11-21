@@ -46,7 +46,6 @@ cat >variables.tfvars <<EOF
 app_project_slug = "${APP_PROJECT_SLUG}"
 app_environment = "${APP_ENVIRONMENT}"
 app_version = "${APP_VERSION}"
-app_frontend_url = "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY_NAME}"
 arm_location = "${ARM_LOCATION}"
 arm_tenant_id = "${ARM_TENANT_ID}"
 arm_subscription_id = "${ARM_SUBSCRIPTION_ID}"
@@ -59,39 +58,48 @@ nordigen_secret_id = "${NORDIGEN_SECRET_ID}"
 nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
 EOF
 
-function mssql_user_import {
+function mssql_user_reimport {
     SERVER="${1}"
     DATABASE="${2}"
-    RESOURCE="${3}"
+    RESOURCE="mssql_user.${3}"
     USER="${4}"
+    RESOURCE_ID="mssql://${SERVER}.database.windows.net/${DATABASE}/${USER}"
 
-    MSSQL_TENANT_ID="" \
-        MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
+    echo "### Remove state ${RESOURCE}"
+    terraform state rm "${RESOURCE}" || true
+
+    echo "### Import state ${RESOURCE} @ ${RESOURCE_ID}"
+    MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
         MSSQL_CLIENT_ID="${ARM_CLIENT_ID}" \
         MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}" \
         terraform import \
         -var-file="variables.tfvars" \
         -input=false \
-        "mssql_user.${RESOURCE}" \
-        "mssql://${SERVER}.database.windows.net/${DATABASE}/${USER}"
+        "${RESOURCE}" \
+        "${RESOURCE_ID}" || true
 }
 
 if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
     echo "## Delete / reimport mssql_user states ##"
     # The mssql_user state is not updated when a server is deleted.
     # This causes Error: unable to read user [...].[...]: db connection failed after 30s timeout
-    terraform state rm mssql_user.backend_database_migrations || true
-    terraform state rm mssql_user.read_write || true
-    mssql_user_import \
+    mssql_user_reimport \
         "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
         "${APP_ENVIRONMENT}-backend" \
         backend_database_migrations \
-        "${APP_ENVIRONMENT}-backend-database-owner" || true
-    mssql_user_import \
+        "${APP_ENVIRONMENT}-backend-database-owner"
+    mssql_user_reimport \
         "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
         "${APP_ENVIRONMENT}-backend" \
         read_write \
-        "${APP_ENVIRONMENT}-backend-database-read-write" || true
+        "${APP_ENVIRONMENT}-backend-database-read-write"
+    if [[ "${APP_ENVIRONMENT}" != "main" ]]; then
+        mssql_user_reimport \
+            "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
+            "${APP_ENVIRONMENT}-backend" \
+            integration_test_admin[0] \
+            integration_test_admin
+    fi
 
     echo "## Planning ##"
     terraform "plan" \
@@ -121,6 +129,7 @@ if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
 
             if [ "${VARIABLE_SENSITIVE}" = true ]; then
                 echo "::add-mask::${VARIABLE_VALUE}"
+
                 VARIABLE_VALUE=$(echo -n "$VARIABLE_VALUE" | openssl enc -pbkdf2 -a -salt -pass "pass:$GH_ENCRYPT_KEY" | base64 -w 0)
 
                 echo " - ${VARIABLE_KEY}=****"

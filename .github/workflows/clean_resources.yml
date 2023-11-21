@@ -35,7 +35,6 @@ jobs:
               env:
                   APP_VERSION: '${{ needs.deploy_slug.outputs.tag }}'
                   APP_ENVIRONMENT: '${{ needs.deploy_slug.outputs.environment }}'
-                  APP_FRONTEND_URL: 'https:///blaat.com'
                   ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
                   ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
                   ARM_CLIENT_SECRET: '${{ secrets.ARM_CLIENT_SECRET }}'
