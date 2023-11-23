@@ -24,14 +24,3 @@ resource "mssql_user" "integration_test_admin" {
 
   roles = ["db_owner"]
 }
-
-output "app_db_connection_string" {
-  sensitive = true
-  value = var.app_environment == "main" ? "" : join(";", [
-    "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
-    "Database=${azurerm_mssql_database.backend_database.name}",
-    try("User Id=${one(mssql_user.integration_test_admin[*].username)}", "User Id="),
-    try("Password=${one(mssql_user.integration_test_admin[*].password)}", "Password="),
-    "Encrypt=True",
-  ])
-}

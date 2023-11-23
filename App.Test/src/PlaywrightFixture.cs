@@ -1,32 +1,57 @@
 
+using App.Test.Screens;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Respawn;
+using App.Backend.Startup;
+using App.Data;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using App.Backend;
 
 namespace App.Test;
 
-public class PlaywrightFixture : IAsyncDisposable
+public class PlaywrightFixture : IAsyncLifetime
 {
+    public ServiceProvider Services { get; private set; }
+
     private IPlaywright? _playwright;
     private IBrowser? _browser;
     private IBrowserContext? _browserContext;
-    private Respawner _respawner;
-
-    private static string AppUrl => Environment.GetEnvironmentVariable("APP_URL")
-        ?? "http://localhost:3000";
-    private static string AppEnvironment => Environment.GetEnvironmentVariable("APP_ENVIRONMENT")
-        ?? "dev";
-    private static string DbConnectionString => Environment.GetEnvironmentVariable("APP_DB_CONNECTION_STRING")
-        ?? "Server=localhost,1433; Database=development; User Id=sa; Password=myLeet123Password!; Encrypt=False";
+    private readonly Respawner _respawner;
+    private readonly string _dbConnectionString;
 
     public PlaywrightFixture()
     {
-        _respawner = Respawner.CreateAsync(DbConnectionString)
+        var configuration = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .AddJsonFile("appsettings.json", false)
+            .AddJsonFile("appsettings.local.json", false)
+            .Build();
+
+        _dbConnectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Missing 'ConnectionStrings:DefaultConnection' setting.");
+
+        var services = new ServiceCollection();
+        services.Configure(configuration);
+        services.AddAppServices();
+        services.AddDatabase(_dbConnectionString);
+        services.AddNordigenClient(configuration);
+
+        Services = services.BuildServiceProvider();
+        _respawner = Respawner.CreateAsync(_dbConnectionString)
             .ConfigureAwait(false)
             .GetAwaiter()
             .GetResult();
     }
 
-    public async ValueTask DisposeAsync()
+    public async Task InitializeAsync()
+    {
+        // Ensure we start with a clean database
+        await _respawner.ResetAsync(_dbConnectionString);
+    }
+
+    async Task IAsyncLifetime.DisposeAsync()
     {
         if (_browserContext != null)
             await _browserContext.DisposeAsync();
@@ -36,61 +61,37 @@ public class PlaywrightFixture : IAsyncDisposable
 
         _playwright?.Dispose();
 
-        await _respawner.ResetAsync(DbConnectionString);
-        GC.SuppressFinalize(this);
+        await _respawner.ResetAsync(_dbConnectionString);
     }
 
     public async Task<IPage> WithPage()
     {
         _playwright ??= await Playwright.CreateAsync();
-        _browser ??= await _playwright.Chromium.LaunchAsync();
+        _browser ??= await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true"
+        });
 
         _browserContext ??= await _browser.NewContextAsync();
 
         var page = await _browserContext.NewPageAsync();
-        await page.GotoAsync(AppUrl);
+        await page.GotoAsync(Services.GetRequiredService<IOptions<AppSettings>>().Value.FrontendUrl);
 
         await EnsureAuthentication(page);
         return page;
     }
 
-    private static async Task EnsureAuthentication(IPage page)
+    private async Task EnsureAuthentication(IPage page)
     {
-        var loginLocator = page.GetByText("Log in to");
-        var authorizeLocator = page.GetByText("Authorize App");
-        var appLocator = page.GetByText("WFK Finance");
+        var appEnvironment = Services.GetRequiredService<IOptions<AppSettings>>().Value.Environment;
 
-        var loginPage = loginLocator.WaitForAsync();
-        var authorizePage = authorizeLocator.WaitForAsync();
-        var app = appLocator.WaitForAsync();
+        var authScreen = new Auth0Screen(page);
+        var homeScreen = new HomeScreen(page);
 
-        var currentPage = await Task.WhenAny(loginPage, authorizePage, app);
-        if (currentPage == loginPage)
-        {
-            await Login(page);
-
-            authorizePage = authorizeLocator.WaitForAsync();
-            app = appLocator.WaitForAsync();
-            currentPage = await Task.WhenAny(authorizePage, app);
-        }
-
-        if (currentPage == authorizePage)
-        {
-            await AuthorizeApp(page);
-        }
-
-        await appLocator.WaitForAsync();
-    }
-
-    private static async Task AuthorizeApp(IPage page)
-    {
-        await page.GetByRole(AriaRole.Button, new() { Name = "Accept", Exact = true }).ClickAsync();
-    }
-
-    private static async Task Login(IPage page)
-    {
-        await page.GetByLabel("Email address").FillAsync($"test-{AppEnvironment}@test.com");
-        await page.GetByLabel("Password").FillAsync("passpass$12$12");
-        await page.GetByRole(AriaRole.Button, new() { Name = "Continue", Exact = true }).ClickAsync();
+        await new List<LocatorAction> {
+            new (authScreen.LoginLocator, async (_) => await authScreen.Login($"test-{appEnvironment}@test.com", "passpass$12$12")),
+            new (authScreen.AuthorizeLocator, async (_) => await authScreen.AcceptAuthorization()),
+            new (homeScreen.Locator)}
+            .GoToLastAsync();
     }
 }

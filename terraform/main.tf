@@ -50,15 +50,11 @@ provider "azuread" {
   client_secret = var.arm_client_secret
   tenant_id     = var.arm_tenant_id
 }
-provider "mssql" {
-  debug = true
-
-}
+provider "mssql" {}
 provider "auth0" {
   domain        = var.auth0_domain
   client_id     = var.auth0_client_id
   client_secret = var.auth0_client_secret
-  debug         = true
 }
 
 data "azurerm_container_registry" "app" {

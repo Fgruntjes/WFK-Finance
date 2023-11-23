@@ -7,7 +7,13 @@
 	import { base } from '$app/paths';
 </script>
 
-<Header company="WFK" platformName="Finance" href={base}>
+<div />
+<Header
+	company="WFK"
+	platformName="Finance"
+	href={base}
+	data-testid={`activeroute:${$page.route.id}`}
+>
 	<HeaderNav>
 		{#each routes.filter((r) => r.includeInMenu) as route}
 			{@const label = $i18n.t(route.translationKey)}

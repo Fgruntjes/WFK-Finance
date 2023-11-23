@@ -1,15 +1,12 @@
 locals {
-  app_frontend_url = "https://${var.app_environment}.${var.app_project_slug}.pages.dev/"
+  app_frontend_url = var.app_environment == "dev" ? "http://localhost:3000/" : "https://${var.app_environment}.${var.app_project_slug}.pages.dev/"
 }
 
 resource "auth0_client" "frontend" {
   name        = "${var.app_environment}-frontend"
   description = "Frontend for ${var.app_environment}"
   app_type    = "spa"
-  callbacks = var.app_environment == "dev" ? [
-    "http://localhost:3000/",
-    local.app_frontend_url,
-  ] : [local.app_frontend_url]
+  callbacks   = [local.app_frontend_url]
 
   oidc_conformant = true
   grant_types = [

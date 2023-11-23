@@ -44,16 +44,15 @@ jobs:
                   dotnet-version: 7.0
             - run: dotnet build App.Test
             - run: |
-                  APP_DB_CONNECTION_STRING=$(echo "${APP_DB_CONNECTION_STRING_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}")
-                  echo "::add-mask::${APP_DB_CONNECTION_STRING}"
+                  APP_SETTINGS_JSON=$(echo "${APP_SETTINGS_JSON_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}")
+                  echo "::add-mask::${APP_SETTINGS_JSON}"
 
-                  export APP_DB_CONNECTION_STRING
+                  echo "${APP_SETTINGS_JSON}" > App.Test/bin/Debug/net7.0/appsettings.local.json
+                  echo "${APP_SETTINGS_JSON}" > App.Test/appsettings.local.json
                   dotnet test App.Test \
                       --no-build \
                       --blame \
                       --blame-hang-timeout 2m
               env:
-                  APP_URL: ${{ needs.deploy.outputs.app_url }}
-                  APP_ENVIRONMENT: ${{ needs.deploy_slug.outputs.environment }}
-                  APP_DB_CONNECTION_STRING_ENCRYPTED: ${{ needs.deploy.outputs.app_db_connection_string }}
+                  APP_SETTINGS_JSON_ENCRYPTED: ${{ needs.deploy.outputs.app_settings_json }}
                   GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}

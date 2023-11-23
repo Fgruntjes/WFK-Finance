@@ -1,18 +1,3 @@
-resource "local_file" "dev_env_backend" {
-  content = jsonencode(merge(local.backend_settings, {
-    ConnectionStrings = {
-      DefaultConnection = join(";", [
-        "Server=localhost,1433",
-        "Database=development",
-        "User Id=sa",
-        "Password=myLeet123Password!",
-        "Encrypt=False",
-      ]),
-    }
-  }))
-  filename = "../App.Backend/appsettings.local.json"
-}
-
 resource "azurerm_container_app_environment" "backend_app" {
   name                = "v${var.app_environment}-backend-app"
   location            = var.arm_location

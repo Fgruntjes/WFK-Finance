@@ -25,7 +25,7 @@ public class InstitutionConnectionCreateService
     public async Task<InstitutionConnectionEntity> Connect(Guid institutionId, Uri returnUrl, CancellationToken cancellationToken = default)
     {
         var institution = await _database.Institutions
-            .FindAsync(institutionId)
+            .FindAsync(institutionId, cancellationToken)
             ?? throw new ArgumentOutOfRangeException(nameof(institutionId), institutionId, "Could not find institution");
 
         var connectEntity = await GetConnectUrl(institution, cancellationToken);

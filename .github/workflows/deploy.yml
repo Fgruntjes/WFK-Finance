@@ -9,10 +9,8 @@ on:
                 required: true
                 type: string
         outputs:
-            app_url:
-                value: ${{ jobs.deploy_frontend.outputs.app_url }}
-            app_db_connection_string:
-                value: ${{ jobs.deploy_backend.outputs.app_db_connection_string }}
+            app_settings_json:
+                value: ${{ jobs.deploy_backend.outputs.app_settings_json }}
     push:
         branches:
             - main
@@ -51,7 +49,7 @@ jobs:
         needs: build_backend
         outputs:
             app_api_url: ${{ steps.deploy.outputs.app_api_url }}
-            app_db_connection_string: ${{ steps.deploy.outputs.app_db_connection_string }}
+            app_settings_json: ${{ steps.deploy.outputs.app_settings_json }}
             frontend_auth0_client_id: ${{ steps.deploy.outputs.frontend_auth0_client_id }}
             backend_auth0_audience: ${{ steps.deploy.outputs.backend_auth0_audience }}
         steps:
