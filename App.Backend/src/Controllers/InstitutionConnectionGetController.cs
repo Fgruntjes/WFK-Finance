@@ -23,7 +23,7 @@ public class InstitutionConnectionGetController : GraphController
     [Query("get")]
     public async Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
         return await _database.InstitutionConnections
             .Where(e => e.Id == id && e.OrganisationId == organisationId)
             .OrderBy(e => e.CreatedAt)

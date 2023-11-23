@@ -5,6 +5,11 @@ namespace App.Backend.Startup;
 
 public static class App
 {
+    public static void Configure(this IServiceCollection services, IConfiguration config)
+    {
+        services.Configure<AppSettings>(config.GetSection(AppSettings.App));
+    }
+
     public static void AddAppServices(this IServiceCollection services)
     {
         services.AddLogging();

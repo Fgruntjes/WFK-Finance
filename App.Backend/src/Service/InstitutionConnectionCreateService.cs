@@ -25,7 +25,7 @@ public class InstitutionConnectionCreateService
     public async Task<InstitutionConnectionEntity> Connect(Guid institutionId, Uri returnUrl, CancellationToken cancellationToken = default)
     {
         var institution = await _database.Institutions
-            .FindAsync(institutionId)
+            .FindAsync(institutionId, cancellationToken)
             ?? throw new ArgumentOutOfRangeException(nameof(institutionId), institutionId, "Could not find institution");
 
         var connectEntity = await GetConnectUrl(institution, cancellationToken);
@@ -36,7 +36,7 @@ public class InstitutionConnectionCreateService
 
         var requisitionResponse = await _nordigenClient.Requisitions.Post(new RequisitionCreation(returnUrl, institution.ExternalId)
         {
-            AccountSelection = true
+            AccountSelection = false
         });
 
         connectEntity = await StoreConnectUrl(institutionId, requisitionResponse.Link, requisitionResponse.Id.ToString(), cancellationToken);
@@ -45,19 +45,19 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity?> GetConnectUrl(InstitutionEntity institution, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
 
         return await _database.InstitutionConnections
             .AsQueryable()
             .Where(c => c.OrganisationId == organisationId && c.InstitutionId == institution.Id)
             .OrderBy(e => e.CreatedAt)
             .Take(1)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
         var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,

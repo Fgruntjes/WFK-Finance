@@ -1,15 +1,21 @@
 name: Deploy
 on:
+    workflow_call:
+        inputs:
+            environment:
+                required: true
+                type: string
+            version:
+                required: true
+                type: string
+        outputs:
+            app_settings_json:
+                value: ${{ jobs.deploy_backend.outputs.app_settings_json }}
     push:
         branches:
             - main
             - beta
             - alpha
-
-permissions:
-    contents: read
-    id-token: write
-    deployments: write
 
 jobs:
     build_backend:
@@ -30,24 +36,20 @@ jobs:
             - uses: azure/login@v1
               with:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
-            - uses: benjlevesque/short-sha@v2.2
-              id: short-sha
-              with:
-                  length: 6
             - run: ./build.sh ${{ matrix.target }}
               env:
-                  APP_VERSION: '${{ steps.short-sha.outputs.sha }}'
-                  APP_ENVIRONMENT: '${{ github.ref_name }}'
+                  APP_VERSION: '${{ inputs.version }}'
+                  APP_ENVIRONMENT: '${{ inputs.environment }}'
 
     deploy_backend:
         runs-on: ubuntu-latest
         timeout-minutes: 60
         permissions:
             contents: read
-            pull-requests: write
         needs: build_backend
         outputs:
             app_api_url: ${{ steps.deploy.outputs.app_api_url }}
+            app_settings_json: ${{ steps.deploy.outputs.app_settings_json }}
             frontend_auth0_client_id: ${{ steps.deploy.outputs.frontend_auth0_client_id }}
             backend_auth0_audience: ${{ steps.deploy.outputs.backend_auth0_audience }}
         steps:
@@ -58,16 +60,13 @@ jobs:
             - uses: hashicorp/setup-terraform@v3
               with:
                   terraform_version: '~1.6.3'
-            - uses: benjlevesque/short-sha@v2.2
-              id: short-sha
-              with:
-                  length: 6
+                  terraform_wrapper: false
             - run: ./deploy.sh
               id: deploy
               env:
-                  APP_VERSION: '${{ steps.short-sha.outputs.sha }}'
-                  APP_ENVIRONMENT: '${{ github.ref_name }}'
-                  APP_FRONTEND_URL: 'https:///blaat.com'
+                  APP_VERSION: '${{ inputs.version }}'
+                  APP_ENVIRONMENT: '${{ inputs.environment }}'
+                  GH_ENCRYPT_KEY: '${{ secrets.GH_ENCRYPT_KEY }}'
                   ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
                   ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
                   ARM_CLIENT_SECRET: '${{ secrets.ARM_CLIENT_SECRET }}'
@@ -103,36 +102,43 @@ jobs:
                   node-version-file: frontend/package.json
                   cache: 'pnpm'
                   cache-dependency-path: frontend/pnpm-lock.yaml
-            - uses: benjlevesque/short-sha@v2.2
-              id: short-sha
-              with:
-                  length: 6
             - run: ./build.sh frontend
               env:
-                  APP_VERSION: '${{ steps.short-sha.outputs.sha }}'
-                  APP_ENVIRONMENT: '${{ github.ref_name }}'
-                  APP_API_URI: '${{ needs.deploy_backend.outputs.app_api_url }}'
-                  APP_BASE: '${{ github.event.repository.name }}'
-                  AUTH0_DOMAIN: '${{ vars.AUTH0_DOMAIN }}'
-                  AUTH0_CLIENT_ID: '${{ needs.deploy_backend.outputs.frontend_auth0_client_id }}'
-                  AUTH0_AUDIENCE: '${{ needs.deploy_backend.outputs.backend_auth0_audience }}'
+                  APP_VERSION: ${{ inputs.version }}
+                  APP_ENVIRONMENT: ${{ inputs.environment }}
+                  APP_API_URI: ${{ needs.deploy_backend.outputs.app_api_url }}
+                  APP_BASE: ${{ github.event.repository.name }}
+                  AUTH0_DOMAIN: ${{ vars.AUTH0_DOMAIN }}
+                  AUTH0_CLIENT_ID: ${{ needs.deploy_backend.outputs.frontend_auth0_client_id }}
+                  AUTH0_AUDIENCE: ${{ needs.deploy_backend.outputs.backend_auth0_audience }}
 
-            - uses: actions/upload-pages-artifact@v2
+            - uses: actions/upload-artifact@v3
               with:
+                  name: frontend
                   path: frontend/build
 
     deploy_frontend:
-        needs: build_frontend
-
-        permissions:
-            pages: write
-            id-token: write
-
-        environment:
-            name: ${{ github.ref_name }}
-            url: ${{ steps.deployment.outputs.page_url }}
-
         runs-on: ubuntu-latest
+        needs: build_frontend
+        outputs:
+            app_url: https://${{ inputs.environment }}.${{ vars.APP_PROJECT_SLUG }}.pages.dev/
+        permissions:
+            deployments: write
+        environment:
+            name: ${{ inputs.environment }}
+            url: https://${{ inputs.environment }}.${{ vars.APP_PROJECT_SLUG }}.pages.dev/
         steps:
+            - uses: actions/download-artifact@v3
+              with:
+                  name: frontend
+                  path: frontend/build
             - id: deployment
-              uses: actions/deploy-pages@v2
+              uses: cloudflare/pages-action@v1
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+                  projectName: ${{ vars.APP_PROJECT_SLUG }}
+                  directory: frontend/build
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                  branch: ${{ inputs.environment }}
+                  wranglerVersion: '3'

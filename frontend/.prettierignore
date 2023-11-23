@@ -4,6 +4,7 @@ node_modules
 /.svelte-kit
 /$houdini
 /package
+/schema.graphql
 .env
 .env.*
 !.env.example

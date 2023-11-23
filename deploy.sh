@@ -15,13 +15,15 @@ set +a
 # Enter terraform dir
 cd "terraform"
 
-set -x
 set -e
 
 ARM_STORAGE_ACCOUNT_NAME=$(echo "${APP_PROJECT_SLUG}-terraform" | sed "s/-//g")
 ACTION=${1:-"apply"}
 
+echo "## Running deploy on ${APP_ENVIRONMENT} ${APP_VERSION} - action ${ACTION} ##"
+
 # Init and plan
+echo "## Terraform init ##"
 if [[ "${ACTION}" == "init" ]]; then
     terraform init \
         -backend-config="resource_group_name=${APP_PROJECT_SLUG}" \
@@ -44,7 +46,6 @@ cat >variables.tfvars <<EOF
 app_project_slug = "${APP_PROJECT_SLUG}"
 app_environment = "${APP_ENVIRONMENT}"
 app_version = "${APP_VERSION}"
-app_frontend_url = "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY_NAME}"
 arm_location = "${ARM_LOCATION}"
 arm_tenant_id = "${ARM_TENANT_ID}"
 arm_subscription_id = "${ARM_SUBSCRIPTION_ID}"
@@ -56,53 +57,105 @@ auth0_client_secret = "${AUTH0_CLIENT_SECRET}"
 nordigen_secret_id = "${NORDIGEN_SECRET_ID}"
 nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
 EOF
-cat variables.tfvars
 
-function doAction {
-    set -e
+function mssql_user_reimport {
+    SERVER="${1}"
+    DATABASE="${2}"
+    RESOURCE="mssql_user.${3}"
+    USER="${4}"
+    RESOURCE_ID="mssql://${SERVER}.database.windows.net/${DATABASE}/${USER}"
 
-    if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
-        terraform "plan" \
-            -out="tfplan" \
-            -var-file="variables.tfvars" \
-            -input=false \
-            "${@:2}" || exit 1
+    echo "### Remove state ${RESOURCE}"
+    terraform state rm "${RESOURCE}" || true
 
-        if [[ "${ACTION}" == "apply" ]]; then
-            terraform apply \
-                -auto-approve \
-                "tfplan" || exit 1
-
-            # Output variables to github ci
-            if [[ -z "${GITHUB_OUTPUT}" ]]; then
-                GITHUB_OUTPUT=".github_output"
-            fi
-
-            terraform output -json | jq -r 'to_entries[] | "\(.key)=\(.value.value)"' | while read -r OUTPUT_LINE; do
-                VARIABLE_KEY=$(echo "$OUTPUT_LINE" | cut -d'=' -f1)
-                VARIABLE_VALUE=$(echo "$OUTPUT_LINE" | cut -d'=' -f2)
-                echo "$VARIABLE_KEY=$VARIABLE_VALUE" >>"$GITHUB_OUTPUT"
-            done
-
-            echo "Github output:"
-            cat "$GITHUB_OUTPUT"
-        fi
-    elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
-        terraform "${ACTION}" \
-            -var-file="variables.tfvars" \
-            "${@:2}"
-    else
-        terraform "${@:1}"
-    fi
+    echo "### Import state ${RESOURCE} @ ${RESOURCE_ID}"
+    MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
+        MSSQL_CLIENT_ID="${ARM_CLIENT_ID}" \
+        MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}" \
+        terraform import \
+        -var-file="variables.tfvars" \
+        -input=false \
+        "${RESOURCE}" \
+        "${RESOURCE_ID}" || true
 }
 
-# Run terraform
 if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
-    if ! doAction "${@}"; then
-        echo "# Terraform failed, try again"
-
-        doAction "${@}" || exit 1
+    echo "## Delete / reimport mssql_user states ##"
+    # The mssql_user state is not updated when a server is deleted.
+    # This causes Error: unable to read user [...].[...]: db connection failed after 30s timeout
+    mssql_user_reimport \
+        "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
+        "${APP_ENVIRONMENT}-backend" \
+        backend_database_migrations \
+        "${APP_ENVIRONMENT}-backend-database-owner"
+    mssql_user_reimport \
+        "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
+        "${APP_ENVIRONMENT}-backend" \
+        read_write \
+        "${APP_ENVIRONMENT}-backend-database-read-write"
+    if [[ "${APP_ENVIRONMENT}" != "main" ]]; then
+        mssql_user_reimport \
+            "${APP_PROJECT_SLUG}-${APP_ENVIRONMENT}-server" \
+            "${APP_ENVIRONMENT}-backend" \
+            integration_test_admin[0] \
+            integration_test_admin
     fi
+
+    echo "## Planning ##"
+    terraform "plan" \
+        -out="tfplan" \
+        -var-file="variables.tfvars" \
+        -input=false \
+        "${@:2}"
+
+    if [[ "${ACTION}" == "apply" ]]; then
+        echo "## Applying ##"
+        terraform apply \
+            -auto-approve \
+            "tfplan"
+
+        # Output variables to github ci
+        if [[ -z "${GITHUB_OUTPUT}" ]]; then
+            GITHUB_OUTPUT="$(pwd)/.github_output"
+            echo "## Create github output file ${GITHUB_OUTPUT} ##"
+            cat /dev/null >"${GITHUB_OUTPUT}"
+        fi
+
+        echo "## Setting github outputs"
+        terraform output -json | jq -c -r 'to_entries[]' | while read -r OUTPUT_LINE; do
+            VARIABLE_KEY=$(echo "${OUTPUT_LINE}" | jq -r '.key')
+            VARIABLE_VALUE=$(echo "${OUTPUT_LINE}" | jq -r '.value.value')
+            VARIABLE_SENSITIVE=$(echo "${OUTPUT_LINE}" | jq -r '.value.sensitive')
+
+            if [ "${VARIABLE_SENSITIVE}" = true ]; then
+                echo "::add-mask::${VARIABLE_VALUE}"
+
+                VARIABLE_VALUE=$(echo -n "$VARIABLE_VALUE" | openssl enc -pbkdf2 -a -salt -pass "pass:$GH_ENCRYPT_KEY" | base64 -w 0)
+
+                echo " - ${VARIABLE_KEY}=****"
+            else
+                echo " - ${VARIABLE_KEY}=${VARIABLE_VALUE}"
+            fi
+
+            echo "${VARIABLE_KEY}=${VARIABLE_VALUE}" >>"${GITHUB_OUTPUT}"
+        done
+    fi
+elif [[ "${ACTION}" == "destroy" ]]; then
+    if [[ "${APP_ENVIRONMENT}" == "main" ]]; then
+        echo "Main environment can not be destroyed"
+        exit 1
+    fi
+
+    echo "## Destroying environment ##"
+    terraform destroy \
+        -var-file="variables.tfvars" \
+        "${@:2}"
+elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
+    echo "## Running ${ACTION} with var-file ##"
+    terraform "${ACTION}" \
+        -var-file="variables.tfvars" \
+        "${@:2}"
 else
-    doAction "${@}"
+    echo "## Running ${ACTION} ##"
+    terraform "${@:1}"
 fi
