@@ -52,7 +52,3 @@ variable "nordigen_secret_key" {
   type      = string
   sensitive = true
 }
-
-variable "app_frontend_url" {
-  type = string
-}

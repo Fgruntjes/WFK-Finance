@@ -1,4 +1,4 @@
-name: Code quality
+name: Test
 on:
     pull_request:
 
@@ -31,7 +31,7 @@ jobs:
             - uses: terraform-linters/setup-tflint@v4
             - uses: hashicorp/setup-terraform@v3
               with:
-                  terraform_version: "~1.6.3"
+                  terraform_version: '~1.6.3'
             - run: terraform fmt -check
               working-directory: terraform
             - run: tflint --format compact
@@ -54,7 +54,7 @@ jobs:
             - uses: actions/setup-node@v4
               with:
                   node-version-file: frontend/package.json
-                  cache: "pnpm"
+                  cache: 'pnpm'
                   cache-dependency-path: frontend/pnpm-lock.yaml
             - run: ./build.sh frontend
             - run: pnpm run lint
@@ -62,9 +62,33 @@ jobs:
             - run: pnpm run check
               working-directory: frontend
 
-    test_quality_success:
+    #########################################################
+    # Unit / Integration tests
+    #########################################################
+    test_dotnet_backend:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: 7.0
+            - run: dotnet build App.Backend.Test
+            - run: |
+                  dotnet test App.Backend.Test \
+                      --no-build \
+                      --blame \
+                      --blame-hang-timeout 2m
+
+    #########################################################
+    # PR check
+    #########################################################
+    test_success:
         runs-on: ubuntu-latest
         needs:
+            - test_dotnet_backend
             - test_quality_dotnet
             - test_quality_frontend
             - test_quality_terraform
@@ -72,6 +96,7 @@ jobs:
         steps:
             - run: |
                   [[
+                      '${{ needs.test_dotnet_backend.result }}' == 'success' &&
                       '${{ needs.test_quality_dotnet.result }}' == 'success' &&
                       '${{ needs.test_quality_frontend.result }}' == 'success' &&
                       '${{ needs.test_quality_terraform.result }}' == 'success'

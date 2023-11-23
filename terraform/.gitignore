@@ -3,6 +3,7 @@
 
 ### App ###
 tfplan
+*.tfplan
 *.log
 
 ### Terraform ###

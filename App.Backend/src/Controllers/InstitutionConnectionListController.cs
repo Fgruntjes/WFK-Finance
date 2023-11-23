@@ -24,7 +24,7 @@ public class InstitutionConnectionListController : GraphController
     [Query("list")]
     public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
     {
-        var organisationId = await _organisationIdProvider.OrganisationIdAsync(cancellationToken);
+        var organisationId = _organisationIdProvider.OrganisationId;
         var query = _database.InstitutionConnections
             .Where(e => e.OrganisationId == organisationId);
 

@@ -18,8 +18,7 @@ const config = {
 			$houdini: '$houdini'
 		},
 		paths: {
-			relative: false,
-			base: process.env.NODE_ENV === 'production' ? `/${process.env.APP_BASE}` : ''
+			relative: false
 		}
 	}
 };

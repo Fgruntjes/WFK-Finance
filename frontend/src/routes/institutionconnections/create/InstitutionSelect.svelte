@@ -6,6 +6,7 @@
 	import { Select, SelectItem, SelectSkeleton } from 'carbon-components-svelte';
 
 	export let selectedId: Guid | undefined = undefined;
+	export let countryIso2: string;
 	export const _InstitutionsVariables: InstitutionsVariables = ({ props: { countryIso2 } }) => {
 		return { countryIso2 };
 	};
@@ -49,6 +50,7 @@
 {:else}
 	<Select
 		labelText={$i18n.t('institutionconnections:create.bankselect')}
+		data-country={countryIso2}
 		bind:selected={selectedId}
 		{...$$restProps}
 	>
