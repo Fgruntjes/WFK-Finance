@@ -63,20 +63,26 @@ function mssql_user_reimport {
     DATABASE="${2}"
     RESOURCE="mssql_user.${3}"
     USER="${4}"
-    RESOURCE_ID="mssql://${SERVER}.database.windows.net/${DATABASE}/${USER}"
+
+    SERVER_HOST="${SERVER}.database.windows.net"
+    RESOURCE_ID="mssql://${SERVER_HOST}/${DATABASE}/${USER}"
 
     echo "### Remove state ${RESOURCE}"
     terraform state rm "${RESOURCE}" || true
 
-    echo "### Import state ${RESOURCE} @ ${RESOURCE_ID}"
-    MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
-        MSSQL_CLIENT_ID="${ARM_CLIENT_ID}" \
-        MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}" \
-        terraform import \
-        -var-file="variables.tfvars" \
-        -input=false \
-        "${RESOURCE}" \
-        "${RESOURCE_ID}" || true
+    if nslookup "${SERVER_HOST}" >/dev/null; then
+        echo "### Import state ${RESOURCE} @ ${RESOURCE_ID}"
+        MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
+            MSSQL_CLIENT_ID="${ARM_CLIENT_ID}" \
+            MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}" \
+            terraform import \
+            -var-file="variables.tfvars" \
+            -input=false \
+            "${RESOURCE}" \
+            "${RESOURCE_ID}" || true
+    else
+        echo "### Import state ${RESOURCE} @ ${RESOURCE_ID} SKIPPED - DNS $SERVER_HOST does not exist"
+    fi
 }
 
 function refresh_mssql_users {
