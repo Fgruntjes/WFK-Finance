@@ -1,5 +1,5 @@
 resource "azurerm_user_assigned_identity" "backend_database_read_write" {
-  name                = "${var.app_environment}-backend-database-read-write"
+  name                = "read-write"
   resource_group_name = var.app_project_slug
   location            = var.arm_location
 }
