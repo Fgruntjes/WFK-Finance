@@ -1,6 +1,10 @@
 name: Integration tests
 on:
     pull_request:
+        branches-ignore:
+            - 'main'
+            - 'test'
+            - 'alpha'
 
 jobs:
     deploy_slug:
