@@ -79,7 +79,7 @@ function mssql_user_reimport {
         "${RESOURCE_ID}" || true
 }
 
-if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
+function refresh_mssql_users {
     echo "## Delete / reimport mssql_user states ##"
     # The mssql_user state is not updated when a server is deleted.
     # This causes Error: unable to read user [...].[...]: db connection failed after 30s timeout
@@ -100,6 +100,10 @@ if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
             integration_test_admin[0] \
             integration_test_admin
     fi
+}
+
+if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
+    refresh_mssql_users
 
     echo "## Planning ##"
     terraform "plan" \
@@ -145,6 +149,8 @@ elif [[ "${ACTION}" == "destroy" ]]; then
         echo "Main environment can not be destroyed"
         exit 1
     fi
+
+    refresh_mssql_users
 
     echo "## Destroying environment ##"
     terraform destroy \
