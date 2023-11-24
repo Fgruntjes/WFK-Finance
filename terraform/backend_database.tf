@@ -1,5 +1,5 @@
 resource "azurerm_mssql_server" "backend_database" {
-  name                                 = "${var.app_project_slug}-${var.app_environment}-server"
+  name                                 = "${var.app_project_slug}-${var.app_environment}"
   resource_group_name                  = var.app_project_slug
   location                             = var.arm_location
   version                              = "12.0"

@@ -3,6 +3,10 @@ name: Clean resources
 on:
     pull_request:
         types: ['closed']
+        branches-ignore:
+            - 'main'
+            - 'test'
+            - 'alpha'
 
 jobs:
     deploy_slug:
@@ -10,7 +14,7 @@ jobs:
         steps:
             - uses: rlespinasse/github-slug-action@v4
             - id: environment
-              run: echo "var=${{ env.GITHUB_REF_SLUG_URL }}" >> $GITHUB_OUTPUT
+              run: echo "var=${{ github.event.pull_request.number }}-merge" >> $GITHUB_OUTPUT
             - id: tag
               run: echo "var=${{ env.GITHUB_SHA_SHORT }}" >> $GITHUB_OUTPUT
         outputs:
@@ -31,6 +35,7 @@ jobs:
             - uses: hashicorp/setup-terraform@v3
               with:
                   terraform_version: '~1.6.3'
+                  terraform_wrapper: false
             - run: ./deploy.sh destroy -auto-approve
               env:
                   APP_VERSION: '${{ needs.deploy_slug.outputs.tag }}'

@@ -19,7 +19,7 @@ resource "mssql_user" "integration_test_admin" {
   depends_on = [azurerm_mssql_firewall_rule.backend_database_public]
 
   database = azurerm_mssql_database.backend_database.name
-  username = "integration_test_admin"
+  username = "test-admin"
   password = one(random_password.integration_test_admin_password[*].result)
 
   roles = ["db_owner"]
