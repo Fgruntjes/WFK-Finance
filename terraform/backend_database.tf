@@ -1,5 +1,5 @@
 resource "azurerm_mssql_server" "backend_database" {
-  name                                 = "${var.app_project_slug}-${var.app_environment}-server"
+  name                                 = "${var.app_project_slug}-${var.app_environment}"
   resource_group_name                  = var.app_project_slug
   location                             = var.arm_location
   version                              = "12.0"
@@ -11,7 +11,7 @@ resource "azurerm_mssql_server" "backend_database" {
     azuread_authentication_only = var.app_environment == "main"
     tenant_id                   = var.arm_tenant_id
     object_id                   = var.arm_client_id
-    login_username              = "github-actions-${var.app_project_slug}"
+    login_username              = "appadmin"
   }
 
   identity {
