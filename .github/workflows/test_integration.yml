@@ -17,7 +17,7 @@ jobs:
 
     deploy:
         needs: deploy_slug
-        if: ${{ needs.deploy_slug.outputs.environment != 'main' && needs.deploy_slug.outputs.environment != 'test' && needs.deploy_slug.outputs.environment != 'alpha' }}
+        if: ${{ needs.deploy_slug.outputs.environment != 'main' && needs.deploy_slug.outputs.environment != 'test' }}
         uses: ./.github/workflows/deploy.yml
         secrets: inherit
         permissions:

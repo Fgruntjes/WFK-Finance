@@ -1,12 +1,12 @@
 resource "random_password" "integration_test_admin_password" {
-  count            = var.app_environment == "main" ? 0 : 1
+  count            = local.environment_data_ephemeral ? 1 : 0
   length           = 16
   special          = true
   override_special = "_%@"
 }
 
 resource "mssql_user" "integration_test_admin" {
-  count = var.app_environment == "main" ? 0 : 1
+  count = local.environment_data_ephemeral ? 1 : 0
   server {
     host = azurerm_mssql_server.backend_database.fully_qualified_domain_name
     azure_login {
