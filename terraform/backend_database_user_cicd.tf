@@ -1,4 +1,3 @@
-
 resource "random_password" "integration_test_admin_password" {
   count            = var.app_environment == "main" ? 0 : 1
   length           = 16
