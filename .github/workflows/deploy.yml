@@ -11,11 +11,6 @@ on:
         outputs:
             app_settings_json:
                 value: ${{ jobs.deploy_backend.outputs.app_settings_json }}
-    push:
-        branches:
-            - main
-            - beta
-            - alpha
 
 jobs:
     build_backend:

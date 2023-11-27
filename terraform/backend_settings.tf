@@ -1,4 +1,5 @@
 locals {
+  environment_data_ephemeral = var.app_environment != "main" && var.app_environment != "test"
   backend_settings = {
     App = {
       Environment = var.app_environment,
@@ -17,9 +18,6 @@ locals {
       DefaultConnection = "",
     }
   }
-}
-
-locals {
   backend_settings_string = jsonencode(merge(local.backend_settings, {
     ConnectionStrings = {
       DefaultConnection = join(";", [
@@ -48,13 +46,13 @@ output "app_settings_json" {
   sensitive = true
   value = jsonencode(merge(local.backend_settings, {
     ConnectionStrings = {
-      DefaultConnection = var.app_environment == "main" ? "" : join(";", [
+      DefaultConnection = local.environment_data_ephemeral ? join(";", [
         "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
         "Database=${azurerm_mssql_database.backend_database.name}",
         try("User Id=${one(mssql_user.integration_test_admin[*].username)}", "User Id="),
         try("Password=${one(mssql_user.integration_test_admin[*].password)}", "Password="),
         "Encrypt=True",
-      ])
+      ]) : ""
     }
   }))
 }

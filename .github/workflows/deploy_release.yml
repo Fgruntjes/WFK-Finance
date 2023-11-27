@@ -25,8 +25,7 @@ jobs:
         secrets: inherit
         permissions:
             contents: read
-            id-token: write
-            pages: write
+            deployments: write
         with:
             environment: ${{ needs.deploy_slug.outputs.environment }}
-            tag: ${{ needs.deploy_slug.outputs.tag }}
+            version: ${{ needs.deploy_slug.outputs.version }}
