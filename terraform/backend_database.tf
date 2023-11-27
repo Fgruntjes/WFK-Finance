@@ -8,7 +8,7 @@ resource "azurerm_mssql_server" "backend_database" {
   public_network_access_enabled        = true
 
   azuread_administrator {
-    azuread_authentication_only = false
+    azuread_authentication_only = !local.environment_data_ephemeral
     tenant_id                   = var.arm_tenant_id
     object_id                   = var.arm_client_id
     login_username              = "github-actions-${var.app_project_slug}"
