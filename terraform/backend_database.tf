@@ -1,3 +1,10 @@
+resource "random_password" "backend_database_sa_password" {
+  count            = local.environment_data_ephemeral ? 1 : 0
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
+
 resource "azurerm_mssql_server" "backend_database" {
   name                                 = "${var.app_project_slug}-${var.app_environment}"
   resource_group_name                  = var.app_project_slug
@@ -6,6 +13,9 @@ resource "azurerm_mssql_server" "backend_database" {
   connection_policy                    = "Default"
   outbound_network_restriction_enabled = false
   public_network_access_enabled        = true
+
+  administrator_login          = local.environment_data_ephemeral ? "sa-${var.app_project_slug}" : null
+  administrator_login_password = one(random_password.backend_database_sa_password[*].result)
 
   azuread_administrator {
     azuread_authentication_only = !local.environment_data_ephemeral
