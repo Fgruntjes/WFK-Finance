@@ -75,12 +75,15 @@ public class AppFixture : IAsyncDisposable
 
     public void WithData(Action<DatabaseContext> assertAction)
     {
-        using var scope = Services.CreateScope();
+        var scope = Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
         assertAction(context);
+
+        // Explicitly dispose to ensure any exception is thrown within the test 
+        scope.Dispose();
     }
 
-    private TestServer<GraphSchema> CreateServer()
+    public TestServer<GraphSchema> CreateServer(string? authenticatedUser = TestUserId)
     {
         var builder = new TestServerBuilder<GraphSchema>();
 
@@ -120,8 +123,10 @@ public class AppFixture : IAsyncDisposable
             options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.All;
         });
 
-        // TODO handle non authorized test cases
-        builder.UserContext.Authenticate(TestUserId);
+        if (authenticatedUser != null)
+        {
+            builder.UserContext.Authenticate(authenticatedUser);
+        }
 
         // Start server
         TestServer<GraphSchema> app;

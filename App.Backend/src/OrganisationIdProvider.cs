@@ -38,7 +38,8 @@ public class OrganisationIdProvider
                     .Take(1)
                     .FirstOrDefault();
 
-                if (organisationEntity != null) {
+                if (organisationEntity != null)
+                {
                     _storedOrganisations[identity] = organisationEntity.Id;
                     return organisationEntity.Id;
                 }

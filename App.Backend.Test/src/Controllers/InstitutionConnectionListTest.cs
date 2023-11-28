@@ -1,3 +1,5 @@
+using Xunit.Sdk;
+
 namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionListTest : IClassFixture<InstitutionConnectionListFixture>
@@ -21,5 +23,11 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     {
         var result = await _fixture.Server.ExecuteQuery(new { offset = 1, limit = 1 });
         result.MatchSnapshot();
+    }
+
+    [Fact]
+    public async Task OnlyWithinOrganisation()
+    {
+        FailException.ForFailure("Not implemented");
     }
 }

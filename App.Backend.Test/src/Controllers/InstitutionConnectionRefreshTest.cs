@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Xunit.Sdk;
+
 namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnectionRefreshFixture>
@@ -48,13 +51,12 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         result.MatchSnapshot();
 
         // Assert database
-        _fixture.WithData(async context =>
+        _fixture.WithData(context =>
         {
-            var connectionEntity = await context.InstitutionConnections
-                .FindAsync(_fixture.InstitutionConnectionEntity.Id);
-
-            connectionEntity.Should().NotBeNull();
-            connectionEntity?.Accounts.Should().HaveCount(2);
+            context.InstitutionConnections
+                .Include(e => e.Accounts)
+                .First(e => e.Id == _fixture.InstitutionConnectionEntity.Id)
+                .Accounts.Should().HaveCount(2);
         });
     }
 
@@ -69,5 +71,11 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
 
         // Assert
         result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
+    }
+
+    [Fact]
+    public async Task OnlyWithinOrganisation()
+    {
+        FailException.ForFailure("Not implemented");
     }
 }

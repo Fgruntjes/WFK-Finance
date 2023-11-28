@@ -10,32 +10,32 @@ public static class TestServerExtensions
     private static readonly ISnapshotFullNameReader _testNameResolver = new XunitSnapshotFullNameReader();
 
     public static async Task<string> ExecuteQuery<TSchema>(
-        this TestServer<TSchema> Server,
+        this TestServer<TSchema> server,
         string? queryFile,
         object? variables = null)
         where TSchema : GraphSchema
     {
-        var context = Server.BuildQueryContext(queryFile, variables);
-        return await Server.RenderResult(context);
+        var context = server.BuildQueryContext(queryFile, variables);
+        return await server.RenderResult(context);
     }
 
     public static async Task<string> ExecuteQuery<TSchema>(
-        this TestServer<TSchema> Server,
+        this TestServer<TSchema> server,
         object? variables = null)
         where TSchema : GraphSchema
     {
-        var context = Server.BuildQueryContext(null, variables);
-        return await Server.RenderResult(context);
+        var context = server.BuildQueryContext(null, variables);
+        return await server.RenderResult(context);
     }
 
-    private static QueryExecutionContext BuildQueryContext<TSchema>(
-        this TestServer<TSchema> Server,
+    public static QueryExecutionContext BuildQueryContext<TSchema>(
+        this TestServer<TSchema> server,
         string? queryFile,
         object? variables = null)
         where TSchema : GraphSchema
     {
         var queryText = LoadQueryFile(queryFile);
-        var queryBuilder = Server.CreateQueryContextBuilder();
+        var queryBuilder = server.CreateQueryContextBuilder();
         queryBuilder.AddQueryText(queryText);
 
         if (variables != null)

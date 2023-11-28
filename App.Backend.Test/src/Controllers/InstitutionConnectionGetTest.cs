@@ -1,5 +1,6 @@
 using App.Backend.GraphQL.Type;
 using App.Data.Entity;
+using Xunit.Sdk;
 
 namespace App.Backend.Test.Controllers;
 
@@ -84,5 +85,11 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
 
         // Assert
         result.MatchSnapshot();
+    }
+
+    [Fact]
+    public async Task OnlyWithinOrganisation()
+    {
+        FailException.ForFailure("Not implemented");
     }
 }
