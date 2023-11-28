@@ -13,7 +13,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     public async Task ByExternalId_Success()
     {
         // Act
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             _fixture.InstitutionConnectionEntity.ExternalId
         });
@@ -26,7 +26,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     public async Task ByExternalId_MissingConnection()
     {
         // Act
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             ExternalId = "SomeExternalIdMissing"
         });
@@ -39,7 +39,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     public async Task ById_Success()
     {
         // Act
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             _fixture.InstitutionConnectionEntity.Id
         });
@@ -62,7 +62,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     public async Task ById_MissingConnection()
     {
         // Act
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             Id = new Guid("59a35c45-6e8d-4dc7-bacc-f151f94da93d")
         });

@@ -1,10 +1,8 @@
 using App.Data;
 using App.Backend.Startup;
-using GraphQL.AspNet.Execution.Contexts;
 using GraphQL.AspNet.Schemas;
 using GraphQL.AspNet.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
-using Snapshooter.Core;
 using App.Backend.Test.Database;
 using Microsoft.Extensions.Logging;
 using App.Backend.Controllers;
@@ -19,7 +17,6 @@ namespace App.Backend.Test;
 
 public class AppFixture : IAsyncDisposable
 {
-    private readonly ISnapshotFullNameReader _testNameResolver;
     private readonly PooledDatabase _database;
     private readonly ILoggerProvider _loggerProvider;
     private TestServer<GraphSchema>? _server;
@@ -40,7 +37,6 @@ public class AppFixture : IAsyncDisposable
 
     public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
-        _testNameResolver = new XunitSnapshotFullNameReader();
         _database = databasePool.Get();
         _loggerProvider = loggerProvider;
 
@@ -67,18 +63,6 @@ public class AppFixture : IAsyncDisposable
         using var scope = Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
         assertAction(context);
-    }
-
-    public async Task<string> ExecuteQuery(string? queryFile, object? variables = null)
-    {
-        var context = BuildQueryContext(queryFile, variables);
-        return await Server.RenderResult(context);
-    }
-
-    public async Task<string> ExecuteQuery(object? variables = null)
-    {
-        var context = BuildQueryContext(null, variables);
-        return await Server.RenderResult(context);
     }
 
     private TestServer<GraphSchema> CreateServer()
@@ -133,32 +117,5 @@ public class AppFixture : IAsyncDisposable
         _database.EnsureInitialized(app.ServiceProvider);
 
         return app;
-    }
-
-    private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)
-    {
-        var queryText = LoadQueryFile(queryFile);
-        var queryBuilder = Server.CreateQueryContextBuilder();
-        queryBuilder.AddQueryText(queryText);
-
-        if (variables != null)
-        {
-            queryBuilder.AddVariableData(variables);
-        }
-
-        return queryBuilder.Build();
-    }
-
-    private string LoadQueryFile(string? queryFile)
-    {
-        var queryFullName = _testNameResolver.ReadSnapshotFullName();
-        queryFile ??= Path.Combine(queryFullName.FolderPath, "__graphql__", queryFullName.Filename + ".graphql");
-        if (!File.Exists(queryFile))
-        {
-            File.Create(queryFile).Dispose();
-        }
-
-        var queryText = File.ReadAllText(queryFile);
-        return queryText;
     }
 }

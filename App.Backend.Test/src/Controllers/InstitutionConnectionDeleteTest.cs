@@ -28,7 +28,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
         });
 
         // Act
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             ConnectionIds = new List<Guid> { institutionConnectionEntity.Id }
         });
@@ -40,7 +40,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
     [Fact]
     public async Task MissingConnection()
     {
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             ConnectionIds = new List<Guid> { new("5dcb861b-b879-427e-ad47-4c4eade20813") }
         });

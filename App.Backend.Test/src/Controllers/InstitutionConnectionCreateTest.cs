@@ -32,7 +32,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
             .ReturnsAsync(nordigenRequisitionResult);
 
         // Act
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             InstitutionId = _fixture.InstitutionEntity.Id,
             ReturnUrl = "http://www.example.com/return"
@@ -53,7 +53,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
     [Fact]
     public async Task MissingInstitution()
     {
-        var result = await _fixture.ExecuteQuery(new
+        var result = await _fixture.Server.ExecuteQuery(new
         {
             InstitutionId = new Guid("63ee89f0-d929-4f13-9636-4efd23aee070"),
             ReturnUrl = "http://www.example.com/return"
