@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Security.Principal;
 using App.Data;
 using App.Data.Entity;
 
@@ -8,18 +6,21 @@ namespace App.Backend;
 public class OrganisationIdProvider
 {
     private readonly DatabaseContext _database;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IDictionary<string, Guid> _storedOrganisations;
     private static readonly object _lock = new();
 
-    public OrganisationIdProvider(DatabaseContext database)
+    public OrganisationIdProvider(DatabaseContext database, IHttpContextAccessor httpContextAccessor)
     {
         _database = database;
+        _httpContextAccessor = httpContextAccessor;
         _storedOrganisations = new Dictionary<string, Guid>();
     }
 
-    public Guid GetOrganisationId(IPrincipal user)
+    public Guid GetOrganisationId()
     {
-        var identity = user.Identity?.Name ?? throw new Exception("No identity found");
+        var identity = _httpContextAccessor.HttpContext?.User?.Identity?.Name
+            ?? throw new Exception("No identity found");
 
         if (_storedOrganisations.TryGetValue(identity, out var id))
         {

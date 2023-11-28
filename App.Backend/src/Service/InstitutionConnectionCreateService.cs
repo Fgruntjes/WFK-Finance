@@ -23,13 +23,13 @@ public class InstitutionConnectionCreateService
         _nordigenClient = nordigenClient;
     }
 
-    public async Task<InstitutionConnectionEntity> Connect(IPrincipal user, Guid institutionId, Uri returnUrl, CancellationToken cancellationToken = default)
+    public async Task<InstitutionConnectionEntity> Connect(Guid institutionId, Uri returnUrl, CancellationToken cancellationToken = default)
     {
         var institution = await _database.Institutions
             .FindAsync(institutionId, cancellationToken)
             ?? throw new ArgumentOutOfRangeException(nameof(institutionId), institutionId, "Could not find institution");
 
-        var connectEntity = await GetConnectUrl(user, institution, cancellationToken);
+        var connectEntity = await GetConnectUrl(institution, cancellationToken);
         if (connectEntity != null)
         {
             return connectEntity;
@@ -40,13 +40,13 @@ public class InstitutionConnectionCreateService
             AccountSelection = false
         });
 
-        connectEntity = await StoreConnectUrl(user, institutionId, requisitionResponse.Link, requisitionResponse.Id.ToString(), cancellationToken);
+        connectEntity = await StoreConnectUrl(institutionId, requisitionResponse.Link, requisitionResponse.Id.ToString(), cancellationToken);
         return connectEntity;
     }
 
-    private async Task<InstitutionConnectionEntity?> GetConnectUrl(IPrincipal user, InstitutionEntity institution, CancellationToken cancellationToken = default)
+    private async Task<InstitutionConnectionEntity?> GetConnectUrl(InstitutionEntity institution, CancellationToken cancellationToken = default)
     {
-        var organisationId = _organisationIdProvider.GetOrganisationId(user);
+        var organisationId = _organisationIdProvider.GetOrganisationId();
 
         return await _database.InstitutionConnections
             .AsQueryable()
@@ -56,9 +56,9 @@ public class InstitutionConnectionCreateService
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    private async Task<InstitutionConnectionEntity> StoreConnectUrl(IPrincipal user, Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
+    private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var organisationId = _organisationIdProvider.GetOrganisationId(user);
+        var organisationId = _organisationIdProvider.GetOrganisationId();
         var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,

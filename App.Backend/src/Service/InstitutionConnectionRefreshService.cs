@@ -24,27 +24,24 @@ public class InstitutionConnectionRefreshService
     }
 
     public async Task<InstitutionConnectionEntity> Refresh(
-        IPrincipal user,
         string externalId,
         CancellationToken cancellationToken = default)
     {
-        return await Refresh(user, e => e.ExternalId == externalId, cancellationToken);
+        return await Refresh(e => e.ExternalId == externalId, cancellationToken);
     }
 
     public async Task<InstitutionConnectionEntity> Refresh(
-        IPrincipal user,
         Guid connectionId,
         CancellationToken cancellationToken = default)
     {
-        return await Refresh(user, e => e.Id == connectionId, cancellationToken);
+        return await Refresh(e => e.Id == connectionId, cancellationToken);
     }
 
     private async Task<InstitutionConnectionEntity> Refresh(
-        IPrincipal user,
         Expression<Func<InstitutionConnectionEntity, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        var organisationId = _organisationIdProvider.GetOrganisationId(user);
+        var organisationId = _organisationIdProvider.GetOrganisationId();
         var entity = await _database.InstitutionConnections
             .OrderBy(e => e.CreatedAt)
             .Take(1)
