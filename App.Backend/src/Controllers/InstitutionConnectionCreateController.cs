@@ -26,7 +26,7 @@ public class InstitutionConnectionCreateController : GraphController
     {
         try
         {
-            var entity = await _createService.Connect(institutionId, returnUrl, cancellationToken);
+            var entity = await _createService.Connect(User, institutionId, returnUrl, cancellationToken);
             return Ok(entity.ToGraphQLType());
         }
         catch (ArgumentOutOfRangeException exception)

@@ -1,52 +1,66 @@
+using System.Security.Claims;
+using System.Security.Principal;
 using App.Data;
 using App.Data.Entity;
-using Microsoft.EntityFrameworkCore;
 
-namespace App;
+namespace App.Backend;
 
 public class OrganisationIdProvider
 {
-    // As long as we have all users under the same organisation
-    private readonly Guid TempOrganisationId = new("ae7113f0-1b52-40e5-9e77-5acb10e7fdad");
     private readonly DatabaseContext _database;
-    private bool _organisationStored = false;
-    private static object _lock = new();
-
-    public Guid OrganisationId
-    {
-        get
-        {
-            EnsureOrganisationIdInserted();
-            return TempOrganisationId;
-        }
-    }
+    private readonly IDictionary<string, Guid> _storedOrganisations;
+    private static readonly object _lock = new();
 
     public OrganisationIdProvider(DatabaseContext database)
     {
         _database = database;
+        _storedOrganisations = new Dictionary<string, Guid>();
     }
 
-    public void EnsureOrganisationIdInserted()
+    public Guid GetOrganisationId(IPrincipal user)
     {
-        if (_organisationStored)
+        var identity = user.Identity?.Name ?? throw new Exception("No identity found");
+
+        if (_storedOrganisations.TryGetValue(identity, out var id))
         {
-            return;
+            return id;
         }
 
         lock (_lock)
         {
-            _database.Organisations
-                .Upsert(new OrganisationEntity
-                {
-                    Id = TempOrganisationId,
-                    Slug = "only-organisation",
-                })
-                .On(i => new
-                {
-                    i.Id,
-                })
-                .Run();
-            _database.SaveChanges();
+            using var transaction = _database.Database.BeginTransaction();
+
+            try
+            {
+                var organisationEntity = _database.Organisations
+                    .Where(o => o.Slug == identity)
+                    .OrderBy(o => o.Id)
+                    .Take(1)
+                    .FirstOrDefault();
+
+                if (organisationEntity != null) {
+                    _storedOrganisations[identity] = organisationEntity.Id;
+                    return organisationEntity.Id;
+                }
+
+                var organisationId = Guid.NewGuid();
+                _database.Organisations
+                    .Add(new OrganisationEntity
+                    {
+                        Id = organisationId,
+                        Slug = identity,
+                    });
+
+                _database.SaveChanges();
+                transaction.Commit();
+
+                return organisationId;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
     }
 }

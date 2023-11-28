@@ -23,7 +23,7 @@ public class InstitutionConnectionRefreshController : GraphController
     {
         try
         {
-            var entity = await _refreshService.Refresh(externalId, cancellationToken);
+            var entity = await _refreshService.Refresh(User, externalId, cancellationToken);
             return Ok(entity.ToGraphQLType());
         }
         catch (InvalidOperationException)
@@ -38,7 +38,7 @@ public class InstitutionConnectionRefreshController : GraphController
     {
         try
         {
-            var entity = await _refreshService.Refresh(id, cancellationToken);
+            var entity = await _refreshService.Refresh(User, id, cancellationToken);
             return Ok(entity.ToGraphQLType());
         }
         catch (InvalidOperationException)

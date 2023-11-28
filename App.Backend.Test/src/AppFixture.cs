@@ -12,6 +12,9 @@ using App.Data.Migrations;
 using GraphQL.AspNet.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
+using App.Data.Entity;
 
 namespace App.Backend.Test;
 
@@ -33,7 +36,9 @@ public class AppFixture : IAsyncDisposable
     }
     public IServiceProvider Services => Server.ServiceProvider;
     public Mock<INordigenClient> NordigenClientMoq { get; private set; }
-    public Guid OrganisationId => Services.GetRequiredService<OrganisationIdProvider>().OrganisationId;
+    public readonly Guid OrganisationId;
+
+    public const string TestUserId = "auth0|qm3vehnjqg885o56wa1wc006";
 
     public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
@@ -41,6 +46,16 @@ public class AppFixture : IAsyncDisposable
         _loggerProvider = loggerProvider;
 
         NordigenClientMoq = new Mock<INordigenClient>();
+
+        OrganisationId = Guid.NewGuid();
+        SeedData(context =>
+        {
+            context.Organisations.Add(new OrganisationEntity
+            {
+                Id = OrganisationId,
+                Slug = TestUserId,
+            });
+        });
     }
 
     public async ValueTask DisposeAsync()
@@ -70,7 +85,7 @@ public class AppFixture : IAsyncDisposable
         var builder = new TestServerBuilder<GraphSchema>();
 
         // Mocks
-        builder.AddScoped((_) => NordigenClientMoq.Object);
+        builder.AddScoped(_ => NordigenClientMoq.Object);
 
         // Load database
         builder.RegisterMigrationInitializer<DatabaseContext>();
@@ -106,7 +121,7 @@ public class AppFixture : IAsyncDisposable
         });
 
         // TODO handle non authorized test cases
-        builder.UserContext.Authenticate();
+        builder.UserContext.Authenticate(TestUserId);
 
         // Start server
         TestServer<GraphSchema> app;
