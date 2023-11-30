@@ -11,6 +11,7 @@ public class InstitutionConnectionRefreshFixture : AppFixture
 {
     public InstitutionEntity InstitutionEntity { get; private set; }
     public InstitutionConnectionEntity InstitutionConnectionEntity { get; private set; }
+    public InstitutionConnectionEntity OrganisationMissmatchInstitutionConnectionEntity { get; private set; }
 
     public InstitutionConnectionRefreshFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
         : base(databasePool, loggerProvider)
@@ -29,10 +30,20 @@ public class InstitutionConnectionRefreshFixture : AppFixture
             InstitutionId = InstitutionEntity.Id,
             OrganisationId = OrganisationId,
         };
+
+        OrganisationMissmatchInstitutionConnectionEntity = new InstitutionConnectionEntity()
+        {
+            ExternalId = "45588298-f719-419f-b9d5-bfa8fc239a29",
+            ConnectUrl = new Uri($"https://www.example-organisation-match-0.com/"),
+            InstitutionId = InstitutionEntity.Id,
+            OrganisationId = AltOrganisationId,
+        };
+
         SeedData(context =>
         {
             context.Institutions.Add(InstitutionEntity);
             context.InstitutionConnections.Add(InstitutionConnectionEntity);
+            context.InstitutionConnections.Add(OrganisationMissmatchInstitutionConnectionEntity);
         });
 
         var requisitionsMock = new Mock<IRequisitionClient>();

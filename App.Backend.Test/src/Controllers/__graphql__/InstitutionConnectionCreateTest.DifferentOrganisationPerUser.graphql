@@ -1,0 +1,8 @@
+mutation CreateInstitutionConnection($InstitutionId: Guid!, $ReturnUrl: Uri!){
+    institutionConnection {
+        create(institutionId: $InstitutionId, returnUrl: $ReturnUrl) {
+            externalId
+            connectUrl
+        }
+    }
+}

@@ -36,7 +36,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.ExecuteQuery(new { CountryIso2 = "NL" });
+        var result = await _fixture.Server.ExecuteQuery(new { CountryIso2 = "NL" });
 
         // Assert
         result.MatchSnapshot();
@@ -61,7 +61,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
             .Returns(institutionsMock.Object);
 
         // Act
-        var result = await _fixture.ExecuteQuery(new { CountryIso2 = "GBR" });
+        var result = await _fixture.Server.ExecuteQuery(new { CountryIso2 = "GBR" });
 
         // Arrange
         result.MatchSnapshot();

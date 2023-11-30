@@ -6,8 +6,8 @@ namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionFixture : AppFixture
 {
-    public InstitutionEntity InstitutionEntity { get; private set; }
-    public InstitutionConnectionEntity InstitutionConnectionEntity { get; private set; }
+    public InstitutionEntity InstitutionEntity { get; }
+    public InstitutionConnectionEntity InstitutionConnectionEntity { get; }
 
     public InstitutionConnectionFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
         : base(databasePool, loggerProvider)

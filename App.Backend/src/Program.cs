@@ -43,7 +43,7 @@ builder.Services.AddNordigenClient(builder.Configuration);
 builder.Services.AddAppServices();
 
 var app = builder.Build();
-app.Logger.LogInformation("Started application with auth0 {domain} and audicence {audience}",
+app.Logger.LogInformation("Started application with auth0 {Domain} and audience {Audience}",
     builder.Configuration["Auth0:Domain"],
     builder.Configuration["Auth0:Audience"]);
 
