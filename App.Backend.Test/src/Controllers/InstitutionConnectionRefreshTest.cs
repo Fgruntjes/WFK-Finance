@@ -1,5 +1,5 @@
+using App.Data.Entity;
 using Microsoft.EntityFrameworkCore;
-using Xunit.Sdk;
 
 namespace App.Backend.Test.Controllers;
 
@@ -74,8 +74,28 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     }
 
     [Fact]
-    public async Task OnlyWithinOrganisation()
+    public async Task ByExternalId_OnlyWithinOrganisation()
     {
-        FailException.ForFailure("Not implemented");
+        // Act
+        var result = await _fixture.Server.ExecuteQuery(new
+        {
+            _fixture.OrganisationMissmatchInstitutionConnectionEntity.ExternalId
+        });
+
+        // Assert response
+        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
+    }
+
+    [Fact]
+    public async Task ById_OnlyWithinOrganisation()
+    {
+        // Act
+        var result = await _fixture.Server.ExecuteQuery(new
+        {
+            _fixture.OrganisationMissmatchInstitutionConnectionEntity.Id
+        });
+
+        // Assert response
+        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
     }
 }

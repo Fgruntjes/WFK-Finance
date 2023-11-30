@@ -12,9 +12,9 @@ using App.Data.Migrations;
 using GraphQL.AspNet.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Security.Claims;
 using App.Data.Entity;
+using GraphQL.AspNet.Interfaces.Security;
+using Microsoft.AspNetCore.Http;
 
 namespace App.Backend.Test;
 
@@ -37,8 +37,10 @@ public class AppFixture : IAsyncDisposable
     public IServiceProvider Services => Server.ServiceProvider;
     public Mock<INordigenClient> NordigenClientMoq { get; private set; }
     public readonly Guid OrganisationId;
+    public readonly Guid AltOrganisationId;
 
     public const string TestUserId = "auth0|qm3vehnjqg885o56wa1wc006";
+    public const string AltTestUserId = "auth0|pg164es5iwwqrn13qy3pc4ga";
 
     public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
@@ -48,12 +50,19 @@ public class AppFixture : IAsyncDisposable
         NordigenClientMoq = new Mock<INordigenClient>();
 
         OrganisationId = Guid.NewGuid();
+        AltOrganisationId = Guid.NewGuid();
         SeedData(context =>
         {
             context.Organisations.Add(new OrganisationEntity
             {
                 Id = OrganisationId,
                 Slug = TestUserId,
+            });
+
+            context.Organisations.Add(new OrganisationEntity
+            {
+                Id = AltOrganisationId,
+                Slug = AltTestUserId,
             });
         });
     }
@@ -123,8 +132,10 @@ public class AppFixture : IAsyncDisposable
             options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.All;
         });
 
+        var httpContextAccesorMock = new Mock<IHttpContextAccessor>();
         if (authenticatedUser != null)
         {
+            builder.AddSingleton(httpContextAccesorMock.Object);
             builder.UserContext.Authenticate(authenticatedUser);
         }
 
@@ -135,6 +146,15 @@ public class AppFixture : IAsyncDisposable
             app = builder.Build();
         }
         _database.EnsureInitialized(app.ServiceProvider);
+
+        // Since graphql test server does not create a http context, we need to create one manually
+        if (authenticatedUser != null)
+        {
+            httpContextAccesorMock.SetupProperty(a => a.HttpContext, new DefaultHttpContext
+            {
+                User = app.SecurityContext.DefaultUser,
+            });
+        }
 
         return app;
     }
