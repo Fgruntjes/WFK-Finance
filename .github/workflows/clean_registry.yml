@@ -21,5 +21,5 @@ jobs:
                       az acr run \
                         --registry ${APP_STORAGE_SLUG} \
                         --cmd \
-                        'acr purge --untagged --keep 2 --filter .*:.* --ago 1h' \
+                        'acr purge --untagged --filter .*:.* --ago 1h' \
                          /dev/null

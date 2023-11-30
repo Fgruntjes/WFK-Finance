@@ -1,3 +1,5 @@
+using App.Data.Entity;
+
 namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionListTest : IClassFixture<InstitutionConnectionListFixture>
@@ -12,14 +14,43 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     [Fact]
     public async Task WithoutSkipLimit()
     {
-        var result = await _fixture.ExecuteQuery();
+        // Act
+        var result = await _fixture.Server.ExecuteQuery();
+
+        // Assert
         result.MatchSnapshot();
     }
 
     [Fact]
     public async Task WithSkipLimit()
     {
-        var result = await _fixture.ExecuteQuery(new { offset = 1, limit = 1 });
+        // Act
+        var result = await _fixture.Server.ExecuteQuery(new { offset = 1, limit = 1 });
+
+        // Assert
+        result.MatchSnapshot();
+    }
+
+    [Fact]
+    public async Task OnlyWithinOrganisation()
+    {
+        // Arrange
+        var connectionEntity = new InstitutionConnectionEntity()
+        {
+            ExternalId = $"SomeExternalId-organisation-missmatch-0",
+            ConnectUrl = new Uri($"https://www.example-organisation-missmatch-0.com/"),
+            InstitutionId = _fixture.InstitutionEntity.Id,
+            OrganisationId = _fixture.AltOrganisationId,
+        };
+        _fixture.SeedData(c =>
+        {
+            c.InstitutionConnections.Add(connectionEntity);
+        });
+
+        // Act
+        var result = await _fixture.Server.ExecuteQuery();
+
+        // Assert
         result.MatchSnapshot();
     }
 }

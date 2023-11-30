@@ -3,7 +3,7 @@ using GraphQL.AspNet.Tests.Framework.PipelineContextBuilders;
 
 namespace App.Backend.Test;
 
-public static class QueryContextBuilderExtension
+public static class QueryContextBuilderExtensions
 {
     public static QueryContextBuilder AddVariableData<TValue>(this QueryContextBuilder builder, TValue value)
     {

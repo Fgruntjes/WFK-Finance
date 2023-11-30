@@ -1,3 +1,4 @@
+using System.Security.Principal;
 using App.Data;
 using App.Data.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +46,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity?> GetConnectUrl(InstitutionEntity institution, CancellationToken cancellationToken = default)
     {
-        var organisationId = _organisationIdProvider.OrganisationId;
+        var organisationId = _organisationIdProvider.GetOrganisationId();
 
         return await _database.InstitutionConnections
             .AsQueryable()
@@ -57,7 +58,7 @@ public class InstitutionConnectionCreateService
 
     private async Task<InstitutionConnectionEntity> StoreConnectUrl(Guid institutionId, Uri connectUrl, string connectionId, CancellationToken cancellationToken = default)
     {
-        var organisationId = _organisationIdProvider.OrganisationId;
+        var organisationId = _organisationIdProvider.GetOrganisationId();
         var result = await _database.InstitutionConnections.AddAsync(new InstitutionConnectionEntity
         {
             OrganisationId = organisationId,

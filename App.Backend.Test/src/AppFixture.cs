@@ -1,10 +1,8 @@
 using App.Data;
 using App.Backend.Startup;
-using GraphQL.AspNet.Execution.Contexts;
 using GraphQL.AspNet.Schemas;
 using GraphQL.AspNet.Tests.Framework;
 using Microsoft.Extensions.DependencyInjection;
-using Snapshooter.Core;
 using App.Backend.Test.Database;
 using Microsoft.Extensions.Logging;
 using App.Backend.Controllers;
@@ -14,12 +12,14 @@ using App.Data.Migrations;
 using GraphQL.AspNet.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
+using App.Data.Entity;
+using GraphQL.AspNet.Interfaces.Security;
+using Microsoft.AspNetCore.Http;
 
 namespace App.Backend.Test;
 
 public class AppFixture : IAsyncDisposable
 {
-    private readonly ISnapshotFullNameReader _testNameResolver;
     private readonly PooledDatabase _database;
     private readonly ILoggerProvider _loggerProvider;
     private TestServer<GraphSchema>? _server;
@@ -36,15 +36,35 @@ public class AppFixture : IAsyncDisposable
     }
     public IServiceProvider Services => Server.ServiceProvider;
     public Mock<INordigenClient> NordigenClientMoq { get; private set; }
-    public Guid OrganisationId => Services.GetRequiredService<OrganisationIdProvider>().OrganisationId;
+    public readonly Guid OrganisationId;
+    public readonly Guid AltOrganisationId;
+
+    public const string TestUserId = "auth0|qm3vehnjqg885o56wa1wc006";
+    public const string AltTestUserId = "auth0|pg164es5iwwqrn13qy3pc4ga";
 
     public AppFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
-        _testNameResolver = new XunitSnapshotFullNameReader();
         _database = databasePool.Get();
         _loggerProvider = loggerProvider;
 
         NordigenClientMoq = new Mock<INordigenClient>();
+
+        OrganisationId = Guid.NewGuid();
+        AltOrganisationId = Guid.NewGuid();
+        SeedData(context =>
+        {
+            context.Organisations.Add(new OrganisationEntity
+            {
+                Id = OrganisationId,
+                Slug = TestUserId,
+            });
+
+            context.Organisations.Add(new OrganisationEntity
+            {
+                Id = AltOrganisationId,
+                Slug = AltTestUserId,
+            });
+        });
     }
 
     public async ValueTask DisposeAsync()
@@ -64,29 +84,20 @@ public class AppFixture : IAsyncDisposable
 
     public void WithData(Action<DatabaseContext> assertAction)
     {
-        using var scope = Services.CreateScope();
+        var scope = Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
         assertAction(context);
+
+        // Explicitly dispose to ensure any exception is thrown within the test 
+        scope.Dispose();
     }
 
-    public async Task<string> ExecuteQuery(string? queryFile, object? variables = null)
-    {
-        var context = BuildQueryContext(queryFile, variables);
-        return await Server.RenderResult(context);
-    }
-
-    public async Task<string> ExecuteQuery(object? variables = null)
-    {
-        var context = BuildQueryContext(null, variables);
-        return await Server.RenderResult(context);
-    }
-
-    private TestServer<GraphSchema> CreateServer()
+    public TestServer<GraphSchema> CreateServer(string? authenticatedUser = TestUserId)
     {
         var builder = new TestServerBuilder<GraphSchema>();
 
         // Mocks
-        builder.AddScoped((_) => NordigenClientMoq.Object);
+        builder.AddScoped(_ => NordigenClientMoq.Object);
 
         // Load database
         builder.RegisterMigrationInitializer<DatabaseContext>();
@@ -121,8 +132,12 @@ public class AppFixture : IAsyncDisposable
             options.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.All;
         });
 
-        // TODO handle non authorized test cases
-        builder.UserContext.Authenticate();
+        var httpContextAccesorMock = new Mock<IHttpContextAccessor>();
+        if (authenticatedUser != null)
+        {
+            builder.AddSingleton(httpContextAccesorMock.Object);
+            builder.UserContext.Authenticate(authenticatedUser);
+        }
 
         // Start server
         TestServer<GraphSchema> app;
@@ -132,33 +147,15 @@ public class AppFixture : IAsyncDisposable
         }
         _database.EnsureInitialized(app.ServiceProvider);
 
+        // Since graphql test server does not create a http context, we need to create one manually
+        if (authenticatedUser != null)
+        {
+            httpContextAccesorMock.SetupProperty(a => a.HttpContext, new DefaultHttpContext
+            {
+                User = app.SecurityContext.DefaultUser,
+            });
+        }
+
         return app;
-    }
-
-    private QueryExecutionContext BuildQueryContext(string? queryFile, object? variables = null)
-    {
-        var queryText = LoadQueryFile(queryFile);
-        var queryBuilder = Server.CreateQueryContextBuilder();
-        queryBuilder.AddQueryText(queryText);
-
-        if (variables != null)
-        {
-            queryBuilder.AddVariableData(variables);
-        }
-
-        return queryBuilder.Build();
-    }
-
-    private string LoadQueryFile(string? queryFile)
-    {
-        var queryFullName = _testNameResolver.ReadSnapshotFullName();
-        queryFile ??= Path.Combine(queryFullName.FolderPath, "__graphql__", queryFullName.Filename + ".graphql");
-        if (!File.Exists(queryFile))
-        {
-            File.Create(queryFile).Dispose();
-        }
-
-        var queryText = File.ReadAllText(queryFile);
-        return queryText;
     }
 }
