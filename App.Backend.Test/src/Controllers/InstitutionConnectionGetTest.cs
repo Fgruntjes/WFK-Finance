@@ -1,4 +1,3 @@
-using App.Backend.GraphQL.Type;
 using App.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
@@ -16,7 +15,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task Success()
     {
         // Act
-        var result = await _fixture.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Server.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -26,25 +25,20 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task OrganisationMismatch()
     {
         // Arrange
-        var organisationEntity = new OrganisationEntity()
-        {
-            Slug = "organisation-missmatch-0"
-        };
         var connectionEntity = new InstitutionConnectionEntity()
         {
             ExternalId = $"SomeExternalId-organisation-missmatch-0",
             ConnectUrl = new Uri($"https://www.example-organisation-missmatch-0.com/"),
             InstitutionId = _fixture.InstitutionEntity.Id,
-            OrganisationId = organisationEntity.Id,
+            OrganisationId = _fixture.AltOrganisationId,
         };
         _fixture.SeedData(c =>
         {
-            c.Organisations.Add(organisationEntity);
             c.InstitutionConnections.Add(connectionEntity);
         });
 
         // Act
-        var result = await _fixture.ExecuteQuery(new { Id = connectionEntity.Id });
+        var result = await _fixture.Server.ExecuteQuery(new { connectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -54,7 +48,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task WithInstitution()
     {
         // Act
-        var result = await _fixture.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Server.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -80,7 +74,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
         });
 
         // Act
-        var result = await _fixture.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Server.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();

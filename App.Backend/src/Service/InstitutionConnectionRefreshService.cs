@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Security.Principal;
 using App.Data;
 using App.Data.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -22,12 +23,16 @@ public class InstitutionConnectionRefreshService
         _nordigenClient = nordigenClient;
     }
 
-    public async Task<InstitutionConnectionEntity> Refresh(string externalId, CancellationToken cancellationToken = default)
+    public async Task<InstitutionConnectionEntity> Refresh(
+        string externalId,
+        CancellationToken cancellationToken = default)
     {
         return await Refresh(e => e.ExternalId == externalId, cancellationToken);
     }
 
-    public async Task<InstitutionConnectionEntity> Refresh(Guid connectionId, CancellationToken cancellationToken = default)
+    public async Task<InstitutionConnectionEntity> Refresh(
+        Guid connectionId,
+        CancellationToken cancellationToken = default)
     {
         return await Refresh(e => e.Id == connectionId, cancellationToken);
     }
@@ -36,7 +41,7 @@ public class InstitutionConnectionRefreshService
         Expression<Func<InstitutionConnectionEntity, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        var organisationId = _organisationIdProvider.OrganisationId;
+        var organisationId = _organisationIdProvider.GetOrganisationId();
         var entity = await _database.InstitutionConnections
             .OrderBy(e => e.CreatedAt)
             .Take(1)
