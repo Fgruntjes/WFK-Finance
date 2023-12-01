@@ -9,7 +9,7 @@ resource "azurerm_container_group" "backend_database_migrations" {
 
   container {
     name   = "app"
-    image  = "${data.azurerm_container_registry.app.login_server}/${var.app_environment}/app.data.migrations:${var.app_version}"
+    image  = "${data.azurerm_container_registry.app.login_server}/app.data.migrations:${var.app_version}"
     cpu    = "1"
     memory = "2"
 

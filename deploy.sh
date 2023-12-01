@@ -6,8 +6,11 @@ cd "$(dirname "$(realpath "$0")")"
 # Load env variables
 set -a
 CURRENT_ENV=$(declare -p -x)
+# shellcheck source=/dev/null
 source .env
+# shellcheck source=/dev/null
 test -f .deploy.env && source .deploy.env
+# shellcheck source=/dev/null
 test -f .local.env && source .local.env
 eval "${CURRENT_ENV}"
 set +a
@@ -36,7 +39,8 @@ else
         -backend-config="resource_group_name=${APP_PROJECT_SLUG}" \
         -backend-config="storage_account_name=${ARM_STORAGE_ACCOUNT_NAME}" \
         -backend-config="key=${APP_ENVIRONMENT}.tfstate" \
-        -input=false
+        -input=false \
+        -reconfigure
 fi
 
 GITHUB_REPOSITORY_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1 | tr '[:upper:]' '[:lower:]')
@@ -146,9 +150,7 @@ elif [[ "${ACTION}" == "destroy" ]]; then
     refresh_mssql_users
 
     echo "## Destroying environment ##"
-    terraform destroy \
-        -var-file="variables.tfvars" \
-        "${@:2}"
+    terraform destroy -var-file="variables.tfvars" "${@:2}"
 elif [[ "${ACTION}" == "import" ]] || [[ "${ACTION}" == "destroy" ]]; then
     echo "## Running ${ACTION} with var-file ##"
     terraform "${ACTION}" \
