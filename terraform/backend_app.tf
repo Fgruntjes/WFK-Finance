@@ -61,7 +61,7 @@ resource "azurerm_container_app" "backend_app" {
   template {
     container {
       name  = "app"
-      image = "${data.azurerm_container_registry.app.login_server}/${var.app_environment}/app.backend:${var.app_version}"
+      image = "${data.azurerm_container_registry.app.login_server}/app.backend:${var.app_version}"
       command = [
         "bash",
         "-c",
