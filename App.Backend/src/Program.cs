@@ -18,12 +18,15 @@ builder.Services.AddResponseCompression(options =>
 {
     options.MimeTypes = new[] { "application/json", "application/graphql-response+json" };
 });
+
+var appFrontendUrl = builder.Configuration["App:FrontendUrl"]
+        ?? throw new Exception("Missing 'App:FrontendUrl' setting.");
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins("*")
+            policy.WithOrigins(appFrontendUrl.TrimEnd('/'))
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -43,9 +46,11 @@ builder.Services.AddNordigenClient(builder.Configuration);
 builder.Services.AddAppServices();
 
 var app = builder.Build();
-app.Logger.LogInformation("Started application with auth0 {Domain} and audience {Audience}",
+app.Logger.LogInformation("Started application");
+app.Logger.LogInformation("Auth0 {Domain} and audience {Audience}",
     builder.Configuration["Auth0:Domain"],
     builder.Configuration["Auth0:Audience"]);
+app.Logger.LogInformation("Frontend URL {AppFrontendUrl}", appFrontendUrl);
 
 app.UseAuthentication();
 app.UseAuthorization();
