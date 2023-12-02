@@ -1,4 +1,4 @@
-name: Clean resources
+name: Close PR
 
 on:
     pull_request:
@@ -33,7 +33,7 @@ jobs:
               with:
                   terraform_version: '~1.6.3'
                   terraform_wrapper: false
-            - run: ./cleanup.sh
+            - run: ./deploy.sh destroy -auto-approve
               env:
                   APP_VERSION: ${{ needs.deploy_slug.outputs.tag }}
                   APP_ENVIRONMENT: ${{ needs.deploy_slug.outputs.environment }}
