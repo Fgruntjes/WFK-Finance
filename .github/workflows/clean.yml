@@ -1,0 +1,31 @@
+name: Clean
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 * * *'
+
+jobs:
+    cleanup:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: azure/login@v1
+              with:
+                  creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: '~1.6.3'
+                  terraform_wrapper: false
+            - run: ./cleanup.sh
+              env:
+                  ARM_LOCATION: ${{ vars.ARM_LOCATION }}
+                  ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+                  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+                  ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+                  ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+                  AUTH0_DOMAIN: ${{ vars.AUTH0_DOMAIN }}
+                  AUTH0_CLIENT_ID: ${{ vars.AUTH0_CLIENT_ID }}
+                  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+                  NORDIGEN_SECRET_ID: ${{ vars.NORDIGEN_SECRET_ID }}
+                  NORDIGEN_SECRET_KEY: ${{ secrets.NORDIGEN_SECRET_KEY }}

@@ -17,6 +17,7 @@ set +a
 
 function delete_environment {
     export APP_ENVIRONMENT=$1
+    export APP_VERSION="cleanup"
     echo "## Delete environment $APP_ENVIRONMENT"
     ./deploy.sh destroy -auto-approve
 }
