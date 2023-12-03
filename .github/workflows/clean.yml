@@ -8,6 +8,9 @@ on:
 jobs:
     cleanup:
         runs-on: ubuntu-latest
+        permissions:
+            deployments: write
+            contents: read
         steps:
             - uses: actions/checkout@v3
             - uses: azure/login@v1
@@ -29,3 +32,4 @@ jobs:
                   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   NORDIGEN_SECRET_ID: ${{ vars.NORDIGEN_SECRET_ID }}
                   NORDIGEN_SECRET_KEY: ${{ secrets.NORDIGEN_SECRET_KEY }}
+                  GH_TOKEN: ${{ github.token }}
