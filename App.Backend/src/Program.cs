@@ -27,8 +27,8 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins(appFrontendUrl.TrimEnd('/'))
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+                .WithHeaders("Authorization", "Content-Type")
+                .WithMethods("GET", "POST");
         });
 });
 

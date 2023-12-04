@@ -25,6 +25,9 @@ function delete_environment {
 # Deployed environments
 DEPLOYED_ENVIRONMENTS=$(az resource list --tag "environment" | jq -r '.[].tags.environment' | sort | uniq)
 
+# Fetch all branches
+git fetch --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+
 # Loop over deployed environments
 for ENVIRONMENT in $DEPLOYED_ENVIRONMENTS; do
     if [[ $ENVIRONMENT == *"-merge" ]]; then
@@ -39,8 +42,10 @@ for ENVIRONMENT in $DEPLOYED_ENVIRONMENTS; do
         fi
     else
         # Check if branch exists with the same name as the environment
-        if git show-ref --verify --quiet "refs/heads/$ENVIRONMENT"; then
+        if git show-ref --verify --quiet "refs/remotes/origin/$ENVIRONMENT"; then
             echo "Branch $ENVIRONMENT exists, skipping"
+        elif [[ "$ENVIRONMENT" == "dev" ]]; then
+            echo "Dev environment, skipping deletion"
         else
             echo "Branch $ENVIRONMENT does not exist"
             delete_environment "$ENVIRONMENT"
