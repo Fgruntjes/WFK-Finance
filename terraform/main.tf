@@ -62,3 +62,4 @@ data "azurerm_container_registry" "app" {
   resource_group_name = var.app_project_slug
 }
 
+data "azuread_client_config" "current" {}

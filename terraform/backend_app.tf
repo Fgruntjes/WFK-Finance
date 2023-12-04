@@ -34,6 +34,7 @@ resource "azurerm_container_app" "backend_app" {
     type = "UserAssigned"
     identity_ids = [
       azurerm_user_assigned_identity.backend_database_read_write.id,
+      azurerm_user_assigned_identity.keyvault_read.id,
       azurerm_user_assigned_identity.container_registry_pull.id,
     ]
   }

@@ -5,6 +5,8 @@ locals {
       Environment = var.app_environment,
       Version     = var.app_version,
       FrontendUrl = local.app_frontend_url
+      KeyVaultUri = azurerm_key_vault.app.vault_uri,
+      KeyName     = azurerm_key_vault_key.backend_data_protection.name,
     }
     Auth0 = {
       Domain   = var.auth0_domain,
