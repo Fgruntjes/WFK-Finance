@@ -30,7 +30,8 @@ export default defineConfig(({ mode }) => {
 			'import.meta.env.APP_API_URI': envVal('APP_API_URI'),
 			'import.meta.env.AUTH0_DOMAIN': envVal('AUTH0_DOMAIN'),
 			'import.meta.env.AUTH0_CLIENT_ID': envVal('AUTH0_CLIENT_ID'),
-			'import.meta.env.AUTH0_AUDIENCE': envVal('AUTH0_AUDIENCE')
+			'import.meta.env.AUTH0_AUDIENCE': envVal('AUTH0_AUDIENCE'),
+			'import.meta.env.SENTRY_DSN': envVal('SENTRY_DSN')
 		},
 		optimizeDeps: {
 			exclude: ['@urql/svelte']

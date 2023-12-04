@@ -14,6 +14,4 @@ resource "sentry_key" "backend" {
 
   project = sentry_project.backend.slug
   name    = "Key"
-
-  depends_on = [sentry_project.backend]
 }
