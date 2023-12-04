@@ -60,6 +60,9 @@ auth0_client_id = "${AUTH0_CLIENT_ID}"
 auth0_client_secret = "${AUTH0_CLIENT_SECRET}"
 nordigen_secret_id = "${NORDIGEN_SECRET_ID}"
 nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
+sentry_organisation = "${SENTRY_ORGANISATION}"
+sentry_token = "${SENTRY_TOKEN}"
+
 EOF
 
 function mssql_user_reimport {

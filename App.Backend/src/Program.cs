@@ -3,12 +3,22 @@ using GraphQL.AspNet.Configuration;
 using GraphQL.AspNet.Security;
 using App.Data;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Sentry;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .AddEnvironmentVariables()
     .AddJsonFile("appsettings.json", true)
     .AddJsonFile("appsettings.local.json", true);
+
+if (!builder.Environment.IsDevelopment())
+{
+    SentrySdk.Init(options =>
+    {
+        options.Dsn = builder.Configuration["Sentry:Dsn"];
+        options.AutoSessionTracking = true;
+    });
+}
 
 builder.Services.AddAuth(
     builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),

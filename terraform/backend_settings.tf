@@ -19,6 +19,9 @@ locals {
     ConnectionStrings = {
       DefaultConnection = "",
     }
+    Sentry = {
+      Dsn = sentry_key.backend.dsn_public,
+    }
   }
   backend_settings_string = jsonencode(merge(local.backend_settings, {
     ConnectionStrings = {

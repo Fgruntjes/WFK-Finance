@@ -47,6 +47,8 @@ jobs:
                   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   NORDIGEN_SECRET_ID: ${{ vars.NORDIGEN_SECRET_ID }}
                   NORDIGEN_SECRET_KEY: ${{ secrets.NORDIGEN_SECRET_KEY }}
+                  SENTRY_ORGANISATION: '${{ vars.SENTRY_ORGANISATION }}'
+                  SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
 
     destroy_frontend:
         runs-on: ubuntu-latest

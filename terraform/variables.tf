@@ -52,3 +52,13 @@ variable "nordigen_secret_key" {
   type      = string
   sensitive = true
 }
+
+variable "sentry_organisation" {
+  type        = string
+  description = "Sentry organisation slug"
+}
+
+variable "sentry_token" {
+  type        = string
+  description = "Sentry token"
+}

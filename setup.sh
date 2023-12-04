@@ -119,3 +119,5 @@ storeSecret ARM_CLIENT_ID
 storeSecret ARM_CLIENT_SECRET true
 storeSecret CLOUDFLARE_ACCOUNT_ID
 storeSecret CLOUDFLARE_API_TOKEN true
+storeSecret SENTRY_ORGANISATION
+storeSecret SENTRY_TOKEN true
