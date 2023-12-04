@@ -1,3 +1,7 @@
+locals {
+  backend_database_backups_enabled = var.app_environment == "main"
+}
+
 resource "random_password" "backend_database_sa_password" {
   count            = local.environment_data_ephemeral ? 1 : 0
   length           = 16
@@ -41,6 +45,23 @@ resource "azurerm_mssql_database" "backend_database" {
   sku_name     = "S0"
   # auto_pause_delay_in_minutes = 60
   storage_account_type = "Local"
+
+  dynamic "short_term_retention_policy" {
+    for_each = local.backend_database_backups_enabled ? [1] : []
+    content {
+      retention_days           = 7
+      backup_interval_in_hours = 24
+    }
+  }
+
+  dynamic "long_term_retention_policy" {
+    for_each = local.backend_database_backups_enabled ? [1] : []
+    content {
+      weekly_retention  = "P4W"
+      monthly_retention = "P0M"
+      yearly_retention  = "P0Y"
+    }
+  }
 
   tags = {
     environment = var.app_environment
