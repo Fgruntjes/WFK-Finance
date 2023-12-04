@@ -5,12 +5,13 @@ namespace App.Backend.Startup;
 
 public static class DataProtection
 {
-    public static void AddAppDataProtection(this IServiceCollection services, string keyVaultServiceUri, string keyName)
-    {
-        services.AddAppDataProtection(new Uri(keyVaultServiceUri), keyName);
-    }
-
-    public static void AddAppDataProtection(this IServiceCollection services, Uri keyVaultServiceUri, string keyName)
+    public static void AddAppDataProtection(
+        this IServiceCollection services,
+        string keyVaultUri,
+        string keyName,
+        string storageAccountUri,
+        string storageContainer,
+        string blobName)
     {
         if (keyName == "dev-backend-data-protection")
         {
@@ -20,13 +21,19 @@ public static class DataProtection
         }
         else
         {
+            var credentials = new DefaultAzureCredential();
+            var storageUri = new Uri($"{storageAccountUri}{storageContainer}/{blobName}");
+            var keyUri = new Uri($"{keyVaultUri.TrimEnd('/')}/keys/{keyName}");
+
             services
                 .AddDataProtection()
-                .ProtectKeysWithAzureKeyVault(keyVaultServiceUri, new DefaultAzureCredential());
+                .PersistKeysToAzureBlobStorage(storageUri, credentials)
+                .ProtectKeysWithAzureKeyVault(keyUri, credentials);
 
             services
                 .AddHealthChecks()
-                .AddAzureKeyVault(keyVaultServiceUri, new DefaultAzureCredential(), options =>
+                // Add storage
+                .AddAzureKeyVault(keyUri, credentials, options =>
                 {
                     options.AddKey(keyName);
                 });

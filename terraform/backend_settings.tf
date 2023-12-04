@@ -7,6 +7,10 @@ locals {
       FrontendUrl = local.app_frontend_url
       KeyVaultUri = azurerm_key_vault.app.vault_uri,
       KeyName     = azurerm_key_vault_key.backend_data_protection.name,
+
+      StorageAccountUri   = azurerm_storage_account.backend.primary_blob_endpoint,
+      KeyStorageContainer = azurerm_storage_container.backend_data_protection.name,
+      KeyBlobName         = azurerm_storage_blob.backend_data_protection.name,
     }
     Auth0 = {
       Domain   = var.auth0_domain,

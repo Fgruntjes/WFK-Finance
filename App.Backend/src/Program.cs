@@ -24,9 +24,13 @@ builder.Services.AddAuth(
     builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),
     builder.Configuration["Auth0:Audience"] ?? throw new InvalidOperationException("Missing 'Auth0:Audience' setting.")
 );
+
 builder.Services.AddAppDataProtection(
     builder.Configuration["App:KeyVaultUri"] ?? throw new InvalidOperationException("Missing 'App:KeyVaultUri' setting."),
-    builder.Configuration["App:KeyName"] ?? throw new InvalidOperationException("Missing 'App:KeyName' setting.")
+    builder.Configuration["App:KeyName"] ?? throw new InvalidOperationException("Missing 'App:KeyName' setting."),
+    builder.Configuration["App:StorageAccountUri"] ?? throw new InvalidOperationException("Missing 'App:KeyName' setting."),
+    builder.Configuration["App:KeyStorageContainer"] ?? throw new InvalidOperationException("Missing 'App:keyStorageContainer' setting."),
+    builder.Configuration["App:KeyBlobName"] ?? throw new InvalidOperationException("Missing 'App:keyBlobName' setting.")
 );
 builder.Services.AddProblemDetails();
 builder.Services.AddResponseCompression(options =>
