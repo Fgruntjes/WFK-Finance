@@ -1,5 +1,5 @@
 resource "azurerm_user_assigned_identity" "backend_database_owner" {
-  name                = "${var.app_environment}-owner"
+  name                = "${var.app_environment}-db-owner"
   resource_group_name = var.app_project_slug
   location            = var.arm_location
 }
