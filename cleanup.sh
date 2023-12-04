@@ -41,6 +41,8 @@ for ENVIRONMENT in $DEPLOYED_ENVIRONMENTS; do
         # Check if branch exists with the same name as the environment
         if git show-ref --verify --quiet "refs/heads/$ENVIRONMENT"; then
             echo "Branch $ENVIRONMENT exists, skipping"
+        elif [[ "$ENVIRONMENT" == "dev" ]]; then
+            echo "Dev environment, skipping deletion"
         else
             echo "Branch $ENVIRONMENT does not exist"
             delete_environment "$ENVIRONMENT"
