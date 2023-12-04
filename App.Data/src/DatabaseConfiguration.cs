@@ -16,5 +16,9 @@ public static class DatabaseConfiguration
             optionsBuilder.UseNodaTime();
             configAction?.Invoke(optionsBuilder);
         });
+
+        services
+            .AddHealthChecks()
+            .AddSqlServer(connectionString: connectionString, tags: new[] { "readiness" });
     }
 }

@@ -2,6 +2,7 @@ using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
 using GraphQL.AspNet.Security;
 using App.Data;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
@@ -52,6 +53,14 @@ app.Logger.LogInformation("Auth0 {Domain} and audience {Audience}",
     builder.Configuration["Auth0:Audience"]);
 app.Logger.LogInformation("Frontend URL {AppFrontendUrl}", appFrontendUrl);
 
+app.MapHealthChecks("/.health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("readiness"),
+});
+app.MapHealthChecks("/.health/live", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("liveness"),
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseResponseCompression();

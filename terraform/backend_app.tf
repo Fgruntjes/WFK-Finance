@@ -77,6 +77,16 @@ resource "azurerm_container_app" "backend_app" {
         name  = "ASPNETCORE_ENVIRONMENT"
         value = var.app_environment == "main" ? "Production" : "Staging"
       }
+      liveness_probe {
+        path      = "/.health/live"
+        port      = 8080
+        transport = "HTTP"
+      }
+      readiness_probe {
+        path      = "/.health/ready"
+        port      = 8080
+        transport = "HTTP"
+      }
     }
 
     http_scale_rule {
