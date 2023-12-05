@@ -47,6 +47,7 @@ jobs:
             app_settings_json: ${{ steps.deploy.outputs.app_settings_json }}
             frontend_auth0_client_id: ${{ steps.deploy.outputs.frontend_auth0_client_id }}
             backend_auth0_audience: ${{ steps.deploy.outputs.backend_auth0_audience }}
+            frontend_sentry_dsn: ${{ steps.deploy.outputs.frontend_sentry_dsn }}
         steps:
             - uses: actions/checkout@v3
             - uses: azure/login@v1
@@ -72,6 +73,8 @@ jobs:
                   AUTH0_CLIENT_SECRET: '${{ secrets.AUTH0_CLIENT_SECRET }}'
                   NORDIGEN_SECRET_ID: '${{ vars.NORDIGEN_SECRET_ID }}'
                   NORDIGEN_SECRET_KEY: '${{ secrets.NORDIGEN_SECRET_KEY }}'
+                  SENTRY_ORGANISATION: '${{ vars.SENTRY_ORGANISATION }}'
+                  SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
             - uses: actions/upload-artifact@v3
               if: failure()
               with:
@@ -106,6 +109,7 @@ jobs:
                   AUTH0_DOMAIN: ${{ vars.AUTH0_DOMAIN }}
                   AUTH0_CLIENT_ID: ${{ needs.deploy_backend.outputs.frontend_auth0_client_id }}
                   AUTH0_AUDIENCE: ${{ needs.deploy_backend.outputs.backend_auth0_audience }}
+                  SENTRY_DSN: ${{ needs.deploy_backend.outputs.frontend_sentry_dsn }}
 
             - uses: actions/upload-artifact@v3
               with:

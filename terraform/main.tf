@@ -30,6 +30,10 @@ terraform {
       source  = "hashicorp/time"
       version = "~> 0.9.1"
     }
+    sentry = {
+      source  = "jianyuan/sentry"
+      version = "~> 0.11.2"
+    }
   }
   backend "azurerm" {
     container_name = "terraform"
@@ -56,9 +60,13 @@ provider "auth0" {
   client_id     = var.auth0_client_id
   client_secret = var.auth0_client_secret
 }
+provider "sentry" {
+  token = var.sentry_token
+}
 
 data "azurerm_container_registry" "app" {
   name                = replace(var.app_project_slug, "-", "")
   resource_group_name = var.app_project_slug
 }
 
+data "azuread_client_config" "current" {}

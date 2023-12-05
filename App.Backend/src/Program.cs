@@ -2,6 +2,8 @@ using App.Backend.Startup;
 using GraphQL.AspNet.Configuration;
 using GraphQL.AspNet.Security;
 using App.Data;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Sentry;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
@@ -9,9 +11,26 @@ builder.Configuration
     .AddJsonFile("appsettings.json", true)
     .AddJsonFile("appsettings.local.json", true);
 
+if (!builder.Environment.IsDevelopment())
+{
+    SentrySdk.Init(options =>
+    {
+        options.Dsn = builder.Configuration["Sentry:Dsn"];
+        options.AutoSessionTracking = true;
+    });
+}
+
 builder.Services.AddAuth(
     builder.Configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Missing 'Auth0:Domain' setting."),
     builder.Configuration["Auth0:Audience"] ?? throw new InvalidOperationException("Missing 'Auth0:Audience' setting.")
+);
+
+builder.Services.AddAppDataProtection(
+    builder.Configuration["App:KeyVaultUri"] ?? throw new InvalidOperationException("Missing 'App:KeyVaultUri' setting."),
+    builder.Configuration["App:KeyName"] ?? throw new InvalidOperationException("Missing 'App:KeyName' setting."),
+    builder.Configuration["App:StorageAccountUri"] ?? throw new InvalidOperationException("Missing 'App:KeyName' setting."),
+    builder.Configuration["App:KeyStorageContainer"] ?? throw new InvalidOperationException("Missing 'App:keyStorageContainer' setting."),
+    builder.Configuration["App:KeyBlobName"] ?? throw new InvalidOperationException("Missing 'App:keyBlobName' setting.")
 );
 builder.Services.AddProblemDetails();
 builder.Services.AddResponseCompression(options =>
@@ -52,6 +71,14 @@ app.Logger.LogInformation("Auth0 {Domain} and audience {Audience}",
     builder.Configuration["Auth0:Audience"]);
 app.Logger.LogInformation("Frontend URL {AppFrontendUrl}", appFrontendUrl);
 
+app.MapHealthChecks("/.health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("readiness"),
+});
+app.MapHealthChecks("/.health/live", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("liveness"),
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseResponseCompression();

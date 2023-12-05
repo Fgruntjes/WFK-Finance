@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.AzureKeyVault" Version="7.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="7.0.0" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.3.2" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Keys" Version="1.2.2" />
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
     <PackageReference Include="DotNetEnv" Version="2.5.0" />
     <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="7.0.0" />
     <PackageReference Include="GraphQL.AspNet" Version="1.2.7" />
@@ -23,6 +28,7 @@
     <PackageReference Include="Polly" Version="8.1.0" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="Sentry" Version="3.41.3" />
     <PackageReference Include="VMelnalksnis.NordigenDotNet" Version="1.1.3" />
     <PackageReference Include="VMelnalksnis.NordigenDotNet.DependencyInjection" Version="1.1.3" />
   </ItemGroup>

@@ -34,6 +34,7 @@ resource "azurerm_container_app" "backend_app" {
     type = "UserAssigned"
     identity_ids = [
       azurerm_user_assigned_identity.backend_database_read_write.id,
+      azurerm_user_assigned_identity.keyvault_read.id,
       azurerm_user_assigned_identity.container_registry_pull.id,
     ]
   }
@@ -76,6 +77,16 @@ resource "azurerm_container_app" "backend_app" {
       env {
         name  = "ASPNETCORE_ENVIRONMENT"
         value = var.app_environment == "main" ? "Production" : "Staging"
+      }
+      liveness_probe {
+        path      = "/.health/live"
+        port      = 8080
+        transport = "HTTP"
+      }
+      readiness_probe {
+        path      = "/.health/ready"
+        port      = 8080
+        transport = "HTTP"
       }
     }
 

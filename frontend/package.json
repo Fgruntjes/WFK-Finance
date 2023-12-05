@@ -13,6 +13,7 @@
 	},
 	"devDependencies": {
 		"@auth0/auth0-spa-js": "^2.0.8",
+		"@sentry/sveltekit": "^7.85.0",
 		"@sveltejs/adapter-auto": "^2.1.0",
 		"@sveltejs/adapter-static": "^2.0.2",
 		"@sveltejs/kit": "^1.20.5",

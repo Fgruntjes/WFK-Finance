@@ -60,6 +60,9 @@ auth0_client_id = "${AUTH0_CLIENT_ID}"
 auth0_client_secret = "${AUTH0_CLIENT_SECRET}"
 nordigen_secret_id = "${NORDIGEN_SECRET_ID}"
 nordigen_secret_key = "${NORDIGEN_SECRET_KEY}"
+sentry_organisation = "${SENTRY_ORGANISATION}"
+sentry_token = "${SENTRY_TOKEN}"
+
 EOF
 
 function mssql_user_reimport {
@@ -92,8 +95,8 @@ function refresh_mssql_users {
     echo "## Delete / reimport mssql_user states ##"
     # The mssql_user state is not updated when a server is deleted.
     # This causes Error: unable to read user [...].[...]: db connection failed after 30s timeout
-    mssql_user_reimport backend_database_migrations "${APP_ENVIRONMENT}-owner"
-    mssql_user_reimport read_write "${APP_ENVIRONMENT}-read-write"
+    mssql_user_reimport backend_database_migrations "${APP_ENVIRONMENT}-db-owner"
+    mssql_user_reimport read_write "${APP_ENVIRONMENT}-db-read-write"
     if [[ "${APP_ENVIRONMENT}" != "main" ]]; then
         mssql_user_reimport integration_test_admin[0] test-admin
     fi
