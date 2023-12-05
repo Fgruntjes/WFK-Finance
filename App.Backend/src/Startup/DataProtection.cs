@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace App.Backend.Startup;
@@ -30,13 +31,16 @@ public static class DataProtection
                 .PersistKeysToAzureBlobStorage(storageUri, credentials)
                 .ProtectKeysWithAzureKeyVault(keyUri, credentials);
 
+            services.AddSingleton(sp => new BlobServiceClient(new Uri(storageAccountUri), credentials));
             services
                 .AddHealthChecks()
-                // Add storage
+                .AddAzureBlobStorage(options => {
+                    options.ContainerName = storageContainer;
+                }, tags: new[] { "readiness" })
                 .AddAzureKeyVault(keyUri, credentials, options =>
                 {
                     options.AddKey(keyName);
-                });
+                }, tags: new[] { "readiness" });
         }
     }
 }
