@@ -34,7 +34,8 @@ public static class DataProtection
             services.AddSingleton(sp => new BlobServiceClient(new Uri(storageAccountUri), credentials));
             services
                 .AddHealthChecks()
-                .AddAzureBlobStorage(options => {
+                .AddAzureBlobStorage(options =>
+                {
                     options.ContainerName = storageContainer;
                 }, tags: new[] { "readiness" })
                 .AddAzureKeyVault(keyUri, credentials, options =>
