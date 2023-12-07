@@ -1,6 +1,5 @@
-using System.Security.Principal;
-using App.Data;
-using App.Data.Entity;
+using App.Lib.Data;
+using App.Lib.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Requisitions;
@@ -26,7 +25,7 @@ public class InstitutionConnectionCreateService
     public async Task<InstitutionConnectionEntity> Connect(Guid institutionId, Uri returnUrl, CancellationToken cancellationToken = default)
     {
         var institution = await _database.Institutions
-            .FindAsync(institutionId, cancellationToken)
+            .FindAsync(new object[] { institutionId }, cancellationToken: cancellationToken)
             ?? throw new ArgumentOutOfRangeException(nameof(institutionId), institutionId, "Could not find institution");
 
         var connectEntity = await GetConnectUrl(institution, cancellationToken);

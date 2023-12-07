@@ -1,19 +1,17 @@
-
 using App.Test.Screens;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Respawn;
-using App.Backend.Startup;
-using App.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using App.Backend;
+using App.Lib.Configuration.Options;
+using Microsoft.Extensions.Logging;
 
 namespace App.Test;
 
 public class PlaywrightFixture : IAsyncLifetime
 {
-    public ServiceProvider Services { get; private set; }
+    public IServiceProvider Services { get; }
 
     private IPlaywright? _playwright;
     private IBrowser? _browser;
@@ -21,24 +19,13 @@ public class PlaywrightFixture : IAsyncLifetime
     private readonly Respawner _respawner;
     private readonly string _dbConnectionString;
 
-    public PlaywrightFixture()
+    public PlaywrightFixture(ILoggerProvider loggerProvider)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .AddJsonFile("appsettings.json", false)
-            .AddJsonFile("appsettings.local.json", false)
-            .Build();
+        var applicationFactory = new ApplicationFactory(loggerProvider);
 
-        _dbConnectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("Missing 'ConnectionStrings:DefaultConnection' setting.");
-
-        var services = new ServiceCollection();
-        services.Configure(configuration);
-        services.AddAppServices();
-        services.AddDatabase(_dbConnectionString);
-        services.AddNordigenClient(configuration);
-
-        Services = services.BuildServiceProvider();
+        Services = applicationFactory.Services;
+        _dbConnectionString = Services.GetRequiredService<IConfiguration>().GetConnectionString("Database")
+                              ?? throw new Exception("Database connection string not found");
         _respawner = Respawner.CreateAsync(_dbConnectionString)
             .ConfigureAwait(false)
             .GetAwaiter()
@@ -75,7 +62,7 @@ public class PlaywrightFixture : IAsyncLifetime
         _browserContext ??= await _browser.NewContextAsync();
 
         var page = await _browserContext.NewPageAsync();
-        await page.GotoAsync(Services.GetRequiredService<IOptions<AppSettings>>().Value.FrontendUrl);
+        await page.GotoAsync(Services.GetRequiredService<IOptions<AppOptions>>().Value.FrontendUrl);
 
         await EnsureAuthentication(page);
         return page;
@@ -83,7 +70,7 @@ public class PlaywrightFixture : IAsyncLifetime
 
     private async Task EnsureAuthentication(IPage page)
     {
-        var appEnvironment = Services.GetRequiredService<IOptions<AppSettings>>().Value.Environment;
+        var appEnvironment = Services.GetRequiredService<IOptions<AppOptions>>().Value.Environment;
 
         var authScreen = new Auth0Screen(page);
         var homeScreen = new HomeScreen(page);

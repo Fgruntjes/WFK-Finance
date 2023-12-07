@@ -1,5 +1,5 @@
-using App.Data;
-using App.Data.Entity;
+using App.Lib.Data;
+using App.Lib.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using VMelnalksnis.NordigenDotNet;
 
@@ -25,6 +25,7 @@ public class InstitutionSearchService
             .Where(i => i.CountryIso2 == countryIso2)
             .ToListAsync(cancellationToken);
 
+        // Not the greatest design choice, but it works and easy to implement
         var minInstitutions = _environment.IsProduction() ? 0 : 1;
         if (institutions.Count > minInstitutions)
         {

@@ -1,4 +1,4 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
 
@@ -15,7 +15,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task Success()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -38,7 +38,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { connectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { connectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -48,7 +48,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task WithInstitution()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -74,7 +74,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();

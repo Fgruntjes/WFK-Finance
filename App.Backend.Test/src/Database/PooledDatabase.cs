@@ -4,11 +4,11 @@ namespace App.Backend.Test.Database;
 
 public sealed class PooledDatabase : IAsyncDisposable
 {
-    private readonly IDatabase _database;
+    private readonly Database _database;
 
-    private readonly ObjectPool<IDatabase> _pool;
+    private readonly ObjectPool<Database> _pool;
 
-    internal PooledDatabase(ObjectPool<IDatabase> pool)
+    internal PooledDatabase(ObjectPool<Database> pool)
     {
         _pool = pool;
         _database = pool.Get();
@@ -16,9 +16,9 @@ public sealed class PooledDatabase : IAsyncDisposable
 
     public string ConnectionString => _database.ConnectionString;
 
-    public void EnsureInitialized(IServiceProvider services)
+    public void EnsureInitialized()
     {
-        _database.Initialize(services);
+        _database.Initialize();
     }
 
     public async ValueTask DisposeAsync()

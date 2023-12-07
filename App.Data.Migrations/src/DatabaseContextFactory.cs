@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using App.Lib.Data;
 
 namespace App.Data.Migrations;
 
@@ -20,7 +21,7 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
         optionsBuilder.UseSqlServer(connectionString, o =>
         {
             o.MigrationsAssembly(typeof(DatabaseContextFactory).Assembly.FullName);
-            o.UseNodaTime();
+            o.ConfigureDatabaseOptions();
         });
 
         return new DatabaseContext(optionsBuilder.Options);

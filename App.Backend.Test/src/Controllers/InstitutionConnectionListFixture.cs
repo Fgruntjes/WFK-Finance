@@ -1,5 +1,5 @@
 using App.Backend.Test.Database;
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace App.Backend.Test.Controllers;

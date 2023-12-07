@@ -1,6 +1,5 @@
 using App.Backend.Test.Controllers;
 using App.Backend.Test.Database;
-using App.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
 
@@ -17,6 +16,5 @@ public static class Startup
         services.AddScoped<InstitutionConnectionFixture>();
         services.AddScoped<InstitutionConnectionListFixture>();
         services.AddScoped<InstitutionConnectionRefreshFixture>();
-        services.RegisterMigrationInitializer<DatabaseContext>();
     }
 }

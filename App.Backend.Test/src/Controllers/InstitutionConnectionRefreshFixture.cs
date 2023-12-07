@@ -1,7 +1,8 @@
 using App.Backend.Test.Database;
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
+using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Accounts;
 using VMelnalksnis.NordigenDotNet.Requisitions;
 
@@ -9,9 +10,9 @@ namespace App.Backend.Test.Controllers;
 
 public class InstitutionConnectionRefreshFixture : AppFixture
 {
-    public InstitutionEntity InstitutionEntity { get; private set; }
-    public InstitutionConnectionEntity InstitutionConnectionEntity { get; private set; }
-    public InstitutionConnectionEntity OrganisationMissmatchInstitutionConnectionEntity { get; private set; }
+    public InstitutionEntity InstitutionEntity { get; }
+    public InstitutionConnectionEntity InstitutionConnectionEntity { get; }
+    public InstitutionConnectionEntity OrganisationMissmatchInstitutionConnectionEntity { get; }
 
     public InstitutionConnectionRefreshFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
         : base(databasePool, loggerProvider)
@@ -48,12 +49,15 @@ public class InstitutionConnectionRefreshFixture : AppFixture
 
         var requisitionsMock = new Mock<IRequisitionClient>();
         var accountsMock = new Mock<IAccountClient>();
-        NordigenClientMoq
-            .SetupGet(c => c.Requisitions)
-            .Returns(requisitionsMock.Object);
-        NordigenClientMoq
-            .SetupGet(c => c.Accounts)
-            .Returns(accountsMock.Object);
+        WithMock<INordigenClient>(mock =>
+        {
+            mock
+                .SetupGet(c => c.Requisitions)
+                .Returns(requisitionsMock.Object);
+            mock
+                .SetupGet(c => c.Accounts)
+                .Returns(accountsMock.Object);
+        });
 
         var nordigenAccounts = new List<Account> {
             new() {

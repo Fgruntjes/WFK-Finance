@@ -1,4 +1,5 @@
 using Moq;
+using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Requisitions;
 
 namespace App.Backend.Test.Controllers;
@@ -17,9 +18,12 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
     {
         // Arrange
         var requisitionsMock = new Mock<IRequisitionClient>();
-        _fixture.NordigenClientMoq
-            .SetupGet(c => c.Requisitions)
-            .Returns(requisitionsMock.Object);
+        _fixture.WithMock<INordigenClient>(mock =>
+            {
+                mock.SetupGet(c => c.Requisitions)
+                .Returns(requisitionsMock.Object);
+            });
+
 
         var nordigenRequisitionResult = new Requisition
         {
@@ -31,7 +35,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
             .ReturnsAsync(nordigenRequisitionResult);
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             InstitutionId = _fixture.InstitutionEntity.Id,
             ReturnUrl = "http://www.example.com/return"
@@ -51,7 +55,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
     [Fact]
     public async Task MissingInstitution()
     {
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             InstitutionId = new Guid("63ee89f0-d929-4f13-9636-4efd23aee070"),
             ReturnUrl = "http://www.example.com/return"
@@ -63,9 +67,12 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
     public async Task DifferentOrganisationPerUser()
     {
         var requisitionsMock = new Mock<IRequisitionClient>();
-        _fixture.NordigenClientMoq
-            .SetupGet(c => c.Requisitions)
-            .Returns(requisitionsMock.Object);
+        _fixture.WithMock<INordigenClient>(mock =>
+        {
+            mock
+                .SetupGet(c => c.Requisitions)
+                .Returns(requisitionsMock.Object);
+        });
 
         var nordigenRequisitionResultOne = new Requisition
         {
@@ -89,12 +96,11 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
         };
 
         const string userTwoId = "auth0|p7rruszw5d7xpga32royaql4";
-        var userTwoServer = _fixture.CreateServer(userTwoId);
 
         // Act
-        (await _fixture.Server.ExecuteQuery(connectVariables))
+        (await _fixture.Client.ExecuteQuery(connectVariables))
             .MatchSnapshot("InstitutionConnectionCreateTest.DifferentOrganisationPerUser.1.snap");
-        (await userTwoServer.ExecuteQuery(connectVariables))
+        (await _fixture.Client.ExecuteQuery(connectVariables, user: userTwoId))
             .MatchSnapshot("InstitutionConnectionCreateTest.DifferentOrganisationPerUser.2.snap");
 
         // Assert

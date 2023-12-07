@@ -1,4 +1,4 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
 
@@ -28,7 +28,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             ConnectionIds = new List<Guid> { institutionConnectionEntity.Id }
         });
@@ -41,7 +41,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
     public async Task MissingConnection()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             ConnectionIds = new List<Guid> { new("5dcb861b-b879-427e-ad47-4c4eade20813") }
         });

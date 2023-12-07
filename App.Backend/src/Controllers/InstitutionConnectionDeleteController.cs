@@ -1,4 +1,4 @@
-using App.Data;
+using App.Lib.Data;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;

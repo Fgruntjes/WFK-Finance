@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.ObjectPool;
 using Respawn;
@@ -8,12 +7,6 @@ namespace App.Backend.Test.Database;
 
 public static class ServiceCollectionExtensions
 {
-    public static void RegisterMigrationInitializer<TContext>(this IServiceCollection services)
-        where TContext : DbContext
-    {
-        services.AddTransient<IDatabaseInitializer, DbContextMigrationInitializer<TContext>>();
-    }
-
     public static void RegisterSharedDatabaseServices(this IServiceCollection services)
     {
         services.AddSingleton<DatabasePool>();
@@ -26,7 +19,7 @@ public static class ServiceCollectionExtensions
         {
             DbAdapter = DbAdapter.SqlServer
         });
-        services.AddTransient<IPooledObjectPolicy<IDatabase>, MsSqlDatabasePoolPolicy>();
+        services.AddTransient<IPooledObjectPolicy<Database>, DatabasePoolPolicy>();
 
         var container = new MsSqlBuilder().Build();
         Utils.RunWithoutSynchronizationContext(() =>

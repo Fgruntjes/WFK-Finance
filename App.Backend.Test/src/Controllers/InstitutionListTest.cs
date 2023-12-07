@@ -1,5 +1,6 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 using Moq;
+using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Institutions;
 
 namespace App.Backend.Test.Controllers;
@@ -36,7 +37,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { CountryIso2 = "NL" });
+        var result = await _fixture.Client.ExecuteQuery(new { CountryIso2 = "NL" });
 
         // Assert
         result.MatchSnapshot();
@@ -56,12 +57,15 @@ public class InstitutionListTest : IClassFixture<AppFixture>
                     Name = "MyFakeName-GB"
                 }
             });
-        _fixture.NordigenClientMoq
-            .SetupGet(c => c.Institutions)
-            .Returns(institutionsMock.Object);
+        _fixture.WithMock<INordigenClient>(mock =>
+        {
+            mock
+                .SetupGet(c => c.Institutions)
+                .Returns(institutionsMock.Object);
+        });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { CountryIso2 = "GBR" });
+        var result = await _fixture.Client.ExecuteQuery(new { CountryIso2 = "GBR" });
 
         // Arrange
         result.MatchSnapshot();

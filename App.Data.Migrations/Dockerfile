@@ -6,7 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY *.sln .
-COPY App.Data/*.csproj ./App.Data/
+COPY App.Lib.Data/*.csproj ./App.Lib.Data/
 COPY App.Data.Migrations/*.csproj ./App.Data.Migrations/
 
 RUN dotnet restore "App.Data.Migrations/App.Data.Migrations.csproj"

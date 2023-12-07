@@ -4,9 +4,9 @@ namespace App.Backend.Test.Database;
 
 public sealed class DatabasePool
 {
-    private readonly ObjectPool<IDatabase> _pool;
+    private readonly ObjectPool<Database> _pool;
 
-    public DatabasePool(IPooledObjectPolicy<IDatabase> policy)
+    public DatabasePool(IPooledObjectPolicy<Database> policy)
     {
         var poolFactory = new DefaultObjectPoolProvider();
         _pool = poolFactory.Create(policy);

@@ -1,4 +1,4 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
 
@@ -28,7 +28,7 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { Id = institutionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { Id = institutionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -38,7 +38,7 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
     public async Task NotFound()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { Id = Guid.NewGuid() });
+        var result = await _fixture.Client.ExecuteQuery(new { Id = Guid.NewGuid() });
 
         // Assert
         result.MatchSnapshot();

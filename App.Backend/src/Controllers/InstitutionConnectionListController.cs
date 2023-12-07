@@ -1,4 +1,4 @@
-using App.Data;
+using App.Lib.Data;
 using App.Backend.GraphQL.Type;
 using App.Backend.Service;
 using GraphQL.AspNet.Attributes;

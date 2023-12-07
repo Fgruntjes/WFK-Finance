@@ -1,5 +1,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using VMelnalksnis.NordigenDotNet;
 
 namespace App.Test.Tests;
@@ -8,7 +9,7 @@ public class NordigenFixture : PlaywrightFixture, IAsyncLifetime
 {
     private readonly INordigenClient _nordigenClient;
 
-    public NordigenFixture() : base()
+    public NordigenFixture(ILoggerProvider loggerProvider) : base(loggerProvider)
     {
         _nordigenClient = Services.GetRequiredService<INordigenClient>();
     }

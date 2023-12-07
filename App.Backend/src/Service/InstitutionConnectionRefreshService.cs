@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
-using System.Security.Principal;
-using App.Data;
-using App.Data.Entity;
+using App.Lib.Data;
+using App.Lib.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using VMelnalksnis.NordigenDotNet;
 
@@ -43,10 +42,10 @@ public class InstitutionConnectionRefreshService
     {
         var organisationId = _organisationIdProvider.GetOrganisationId();
         var entity = await _database.InstitutionConnections
-            .OrderBy(e => e.CreatedAt)
-            .Take(1)
             .Where(predicate)
             .Where(e => e.OrganisationId == organisationId)
+            .OrderBy(e => e.CreatedAt)
+            .Take(1)
             .FirstAsync(cancellationToken);
 
         var connectionAccounts = await _nordigenClient.Requisitions.Get(Guid.Parse(entity.ExternalId), cancellationToken);

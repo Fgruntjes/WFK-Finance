@@ -1,5 +1,5 @@
-using App.Data;
-using App.Data.Entity;
+using App.Lib.Data;
+using App.Lib.Data.Entity;
 
 namespace App.Backend;
 
@@ -19,7 +19,7 @@ public class OrganisationIdProvider
 
     public Guid GetOrganisationId()
     {
-        var identity = _httpContextAccessor.HttpContext?.User?.Identity?.Name
+        var identity = _httpContextAccessor.HttpContext?.User.Identity?.Name
             ?? throw new Exception("No identity found");
 
         if (_storedOrganisations.TryGetValue(identity, out var id))

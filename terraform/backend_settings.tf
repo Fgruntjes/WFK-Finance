@@ -4,15 +4,16 @@ locals {
     App = {
       Environment = var.app_environment,
       Version     = var.app_version,
-      FrontendUrl = local.app_frontend_url
-      KeyVaultUri = azurerm_key_vault.app.vault_uri,
-      KeyName     = azurerm_key_vault_key.backend_data_protection.name,
-
-      StorageAccountUri   = azurerm_storage_account.backend.primary_blob_endpoint,
-      KeyStorageContainer = azurerm_storage_container.backend_data_protection.name,
-      KeyBlobName         = azurerm_storage_blob.backend_data_protection.name,
+      FrontendUrl = local.app_frontend_url,
     }
-    Auth0 = {
+    DataProtection = {
+      KeyVaultUri       = azurerm_key_vault.app.vault_uri,
+      KeyName           = azurerm_key_vault_key.backend_data_protection.name,
+      StorageAccountUri = azurerm_storage_account.backend.primary_blob_endpoint,
+      StorageContainer  = azurerm_storage_container.backend_data_protection.name,
+      KeyBlobName       = azurerm_storage_blob.backend_data_protection.name,
+    }
+    Auth = {
       Domain   = var.auth0_domain,
       Audience = auth0_resource_server.backend.identifier,
     }
@@ -21,7 +22,7 @@ locals {
       SecretKey = var.nordigen_secret_key,
     }
     ConnectionStrings = {
-      DefaultConnection = "",
+      Database = "",
     }
     Sentry = {
       Dsn = sentry_key.backend.dsn_public,
@@ -29,7 +30,7 @@ locals {
   }
   backend_settings_string = jsonencode(merge(local.backend_settings, {
     ConnectionStrings = {
-      DefaultConnection = join(";", [
+      Database = join(";", [
         "Server=localhost,1433",
         "Database=development",
         "User Id=sa",
@@ -55,7 +56,7 @@ output "app_settings_json" {
   sensitive = true
   value = jsonencode(merge(local.backend_settings, {
     ConnectionStrings = {
-      DefaultConnection = local.environment_data_ephemeral ? join(";", [
+      Database = local.environment_data_ephemeral ? join(";", [
         "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
         "Database=${azurerm_mssql_database.backend_database.name}",
         try("User Id=${one(mssql_user.integration_test_admin[*].username)}", "User Id="),
