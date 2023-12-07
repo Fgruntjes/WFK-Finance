@@ -23,7 +23,7 @@ public static class ConfigurationExtension
 
             services
                 .AddHealthChecks()
-                .AddSqlServer(connectionString: connectionString, tags: new[] { AppHealthCheckExtension.ReadinessTag });
+                .AddSqlServer(connectionString, tags: new[] { AppHealthCheckExtension.ReadinessTag });
         });
     }
 

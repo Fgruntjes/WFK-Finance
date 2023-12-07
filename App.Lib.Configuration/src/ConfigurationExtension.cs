@@ -12,7 +12,7 @@ public static class ConfigurationExtension
     {
         builder.UseOptions<AppOptions>(AppOptions.Section);
         var sentryOptions = builder.UseOptions<SentryOptions>("Sentry");
-        
+
         return builder
             .ConfigureAppConfiguration((context, config) =>
             {
@@ -20,11 +20,11 @@ public static class ConfigurationExtension
                 config.AddJsonFile("appsettings.local.json", !isProduction, !isProduction);
             })
             .ConfigureLogging(_ => { })
-            .ConfigureServices((hostContext, services) =>
+            .ConfigureServices((hostContext, _) =>
             {
                 if (!hostContext.HostingEnvironment.IsDevelopment())
                 {
-                    SentrySdk.Init(sentryOptions);   
+                    SentrySdk.Init(sentryOptions);
                 }
             });
     }
@@ -32,7 +32,7 @@ public static class ConfigurationExtension
         where TOptions : class, new()
     {
         var options = new TOptions();
-        
+
         builder
             .ConfigureServices((context, services) =>
             {

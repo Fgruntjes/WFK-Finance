@@ -41,7 +41,8 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
         {
             config.AddInMemoryCollection(new Dictionary<string, string>
             {
-                {"ConnectionStrings:Database", _database.ConnectionString}
+                {"ConnectionStrings:Database", _database.ConnectionString},
+                {"DataProtection:Enabled", "false"},
             }!);
         });
 

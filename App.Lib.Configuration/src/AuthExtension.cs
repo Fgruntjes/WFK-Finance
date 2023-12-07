@@ -13,7 +13,7 @@ public static class AuthExtension
     public static IHostBuilder UseAuth(this IHostBuilder builder)
     {
         var options = builder.UseOptions<AuthOptions>(AuthOptions.Section);
-        
+
         return builder.ConfigureServices((context, services) =>
         {
             IdentityModelEventSource.ShowPII = context.HostingEnvironment.IsDevelopment();

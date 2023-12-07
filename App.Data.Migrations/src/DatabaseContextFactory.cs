@@ -15,7 +15,7 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
             .AddJsonFile("appsettings.local.json", true)
             .Build();
 
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
+        var connectionString = configuration.GetConnectionString("Database")
             ?? "Server=localhost,1433; Database=development; User Id=sa; Password=myLeet123Password!; Encrypt=False";
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
         optionsBuilder.UseSqlServer(connectionString, o =>

@@ -18,7 +18,7 @@ resource "azurerm_container_group" "backend_database_migrations" {
     }
 
     secure_environment_variables = {
-      ConnectionStrings__DefaultConnection = join(";", [
+      ConnectionStrings__Database = join(";", [
         "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
         "Database=${azurerm_mssql_database.backend_database.name}",
         "Authentication=Active Directory Managed Identity",

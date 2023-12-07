@@ -34,7 +34,7 @@ resource "azurerm_container_app" "backend_app" {
     type = "UserAssigned"
     identity_ids = [
       azurerm_user_assigned_identity.backend_database_read_write.id,
-      azurerm_user_assigned_identity.keyvault_read.id,
+      azurerm_user_assigned_identity.keyvault.id,
       azurerm_user_assigned_identity.container_registry_pull.id,
     ]
   }
@@ -48,7 +48,7 @@ resource "azurerm_container_app" "backend_app" {
     name = "settings"
     value = jsonencode(merge(local.backend_settings, {
       ConnectionStrings = {
-        DefaultConnection = join(";", [
+        Database = join(";", [
           "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
           "Database=${azurerm_mssql_database.backend_database.name}",
           "Authentication=Active Directory Managed Identity",

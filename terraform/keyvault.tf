@@ -22,5 +22,7 @@ resource "azurerm_key_vault_access_policy" "cicd" {
     "Purge",
     "Update",
     "Rotate",
+    "UnwrapKey",
+    "WrapKey",
   ]
 }
