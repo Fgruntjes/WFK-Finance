@@ -18,6 +18,7 @@ resource "azurerm_container_group" "backend_database_migrations" {
     }
 
     secure_environment_variables = {
+      Sentry__Dsn = local.backend_settings.Sentry.Dsn,
       ConnectionStrings__Database = join(";", [
         "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
         "Database=${azurerm_mssql_database.backend_database.name}",
