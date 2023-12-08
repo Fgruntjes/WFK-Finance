@@ -36,14 +36,14 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
             loggingBuilder.Services.AddSingleton(_loggerProvider);
         });
 
-        // Override database configurations
+        // Override configurations
         builder.ConfigureAppConfiguration(config =>
         {
-            config.AddInMemoryCollection(new Dictionary<string, string>
+            config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {"ConnectionStrings:Database", _database.ConnectionString},
                 {"DataProtection:Enabled", "false"},
-            }!);
+            });
         });
 
         builder.ConfigureServices(services =>

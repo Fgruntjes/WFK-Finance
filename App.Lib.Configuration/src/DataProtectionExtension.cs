@@ -21,7 +21,7 @@ public static class DataProtectionExtension
                     services.AddDataProtection();
                 });
         }
-        
+
         return builder
             .ConfigureServices((context, services) =>
             {
