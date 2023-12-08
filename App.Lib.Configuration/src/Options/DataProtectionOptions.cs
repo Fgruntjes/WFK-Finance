@@ -6,7 +6,7 @@ public class DataProtectionOptions
 {
     public const string Section = "DataProtection";
     [Required]
-    public bool Enabled { get; set; } = true;
+    public bool Disabled { get; set; } = true;
     [Required]
     public string KeyVaultUri { get; set; } = null!;
     [Required]

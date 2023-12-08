@@ -60,8 +60,6 @@ public class Startup : IDisposable
 
         services.AddLogging();
         services.AddHttpContextAccessor();
-        services.AddSingleton<IClock>(SystemClock.Instance);
-        services.AddSingleton(DateTimeZoneProviders.Tzdb);
         services.AddScoped<OrganisationIdProvider>();
         services.Scan(scan => scan.FromAssemblyOf<Program>()
             .AddClasses(classes => classes.InNamespaceOf<InstitutionConnectionCreateService>())

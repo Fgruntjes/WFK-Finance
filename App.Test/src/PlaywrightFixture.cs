@@ -1,3 +1,4 @@
+using App.Lib.Configuration;
 using App.Test.Screens;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
@@ -5,6 +6,9 @@ using Respawn;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using App.Lib.Configuration.Options;
+using App.Lib.Data;
+using App.Lib.InstitutionConnection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace App.Test;
@@ -21,9 +25,17 @@ public class PlaywrightFixture : IAsyncLifetime
 
     public PlaywrightFixture(ILoggerProvider loggerProvider)
     {
-        var applicationFactory = new ApplicationFactory(loggerProvider);
+        var hostBuilder = Host.CreateDefaultBuilder()
+            .UseInstitutionConnectionClient()
+            .UseConfiguration()
+            .ConfigureLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.Services.AddSingleton(loggerProvider);
+            }); ;
+        var host = hostBuilder.Build();
 
-        Services = applicationFactory.Services;
+        Services = host.Services;
         _dbConnectionString = Services.GetRequiredService<IConfiguration>().GetConnectionString("Database")
                               ?? throw new Exception("Database connection string not found");
         _respawner = Respawner.CreateAsync(_dbConnectionString)

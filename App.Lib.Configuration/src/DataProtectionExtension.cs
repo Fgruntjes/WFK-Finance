@@ -13,7 +13,8 @@ public static class DataProtectionExtension
     public static IHostBuilder UseDataProtection(this IHostBuilder builder)
     {
         var options = builder.UseOptions<Options.DataProtectionOptions>(Options.DataProtectionOptions.Section);
-        if (!options.Enabled)
+
+        if (options.Disabled)
         {
             return builder
                 .ConfigureServices((context, services) =>

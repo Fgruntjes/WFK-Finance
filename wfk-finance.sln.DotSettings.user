@@ -1,4 +1,12 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=07937499_002Dee1a_002D4d4a_002D92d7_002Dee3283f637df/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;App.Backend.Test&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Backend.Test" Presentation="&amp;lt;App.Backend.Test&amp;gt;" /&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=101235e6_002D15b3_002D4e75_002Da491_002D1791aeedc967/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;App.Backend.Test&amp;gt; #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Backend.Test" Presentation="&amp;lt;App.Backend.Test&amp;gt;" /&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8b0dd8d5_002Dbab7_002D4e0a_002Dacc1_002Db5637e8eb88b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ConnectUnauthorized" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::4ABEE1DD-A95E-42C0-B610-4E086D71D62C::net7.0::App.Test.Tests.InstitutionConnectTest.ConnectUnauthorized&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

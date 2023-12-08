@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using VMelnalksnis.NordigenDotNet;
 
-namespace App.Backend.Test;
+namespace App.Lib.Test;
 
 internal class ApplicationFactory : WebApplicationFactory<Program>
 {
