@@ -1,5 +1,7 @@
+using App.Backend.GraphQL.Controllers;
 using App.Backend.GraphQL.Type;
-using App.Backend.Service;
+using App.Lib.InstitutionConnection.Exception;
+using App.Lib.InstitutionConnection.Service;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using GraphQL.AspNet.Interfaces.Controllers;
@@ -10,9 +12,9 @@ namespace App.Backend.Controllers;
 [GraphRoute("institutionConnection")]
 public class InstitutionConnectionCreateController : GraphController
 {
-    private readonly InstitutionConnectionCreateService _createService;
+    private readonly IInstitutionConnectionCreateService _createService;
 
-    public InstitutionConnectionCreateController(InstitutionConnectionCreateService createService)
+    public InstitutionConnectionCreateController(IInstitutionConnectionCreateService createService)
     {
         _createService = createService;
     }
@@ -29,9 +31,9 @@ public class InstitutionConnectionCreateController : GraphController
             var entity = await _createService.Connect(institutionId, returnUrl, cancellationToken);
             return Ok(entity.ToGraphQLType());
         }
-        catch (ArgumentOutOfRangeException exception)
+        catch (InstitutionNotFoundException exception)
         {
-            return BadRequest(exception.Message);
+            return new BadRequestGraphQlActionResult(exception);
         }
     }
 }

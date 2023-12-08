@@ -1,5 +1,7 @@
+using App.Backend.GraphQL.Controllers;
 using App.Backend.GraphQL.Type;
-using App.Backend.Service;
+using App.Lib.InstitutionConnection.Exception;
+using App.Lib.InstitutionConnection.Service;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using GraphQL.AspNet.Interfaces.Controllers;
@@ -10,9 +12,9 @@ namespace App.Backend.Controllers;
 [GraphRoute("institutionConnection")]
 public class InstitutionConnectionRefreshController : GraphController
 {
-    private readonly InstitutionConnectionRefreshService _refreshService;
+    private readonly IInstitutionConnectionRefreshService _refreshService;
 
-    public InstitutionConnectionRefreshController(InstitutionConnectionRefreshService refreshService)
+    public InstitutionConnectionRefreshController(IInstitutionConnectionRefreshService refreshService)
     {
         _refreshService = refreshService;
     }
@@ -26,9 +28,9 @@ public class InstitutionConnectionRefreshController : GraphController
             var entity = await _refreshService.Refresh(externalId, cancellationToken);
             return Ok(entity.ToGraphQLType());
         }
-        catch (InvalidOperationException)
+        catch (InstitutionConnectionNotFoundException exception)
         {
-            return BadRequest("Connection not found");
+            return new BadRequestGraphQlActionResult(exception);
         }
     }
 
@@ -41,9 +43,9 @@ public class InstitutionConnectionRefreshController : GraphController
             var entity = await _refreshService.Refresh(id, cancellationToken);
             return Ok(entity.ToGraphQLType());
         }
-        catch (InvalidOperationException)
+        catch (InstitutionConnectionNotFoundException exception)
         {
-            return BadRequest("Connection not found");
+            return new BadRequestGraphQlActionResult(exception);
         }
     }
 }

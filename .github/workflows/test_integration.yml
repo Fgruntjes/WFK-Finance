@@ -43,14 +43,14 @@ jobs:
             - uses: actions/setup-dotnet@v3
               with:
                   dotnet-version: 7.0
-            - run: dotnet build App.Test
+            - run: dotnet build App.IntegrationTest
             - run: |
                   APP_SETTINGS_JSON=$(echo "${APP_SETTINGS_JSON_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}")
                   echo "::add-mask::${APP_SETTINGS_JSON}"
 
-                  echo "${APP_SETTINGS_JSON}" > App.Test/bin/Debug/net7.0/appsettings.local.json
-                  echo "${APP_SETTINGS_JSON}" > App.Test/appsettings.local.json
-                  dotnet test App.Test \
+                  echo "${APP_SETTINGS_JSON}" > App.IntegrationTest/bin/Debug/net7.0/appsettings.local.json
+                  echo "${APP_SETTINGS_JSON}" > App.IntegrationTest/appsettings.local.json
+                  dotnet test App.IntegrationTest \
                       --no-build \
                       --blame \
                       --blame-hang-timeout 2m

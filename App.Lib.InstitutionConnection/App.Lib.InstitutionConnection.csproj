@@ -13,4 +13,8 @@
     <PackageReference Include="VMelnalksnis.NordigenDotNet.DependencyInjection" Version="1.1.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\App.Lib.Data\App.Lib.Data.csproj" />
+  </ItemGroup>
+
 </Project>

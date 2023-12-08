@@ -1,11 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Runtime.CompilerServices;
+using App.Lib.InstitutionConnection.Service;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodaTime;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
 using VMelnalksnis.NordigenDotNet.DependencyInjection;
 
+[assembly: InternalsVisibleTo("App.Lib.InstitutionConnection.Test")]
 namespace App.Lib.InstitutionConnection;
 
 public static class ConfigurationExtension
@@ -25,6 +27,10 @@ public static class ConfigurationExtension
                 .AddNordigenDotNet(hostContext.Configuration)
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(timeoutPolicy);
+
+            services.AddScoped<IInstitutionConnectionCreateService, InstitutionConnectionCreateService>();
+            services.AddScoped<IInstitutionConnectionRefreshService, InstitutionConnectionRefreshService>();
+            services.AddScoped<IInstitutionSearchService, InstitutionSearchService>();
         });
     }
 

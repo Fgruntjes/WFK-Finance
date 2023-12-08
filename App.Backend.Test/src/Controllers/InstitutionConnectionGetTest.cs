@@ -32,7 +32,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
             InstitutionId = _fixture.InstitutionEntity.Id,
             OrganisationId = _fixture.AltOrganisationId,
         };
-        _fixture.SeedData(c =>
+        _fixture.Database.SeedData(c =>
         {
             c.InstitutionConnections.Add(connectionEntity);
         });
@@ -68,7 +68,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
                 Iban = $"IBAN{i}",
             });
         }
-        _fixture.SeedData(c =>
+        _fixture.Database.SeedData(c =>
         {
             c.InstitutionConnectionAccounts.AddRange(InstitutionConnectionAccounts);
         });

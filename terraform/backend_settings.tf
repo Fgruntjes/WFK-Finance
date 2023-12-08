@@ -7,6 +7,7 @@ locals {
       FrontendUrl = local.app_frontend_url,
     }
     DataProtection = {
+      Enabled           = true,
       KeyVaultUri       = azurerm_key_vault.app.vault_uri,
       KeyName           = azurerm_key_vault_key.backend_data_protection.name,
       StorageAccountUri = azurerm_storage_account.backend.primary_blob_endpoint,
@@ -42,14 +43,8 @@ locals {
 }
 
 resource "local_file" "dev_env_tests" {
-  for_each = toset([
-    "../App.Test/appsettings.local.json",
-    "../App.Test/bin/Debug/net7.0/appsettings.local.json",
-    "../App.Backend/appsettings.local.json",
-    "../App.Backend/bin/Debug/net7.0/appsettings.local.json",
-  ])
   content  = local.backend_settings_string
-  filename = each.value
+  filename = "../appsettings.local.json"
 }
 
 output "app_settings_json" {

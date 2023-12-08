@@ -11,9 +11,9 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionGetController : GraphController
 {
     private readonly DatabaseContext _database;
-    private readonly OrganisationIdProvider _organisationIdProvider;
+    private readonly IOrganisationIdProvider _organisationIdProvider;
 
-    public InstitutionConnectionGetController(DatabaseContext database, OrganisationIdProvider organisationIdProvider)
+    public InstitutionConnectionGetController(DatabaseContext database, IOrganisationIdProvider organisationIdProvider)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;

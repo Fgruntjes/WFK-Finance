@@ -1,6 +1,5 @@
 using App.Lib.Data;
 using App.Backend.GraphQL.Type;
-using App.Backend.Service;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +11,9 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionListController : GraphController
 {
     private readonly DatabaseContext _database;
-    private readonly OrganisationIdProvider _organisationIdProvider;
+    private readonly IOrganisationIdProvider _organisationIdProvider;
 
-    public InstitutionConnectionListController(DatabaseContext database, OrganisationIdProvider organisationIdProvider)
+    public InstitutionConnectionListController(DatabaseContext database, IOrganisationIdProvider organisationIdProvider)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;

@@ -1,13 +1,11 @@
 using System.Reflection;
-using App.Backend.Service;
 using App.Lib.Configuration;
 using App.Lib.Configuration.Options;
+using App.Lib.Data;
 using GraphQL.AspNet.Configuration;
 using GraphQL.AspNet.Security;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
-using NodaTime;
 
 namespace App.Backend;
 
@@ -60,11 +58,7 @@ public class Startup : IDisposable
 
         services.AddLogging();
         services.AddHttpContextAccessor();
-        services.AddScoped<OrganisationIdProvider>();
-        services.Scan(scan => scan.FromAssemblyOf<Program>()
-            .AddClasses(classes => classes.InNamespaceOf<InstitutionConnectionCreateService>())
-            .AsSelf()
-            .WithScopedLifetime());
+        services.AddScoped<IOrganisationIdProvider, HttpContextOrganisationIdProvider>();
     }
 
     public void Configure(IApplicationBuilder app)

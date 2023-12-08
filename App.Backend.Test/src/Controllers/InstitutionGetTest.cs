@@ -22,13 +22,13 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
             CountryIso2 = "NL"
         };
 
-        _fixture.SeedData(context =>
+        _fixture.Database.SeedData(context =>
         {
             context.Institutions.Add(institutionEntity);
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new { Id = institutionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { institutionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -38,7 +38,7 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
     public async Task NotFound()
     {
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new { Id = Guid.NewGuid() });
+        var result = await _fixture.Client.ExecuteQuery(new { Id = new Guid("484cc24c-3a50-4b05-b550-c7c1be8eed05") });
 
         // Assert
         result.MatchSnapshot();

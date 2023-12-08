@@ -14,10 +14,10 @@ public static class DataProtectionExtension
     {
         var options = builder.UseOptions<Options.DataProtectionOptions>(Options.DataProtectionOptions.Section);
 
-        if (options.Disabled)
+        if (!options.Enabled)
         {
             return builder
-                .ConfigureServices((context, services) =>
+                .ConfigureServices((_, services) =>
                 {
                     services.AddDataProtection();
                 });

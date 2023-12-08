@@ -13,3 +13,5 @@ var builder = Host.CreateDefaultBuilder(args)
                 ?? throw new Exception("Missing 'ConnectionStrings::ServiceBus' setting.")
         );
     });
+
+await builder.RunConsoleAsync();

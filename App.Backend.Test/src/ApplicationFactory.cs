@@ -1,13 +1,13 @@
 using App.Backend.Test.Auth;
-using App.Backend.Test.Database;
+using App.Lib.Test.Database;
+using App.Lib.InstitutionConnection.Service;
+using App.Lib.Test;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
-using VMelnalksnis.NordigenDotNet;
 
 namespace App.Backend.Test;
 
@@ -24,22 +24,9 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
-        // Configure logging
-        builder.ConfigureLogging(loggingBuilder =>
-        {
-            loggingBuilder.ClearProviders();
-            loggingBuilder.Services.AddSingleton(_loggerProvider);
-        });
-
         // Override configurations
-        builder.ConfigureHostConfiguration(config =>
-        {
-            config.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                {"ConnectionStrings:Database", _database.ConnectionString},
-                {"DataProtection:Disabled", "true"},
-            });
-        });
+        builder.ConfigureLogging(_loggerProvider);
+        builder.ConfigureDatabase(_database.ConnectionString);
 
         builder.ConfigureServices(services =>
         {
@@ -48,9 +35,9 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
                 .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", _ => { });
 
             // Setup mocks
-            // We configure as production when running integration tests due to
-            services.AddSingleton<IHostEnvironment>(new HostingEnvironment { EnvironmentName = Environments.Production });
-            services.MockScoped<INordigenClient>();
+            services.MockScoped<IInstitutionConnectionCreateService>();
+            services.MockScoped<IInstitutionConnectionRefreshService>();
+            services.MockScoped<IInstitutionSearchService>();
         });
 
         return base.CreateHost(builder);

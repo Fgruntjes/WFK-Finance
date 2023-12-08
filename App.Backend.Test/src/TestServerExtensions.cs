@@ -40,7 +40,6 @@ public static class HttpClientExtensions
         return await client.ExecuteQuery(null, variables, user);
     }
 
-
     private static string LoadQueryFile(string? queryFile)
     {
         var queryFullName = _testNameResolver.ReadSnapshotFullName();
