@@ -77,7 +77,6 @@ jobs:
                   dotnet-version: 7.0
             - run: dotnet build App.Backend.Test
             - run: |
-                  env
                   dotnet test App.Backend.Test \
                       --no-build \
                       --blame \
