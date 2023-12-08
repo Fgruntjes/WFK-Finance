@@ -20,25 +20,25 @@ function newMigration {
     echo "### Creating new migrations"
     dotnet ef migrations add \
         "${MIGRATION_NAME}" \
-        --project App.Backend \
-        --output-dir src/Data/Migrations
+        --project App.DataMigrations \
+        --output-dir src/Migrations
 }
 
 function updateDatabase {
     echo "### Updating database"
     dotnet ef database update \
-        --project App.Data.Migrations
+        --project App.DataMigrations
 }
 
 function updateFromAssembly {
     echo "### Updating database from assembly"
     dotnet exec \
-        --runtimeconfig "./App.Data.Migrations.runtimeconfig.json" \
-        --depsfile "./App.Data.Migrations.deps.json" "ef.dll" \
+        --runtimeconfig "./App.DataMigrations.runtimeconfig.json" \
+        --depsfile "./App.DataMigrations.deps.json" "ef.dll" \
         --verbose database update \
-        --context "App.Data.DatabaseContext" \
-        --assembly "./App.Data.Migrations.dll" \
-        --startup-assembly "./App.Data.Migrations.dll" \
+        --context "App.Lib.Data.DatabaseContext" \
+        --assembly "./App.DataMigrations.dll" \
+        --startup-assembly "./App.DataMigrations.dll" \
         --data-dir "./"
 }
 
@@ -49,7 +49,7 @@ function updateDatabaseDocker {
     docker run \
         --env "ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433; Database=development; User Id=sa; Password=myLeet123Password!; Encrypt=False" \
         --add-host=host.docker.internal:host-gateway \
-        app.data.migrations
+        app.datamigrations
 }
 
 ACTION=${1:-"update"}

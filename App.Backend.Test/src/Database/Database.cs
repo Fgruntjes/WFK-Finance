@@ -1,4 +1,4 @@
-using App.Data.Migrations;
+using App.DataMigrations;
 using App.Lib.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

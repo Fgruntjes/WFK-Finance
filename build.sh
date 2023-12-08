@@ -64,6 +64,6 @@ if [ "$#" -ne 0 ]; then
     done
 else
     build App.Backend
-    build App.Data.Migrations
+    build App.DataMigrations
     build frontend
 fi

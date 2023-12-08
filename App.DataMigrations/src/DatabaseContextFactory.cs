@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using App.Lib.Data;
 using Sentry;
 
-namespace App.Data.Migrations;
+namespace App.DataMigrations;
 
 public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
 {

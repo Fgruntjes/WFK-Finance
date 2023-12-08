@@ -1,6 +1,6 @@
 using App.Backend.Test.Auth;
 using App.Backend.Test.Database;
-using App.Data.Migrations;
+using App.DataMigrations;
 using App.Lib.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;

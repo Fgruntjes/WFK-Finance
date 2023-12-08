@@ -7,16 +7,16 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY *.sln .
 COPY App.Lib.Data/*.csproj ./App.Lib.Data/
-COPY App.Data.Migrations/*.csproj ./App.Data.Migrations/
+COPY App.DataMigrations/*.csproj ./App.DataMigrations/
 
-RUN dotnet restore "App.Data.Migrations/App.Data.Migrations.csproj"
+RUN dotnet restore "App.DataMigrations/App.DataMigrations.csproj"
 COPY . .
 
 # Build app
-RUN dotnet build "App.Data.Migrations/App.Data.Migrations.csproj" -c Release -o /app/build
+RUN dotnet build "App.DataMigrations/App.DataMigrations.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "App.Data.Migrations/App.Data.Migrations.csproj" -c Release -o /app/publish
+RUN dotnet publish "App.DataMigrations/App.DataMigrations.csproj" -c Release -o /app/publish
 
 
 FROM base AS final

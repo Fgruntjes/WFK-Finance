@@ -4,16 +4,19 @@ using App.Lib.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace App.Data.Migrations
+namespace App.DataMigrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231005203149_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace App.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("App.Data.Entity.InstitutionConnectionAccountEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionAccountEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -51,7 +54,7 @@ namespace App.Data.Migrations
                     b.ToTable("InstitutionConnectionAccounts");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.InstitutionConnectionEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -85,7 +88,7 @@ namespace App.Data.Migrations
                     b.ToTable("InstitutionConnections");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.InstitutionEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.InstitutionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -116,7 +119,7 @@ namespace App.Data.Migrations
                     b.ToTable("Institutions");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.OrganisationEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.OrganisationEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -130,7 +133,7 @@ namespace App.Data.Migrations
                     b.ToTable("Organisations");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.OrganisationUserEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.OrganisationUserEntity", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -149,7 +152,7 @@ namespace App.Data.Migrations
                     b.ToTable("OrganisationUser");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.UserEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -163,9 +166,9 @@ namespace App.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.InstitutionConnectionAccountEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionAccountEntity", b =>
                 {
-                    b.HasOne("App.Data.Entity.InstitutionConnectionEntity", "InstitutionConnection")
+                    b.HasOne("App.Backend.Data.Entity.InstitutionConnectionEntity", "InstitutionConnection")
                         .WithMany("Accounts")
                         .HasForeignKey("InstitutionConnectionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -174,15 +177,15 @@ namespace App.Data.Migrations
                     b.Navigation("InstitutionConnection");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.InstitutionConnectionEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionEntity", b =>
                 {
-                    b.HasOne("App.Data.Entity.InstitutionEntity", "Institution")
+                    b.HasOne("App.Backend.Data.Entity.InstitutionEntity", "Institution")
                         .WithMany()
                         .HasForeignKey("InstitutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.Data.Entity.OrganisationEntity", "Organisation")
+                    b.HasOne("App.Backend.Data.Entity.OrganisationEntity", "Organisation")
                         .WithMany("InstitutionConnections")
                         .HasForeignKey("OrganisationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -193,15 +196,15 @@ namespace App.Data.Migrations
                     b.Navigation("Organisation");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.OrganisationUserEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.OrganisationUserEntity", b =>
                 {
-                    b.HasOne("App.Data.Entity.OrganisationEntity", "Organisation")
+                    b.HasOne("App.Backend.Data.Entity.OrganisationEntity", "Organisation")
                         .WithMany("Users")
                         .HasForeignKey("OrganisationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("App.Data.Entity.UserEntity", "User")
+                    b.HasOne("App.Backend.Data.Entity.UserEntity", "User")
                         .WithMany("Organisations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -212,19 +215,19 @@ namespace App.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.InstitutionConnectionEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.InstitutionConnectionEntity", b =>
                 {
                     b.Navigation("Accounts");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.OrganisationEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.OrganisationEntity", b =>
                 {
                     b.Navigation("InstitutionConnections");
 
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("App.Data.Entity.UserEntity", b =>
+            modelBuilder.Entity("App.Backend.Data.Entity.UserEntity", b =>
                 {
                     b.Navigation("Organisations");
                 });

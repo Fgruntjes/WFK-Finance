@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Backend.Test", "App.Bac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.Data", "App.Lib.Data\App.Lib.Data.csproj", "{E5E256FC-191C-434C-B2D8-8C9C4A454D24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Data.Migrations", "App.Data.Migrations\App.Data.Migrations.csproj", "{E82D00B4-F258-45DC-9999-D545C3294018}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.DataMigrations", "App.DataMigrations\App.DataMigrations.csproj", "{E82D00B4-F258-45DC-9999-D545C3294018}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Test", "App.Test\App.Test.csproj", "{4ABEE1DD-A95E-42C0-B610-4E086D71D62C}"
 EndProject

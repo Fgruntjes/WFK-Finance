@@ -31,7 +31,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\App.Backend\App.Backend.csproj" />
-        <ProjectReference Include="..\App.Data.Migrations\App.Data.Migrations.csproj" />
+        <ProjectReference Include="..\App.DataMigrations\App.DataMigrations.csproj" />
     </ItemGroup>
 
     <ItemGroup>
