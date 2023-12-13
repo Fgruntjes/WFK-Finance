@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.InstitutionConnecti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.Test", "App.Lib.Test\App.Lib.Test.csproj", "{3121A043-DD4E-46B4-A074-C69BDC0DB73B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.ServiceBus.Test", "App.Lib.ServiceBus.Test\App.Lib.ServiceBus.Test.csproj", "{37386040-6F9B-4A4D-9C68-41B021F0D777}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,5 +84,9 @@ Global
 		{3121A043-DD4E-46B4-A074-C69BDC0DB73B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3121A043-DD4E-46B4-A074-C69BDC0DB73B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3121A043-DD4E-46B4-A074-C69BDC0DB73B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

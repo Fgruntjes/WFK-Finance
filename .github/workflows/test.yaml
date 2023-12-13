@@ -75,6 +75,7 @@ jobs:
                 project:
                 - App.Backend.Test
                 - App.Lib.InstitutionConnection.Test
+                - App.Lib.ServiceBus.Test
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-dotnet@v3

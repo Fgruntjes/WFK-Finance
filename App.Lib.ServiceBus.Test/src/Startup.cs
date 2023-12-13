@@ -2,7 +2,7 @@ using App.Lib.Test;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
 
-namespace App.Lib.InstitutionConnection.Test;
+namespace App.Lib.ServiceBus.Test;
 
 public static class Startup
 {

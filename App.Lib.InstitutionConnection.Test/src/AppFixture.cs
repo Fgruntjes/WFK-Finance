@@ -1,9 +1,12 @@
 using App.Lib.Data;
+using App.Lib.ServiceBus;
+using App.Lib.ServiceBus.Messages;
 using App.Lib.Test;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Moq;
 using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Accounts;
 using VMelnalksnis.NordigenDotNet.Requisitions;
@@ -27,8 +30,16 @@ public class AppFixture : FunctionalTestFixture
                 services.MockTransient<IRequisitionClient>();
                 services.MockTransient<IAccountClient>();
                 services.MockScoped<IOrganisationIdProvider>();
+                services.MockSingleton<IServiceBus>();
             });
         var host = hostBuilder.Build();
+
+        host.Services.WithMock<IServiceBus>(mock =>
+        {
+            mock.Setup(m => m.Send(
+                It.IsAny<InstitutionAccountTransactionImportJob>(),
+                It.IsAny<CancellationToken>()));
+        });
 
         host.Services.WithMock<INordigenClient>(mock =>
         {

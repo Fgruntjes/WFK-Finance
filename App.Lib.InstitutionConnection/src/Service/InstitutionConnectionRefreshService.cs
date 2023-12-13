@@ -79,7 +79,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         // Publish 
         foreach (var account in entity.Accounts)
         {
-            await _serviceBus.Publish(new InstitutionAccountTransactionImportJob
+            await _serviceBus.Send(new InstitutionAccountTransactionImportJob
             {
                 InstitutionConnectionAccountId = account.Id,
             }, cancellationToken);

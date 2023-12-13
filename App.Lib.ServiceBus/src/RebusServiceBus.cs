@@ -12,8 +12,8 @@ internal class RebusServiceBus : IServiceBus
         _bus = bus;
     }
 
-    public async Task Publish<T>(T message, CancellationToken cancellationToken = default) where T : IMessage
+    public async Task Send<T>(T message, CancellationToken cancellationToken = default) where T : IMessage
     {
-        await _bus.Publish(message);
+        await _bus.Send(message);
     }
 }

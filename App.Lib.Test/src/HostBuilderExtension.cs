@@ -26,4 +26,15 @@ public static class HostBuilderExtension
             });
         });
     }
+
+    public static IHostBuilder ConfigureServiceBus(this IHostBuilder builder)
+    {
+        return builder.ConfigureAppConfiguration(config =>
+        {
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                {"ConnectionStrings:ServiceBus", "inmemory://"},
+            });
+        });
+    }
 }

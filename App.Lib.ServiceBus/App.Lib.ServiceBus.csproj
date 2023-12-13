@@ -12,6 +12,7 @@
     <PackageReference Include="Rebus.AzureServiceBus" Version="10.0.0" />
     <PackageReference Include="Rebus.RabbitMq" Version="9.0.1" />
     <PackageReference Include="Rebus.ServiceProvider" Version="10.0.0" />
+    <PackageReference Include="xunit" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>

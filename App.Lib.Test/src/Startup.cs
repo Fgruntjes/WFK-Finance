@@ -4,7 +4,7 @@ using Xunit.DependencyInjection.Logging;
 
 namespace App.Lib.Test;
 
-public static class StartupServiceCollectionExtension
+public static class Startup
 {
     public static void ConfigureServices(this IServiceCollection services)
     {

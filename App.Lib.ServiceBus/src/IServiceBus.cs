@@ -4,5 +4,5 @@ namespace App.Lib.ServiceBus;
 
 public interface IServiceBus
 {
-    Task Publish<T>(T message, CancellationToken cancellationToken = default) where T : IMessage;
+    Task Send<T>(T message, CancellationToken cancellationToken = default) where T : IMessage;
 }

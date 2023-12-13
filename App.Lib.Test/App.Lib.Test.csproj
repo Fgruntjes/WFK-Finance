@@ -16,12 +16,16 @@
     <Reference Include="Testcontainers.MsSql">
       <HintPath>..\..\..\..\.nuget\packages\testcontainers.mssql\3.6.0\lib\netstandard2.1\Testcontainers.MsSql.dll</HintPath>
     </Reference>
+    <Reference Include="xunit.assert">
+      <HintPath>..\..\..\..\.nuget\packages\xunit.assert\2.4.2\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="Respawn" Version="6.1.0" />
     <PackageReference Include="Testcontainers.MsSql" Version="3.6.0" />
+    <PackageReference Include="xunit" Version="2.6.2" />
     <PackageReference Include="Xunit.DependencyInjection.Logging" Version="8.1.0" />
   </ItemGroup>
 

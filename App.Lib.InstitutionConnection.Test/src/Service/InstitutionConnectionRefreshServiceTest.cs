@@ -1,6 +1,8 @@
 using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.InstitutionConnection.Service;
+using App.Lib.ServiceBus;
+using App.Lib.ServiceBus.Messages;
 using App.Lib.Test;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -340,6 +342,34 @@ public class InstitutionConnectionRefreshServiceTest
         fixture.Services.WithMock<IAccountClient>(mock =>
         {
             mock.Verify(m => m.Get(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
+        });
+    }
+
+    [Fact]
+    public async Task QueueRefreshJobs()
+    {
+        // Arrange
+        var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
+        var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
+
+        // Act
+        var result = await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
+        await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
+
+        // Assert
+        result.Accounts.Should().HaveCount(2);
+        fixture.Services.WithMock<IServiceBus>(mock =>
+        {
+            foreach (var account in result.Accounts)
+            {
+                mock.Verify(
+                    m => m.Send(
+                        It.Is<InstitutionAccountTransactionImportJob>(job
+                            => job.InstitutionConnectionAccountId == account.Id),
+                        It.IsAny<CancellationToken>()
+                        ),
+                    Times.Exactly(2));
+            }
         });
     }
 }
