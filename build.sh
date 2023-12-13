@@ -18,6 +18,13 @@ set +a
 
 set -x
 
+if [[ -z "${APP_VERSION}" ]]; then
+  APP_VERSION="dev-$(git describe --tags --always)-$(date +%Y%m%d%H%M%S)"
+  echo "APP_VERSION=${APP_VERSION}" >> .deploy.env
+fi
+
+echo "## Running build on ${APP_ENVIRONMENT} ${APP_VERSION} ##"
+
 CONTAINER_REGISTRY_HOSTNAME=${APP_PROJECT_SLUG//-/}
 CONTAINER_REGISTRY="${CONTAINER_REGISTRY_HOSTNAME}.azurecr.io"
 
