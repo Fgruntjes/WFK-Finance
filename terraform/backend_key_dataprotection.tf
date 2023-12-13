@@ -23,6 +23,9 @@ resource "azurerm_storage_blob" "backend_data_protection" {
   storage_account_name   = azurerm_storage_account.backend.name
   storage_container_name = azurerm_storage_container.backend_data_protection.name
   type                   = "Block"
+  lifecycle {
+    ignore_changes = ["content_md5"]
+  }
 }
 
 resource "azurerm_key_vault_key" "backend_data_protection" {
