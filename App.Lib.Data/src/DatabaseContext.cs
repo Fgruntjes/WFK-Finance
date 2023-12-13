@@ -8,7 +8,7 @@ public class DatabaseContext : DbContext
 {
     public DbSet<InstitutionEntity> Institutions { get; set; } = null!;
     public DbSet<InstitutionConnectionEntity> InstitutionConnections { get; set; } = null!;
-    public DbSet<InstitutionConnectionAccountEntity> InstitutionConnectionAccounts { get; set; } = null!;
+    public DbSet<InstitutionAccountEntity> InstitutionConnectionAccounts { get; set; } = null!;
     public DbSet<OrganisationEntity> Organisations { get; set; } = null!;
     public DbSet<UserEntity> Users { get; set; } = null!;
 

@@ -6,7 +6,7 @@ using NodaTime;
 namespace App.Lib.Data.Entity;
 
 [Index(nameof(ExternalId), nameof(InstitutionConnectionId), IsUnique = true)]
-public class InstitutionConnectionAccountEntity
+public class InstitutionAccountEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -23,7 +23,13 @@ public class InstitutionConnectionAccountEntity
 
     public string Iban { get; set; } = null!;
 
-    public InstitutionConnectionAccountEntity()
+    public ImportStatus ImportStatus { get; set; } = ImportStatus.Success;
+
+    public Instant? LastImport { get; set; }
+
+    public string? LastImportError { get; set; }
+
+    public InstitutionAccountEntity()
     {
         Id = Guid.NewGuid();
         CreatedAt = SystemClock.Instance.GetCurrentInstant();

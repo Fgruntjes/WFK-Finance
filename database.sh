@@ -17,6 +17,10 @@ function cleanup {
 
 function newMigration {
     MIGRATION_NAME=$1
+    if [[ -z "${MIGRATION_NAME}" ]]; then
+        echo "Usage: database-tools.sh new-migration <migration-name>"
+        exit 1
+    fi
     echo "### Creating new migrations"
     dotnet ef migrations add \
         "${MIGRATION_NAME}" \

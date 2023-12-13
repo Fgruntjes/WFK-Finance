@@ -45,18 +45,8 @@ resource "azurerm_container_app" "backend_app" {
   }
 
   secret {
-    name = "settings"
-    value = jsonencode(merge(local.backend_settings, {
-      ConnectionStrings = {
-        Database = join(";", [
-          "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
-          "Database=${azurerm_mssql_database.backend_database.name}",
-          "Authentication=Active Directory Managed Identity",
-          "User Id=${azurerm_user_assigned_identity.backend_database_read_write.client_id}",
-          "Encrypt=True",
-        ]),
-      }
-    }))
+    name  = "settings"
+    value = jsonencode(local.backend_settings_database_readwrite)
   }
 
   template {

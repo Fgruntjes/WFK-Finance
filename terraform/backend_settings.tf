@@ -23,14 +23,6 @@ locals {
       SecretKey = var.nordigen_secret_key,
     }
     ConnectionStrings = {
-      Database = "",
-    }
-    Sentry = {
-      Dsn = sentry_key.backend.dsn_public,
-    }
-  }
-  backend_settings_string = jsonencode(merge(local.backend_settings, {
-    ConnectionStrings = {
       Database = join(";", [
         "Server=localhost,1433",
         "Database=development",
@@ -38,12 +30,38 @@ locals {
         "Password=myLeet123Password!",
         "Encrypt=False",
       ]),
+      ServiceBus = "amqp://username:password@localhost:5672/"
     }
-  }))
+    Sentry = {
+      Dsn = sentry_key.backend.dsn_public,
+    }
+  }
+  backend_settings_database_admin = merge(local.backend_settings, {
+    ConnectionStrings = {
+      Database = join(";", [
+        "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
+        "Database=${azurerm_mssql_database.backend_database.name}",
+        "Authentication=Active Directory Managed Identity",
+        "User Id=${azurerm_user_assigned_identity.backend_database_owner.client_id}",
+        "Encrypt=True",
+      ]),
+    }
+  })
+  backend_settings_database_readwrite = merge(local.backend_settings, {
+    ConnectionStrings = {
+      Database = join(";", [
+        "Server=${azurerm_mssql_server.backend_database.fully_qualified_domain_name}",
+        "Database=${azurerm_mssql_database.backend_database.name}",
+        "Authentication=Active Directory Managed Identity",
+        "User Id=${azurerm_user_assigned_identity.backend_database_read_write.client_id}",
+        "Encrypt=True",
+      ]),
+    }
+  })
 }
 
 resource "local_file" "dev_env_tests" {
-  content  = local.backend_settings_string
+  content  = jsonencode(local.backend_settings)
   filename = "../appsettings.local.json"
 }
 

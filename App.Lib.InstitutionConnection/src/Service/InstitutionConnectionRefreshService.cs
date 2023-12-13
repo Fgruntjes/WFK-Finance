@@ -2,6 +2,8 @@ using System.Linq.Expressions;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Exception;
+using App.Lib.ServiceBus;
+using App.Lib.ServiceBus.Messages;
 using Microsoft.EntityFrameworkCore;
 using VMelnalksnis.NordigenDotNet;
 
@@ -12,15 +14,18 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
     private readonly DatabaseContext _database;
     private readonly IOrganisationIdProvider _organisationIdProvider;
     private readonly INordigenClient _nordigenClient;
+    private readonly IServiceBus _serviceBus;
 
     public InstitutionConnectionRefreshService(
         DatabaseContext database,
         IOrganisationIdProvider organisationIdProvider,
-        INordigenClient nordigenClient)
+        INordigenClient nordigenClient,
+        IServiceBus serviceBus)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;
         _nordigenClient = nordigenClient;
+        _serviceBus = serviceBus;
     }
 
     public async Task<InstitutionConnectionEntity> Refresh(
@@ -68,15 +73,24 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
             Guid.Parse(entity.ExternalId),
             cancellationToken);
 
-        if (await UpdateAccounts(entity, connectionAccounts.Accounts.ToArray()))
+        // Update accounts
+        await UpdateAccounts(entity, connectionAccounts.Accounts.ToArray());
+
+        // Publish 
+        foreach (var account in entity.Accounts)
         {
-            await _database.SaveChangesAsync(cancellationToken);
+            await _serviceBus.Publish(new InstitutionAccountTransactionImportJob
+            {
+                InstitutionConnectionAccountId = account.Id,
+            }, cancellationToken);
+            account.ImportStatus = ImportStatus.Queued;
         }
 
+        await _database.SaveChangesAsync(cancellationToken);
         return entity;
     }
 
-    private async Task<bool> UpdateAccounts(InstitutionConnectionEntity entity, IEnumerable<Guid> externalIdList)
+    private async Task UpdateAccounts(InstitutionConnectionEntity entity, IEnumerable<Guid> externalIdList)
     {
         var entityAccounts = entity.Accounts.ToList();
         var localIds = new HashSet<Guid>(entityAccounts.Select(a => new Guid(a.ExternalId)));
@@ -84,7 +98,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
 
         if (localIds.SetEquals(externalIds))
         {
-            return false;
+            return;
         }
 
         // Remove accounts that are not in the new list
@@ -101,14 +115,12 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         foreach (var newId in newIds)
         {
             var accountInfo = await _nordigenClient.Accounts.Get(newId);
-            entity.Accounts.Add(new InstitutionConnectionAccountEntity
+            entity.Accounts.Add(new InstitutionAccountEntity
             {
                 Iban = accountInfo.Iban,
                 ExternalId = accountInfo.Id.ToString(),
                 InstitutionConnectionId = entity.Id,
             });
         }
-
-        return true;
     }
 }

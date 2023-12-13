@@ -1,10 +1,22 @@
+using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;
-using Rebus.Handlers;
+using Microsoft.Extensions.Logging;
 
-class MessageHandler : IHandleMessages<InstitutionAccountTransactionImportJob>
+namespace App.Job.InstitutionAccountTransactionImport;
+
+public class MessageHandler : IMessageHandler<InstitutionAccountTransactionImportJob>
 {
+    private readonly ILogger<MessageHandler> _logger;
+
+    public MessageHandler(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<MessageHandler>();
+    }
+
     public Task Handle(InstitutionAccountTransactionImportJob message)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Handled message: {Message}", message);
+
+        return Task.CompletedTask;
     }
 }

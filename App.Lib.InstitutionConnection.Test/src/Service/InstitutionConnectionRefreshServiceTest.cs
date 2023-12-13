@@ -113,7 +113,7 @@ public class InstitutionConnectionRefreshServiceTest
         var result = await service.Refresh(fixture.InstitutionConnectionEntity.Id);
         result.Accounts
             .Should()
-            .BeEquivalentTo(new List<InstitutionConnectionAccountEntity>()
+            .BeEquivalentTo(new List<InstitutionAccountEntity>()
             {
                 new () { Iban = "IBAN-1" },
                 new () { Iban = "IBAN-2" }
@@ -127,7 +127,7 @@ public class InstitutionConnectionRefreshServiceTest
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()
-                .BeEquivalentTo(new List<InstitutionConnectionAccountEntity>()
+                .BeEquivalentTo(new List<InstitutionAccountEntity>()
                     {
                         new() { Iban = "IBAN-1" },
                         new() { Iban = "IBAN-2" }
@@ -174,13 +174,13 @@ public class InstitutionConnectionRefreshServiceTest
         var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
         fixture.Database.SeedData(context =>
         {
-            context.InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
                 Iban = "IBAN-1"
             });
-            context.InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127",
@@ -212,7 +212,7 @@ public class InstitutionConnectionRefreshServiceTest
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()
-                .BeEquivalentTo(new List<InstitutionConnectionAccountEntity>
+                .BeEquivalentTo(new List<InstitutionAccountEntity>
                 {
                     new () { ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127" }
                 }, options => options.Including(a => a.ExternalId));
@@ -228,7 +228,7 @@ public class InstitutionConnectionRefreshServiceTest
         var newAccountId = new Guid("582a2fcd-b842-45e3-b1b3-ab2a54e42127");
         fixture.Database.SeedData(context =>
         {
-            context.InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
@@ -274,7 +274,7 @@ public class InstitutionConnectionRefreshServiceTest
                 .ToList()
                 .Should()
                 .BeEquivalentTo(
-                    new List<InstitutionConnectionAccountEntity>
+                    new List<InstitutionAccountEntity>
                     {
                         new () { ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638", Iban = "IBAN-1"},
                         new () { ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127", Iban = "IBAN-2" }
@@ -293,13 +293,13 @@ public class InstitutionConnectionRefreshServiceTest
         var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
         fixture.Database.SeedData(context =>
         {
-            context.InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
                 Iban = "IBAN-1"
             });
-            context.InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127",

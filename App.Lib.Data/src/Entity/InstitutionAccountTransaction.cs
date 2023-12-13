@@ -14,7 +14,7 @@ public class InstitutionAccountTransaction
 
     public Instant CreatedAt { get; set; }
 
-    public InstitutionConnectionAccountEntity Account { get; set; } = null!;
+    public InstitutionAccountEntity Account { get; set; } = null!;
 
     [Required]
     public Guid AccountId { get; set; }

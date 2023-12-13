@@ -58,10 +58,10 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task WithAccounts()
     {
         // Arrange
-        var InstitutionConnectionAccounts = new List<InstitutionConnectionAccountEntity>();
+        var InstitutionConnectionAccounts = new List<InstitutionAccountEntity>();
         for (int i = 0; i < 3; i++)
         {
-            InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 ExternalId = $"SomeExternalId-organisation-account-{i}",
                 InstitutionConnectionId = _fixture.InstitutionConnectionEntity.Id,

@@ -28,8 +28,8 @@ public class InstitutionConnectionEntity
     [Required]
     public Guid InstitutionId { get; set; }
 
-    public ICollection<InstitutionConnectionAccountEntity> Accounts { get; } =
-        new List<InstitutionConnectionAccountEntity>();
+    public ICollection<InstitutionAccountEntity> Accounts { get; } =
+        new List<InstitutionAccountEntity>();
 
     public InstitutionConnectionEntity()
     {
