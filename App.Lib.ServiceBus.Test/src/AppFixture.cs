@@ -21,6 +21,7 @@ public class AppFixture
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     {"ConnectionStrings:ServiceBus", "inmemory://"},
+                    {"ServiceBus:QuitWhenIdle", "false"}
                 });
             })
             .UseServiceBusListener<TestMessage, TestMessageHandler>(new[]

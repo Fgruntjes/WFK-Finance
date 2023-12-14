@@ -6,4 +6,5 @@ public class ServiceBusOptions
     public const string Section = "ServiceBus";
 
     public string Queue { get; set; } = null!;
+    public bool QuitWhenIdle { get; set; } = true;
 }

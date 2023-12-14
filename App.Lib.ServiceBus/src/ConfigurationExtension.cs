@@ -5,6 +5,8 @@ using App.Lib.ServiceBus.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rebus.Config;
 using Rebus.Routing;
 using Rebus.Routing.TypeBased;
@@ -36,7 +38,8 @@ public static class ConfigurationExtension
             var connectionString = GetConnectionString(hostContext.Configuration);
             var queue = GetQueueName<TMessage>();
 
-            services.AddSingleton<IServiceBus, RebusServiceBus>();
+            ConfigureServices(services);
+            services.AddHostedService<ApplicationIdleHostService>();
             services.AddRebusHandler<RebusHandler<TMessage, THandler>>();
             services.AddRebus(rebusConfig =>
             {
@@ -66,7 +69,7 @@ public static class ConfigurationExtension
         {
             var connectionString = GetConnectionString(hostContext.Configuration);
 
-            services.AddSingleton<IServiceBus, RebusServiceBus>();
+            ConfigureServices(services);
             services.AddRebus(rebusConfig =>
             {
                 if (IsInMemoryConnectionString(connectionString))
@@ -92,6 +95,12 @@ public static class ConfigurationExtension
     {
         var name = type.Name;
         return name.EndsWith("Job") ? name[..^3] : name;
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<IServiceBus, RebusServiceBus>();
+        services.AddSingleton<ApplicationIdleService>();
     }
 
     private static bool IsInMemoryConnectionString(string connectionString)

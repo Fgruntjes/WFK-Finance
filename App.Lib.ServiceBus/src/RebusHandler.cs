@@ -8,14 +8,24 @@ public class RebusHandler<TMessage, TMessageHandler> : IHandleMessages<TMessage>
     where TMessage : IMessage
 {
     private readonly TMessageHandler _handler;
+    private readonly ApplicationIdleService _idleService;
 
-    public RebusHandler(TMessageHandler handler)
+
+    public RebusHandler(TMessageHandler handler, ApplicationIdleService idleService)
     {
         _handler = handler;
+        _idleService = idleService;
     }
 
-    public Task Handle(TMessage message)
+    public async Task Handle(TMessage message)
     {
-        return _handler.Handle(message);
+        try
+        {
+            await _handler.Handle(message);
+        }
+        finally
+        {
+            _idleService.ResetExitTimer();
+        }
     }
 }
