@@ -63,21 +63,27 @@ jobs:
               working-directory: frontend
 
     #########################################################
-    # Unit / Integration tests
+    # Unit tests
     #########################################################
-    test_dotnet_backend:
+    test_unit_dotnet:
         runs-on: ubuntu-latest
         timeout-minutes: 30
         permissions:
             contents: read
+        strategy: 
+            matrix:
+                project:
+                - App.Backend.Test
+                - App.Lib.InstitutionConnection.Test
+                - App.Lib.ServiceBus.Test
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-dotnet@v3
               with:
                   dotnet-version: 7.0
-            - run: dotnet build App.Backend.Test
+            - run: dotnet build ${{ matrix.project }}
             - run: |
-                  dotnet test App.Backend.Test \
+                  dotnet test ${{ matrix.project }} \
                       --no-build \
                       --blame \
                       --blame-hang-timeout 2m
@@ -88,7 +94,7 @@ jobs:
     test_success:
         runs-on: ubuntu-latest
         needs:
-            - test_dotnet_backend
+            - test_unit_dotnet
             - test_quality_dotnet
             - test_quality_frontend
             - test_quality_terraform
@@ -96,7 +102,7 @@ jobs:
         steps:
             - run: |
                   [[
-                      '${{ needs.test_dotnet_backend.result }}' == 'success' &&
+                      '${{ needs.test_unit_dotnet.result }}' == 'success' &&
                       '${{ needs.test_quality_dotnet.result }}' == 'success' &&
                       '${{ needs.test_quality_frontend.result }}' == 'success' &&
                       '${{ needs.test_quality_terraform.result }}' == 'success'

@@ -1,5 +1,7 @@
-using App.Data.Entity;
-using Microsoft.EntityFrameworkCore;
+using App.Lib.InstitutionConnection.Exception;
+using App.Lib.InstitutionConnection.Service;
+using App.Lib.Test;
+using Moq;
 
 namespace App.Backend.Test.Controllers;
 
@@ -15,8 +17,17 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     [Fact]
     public async Task ByExternalId_Success()
     {
+        // Arrange
+        _fixture.Services.WithMock<IInstitutionConnectionRefreshService>(mock =>
+        {
+            mock.Setup(e => e.Refresh(
+                    _fixture.InstitutionConnectionEntity.ExternalId,
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_fixture.InstitutionConnectionEntity);
+        });
+
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             _fixture.InstitutionConnectionEntity.ExternalId
         });
@@ -28,74 +39,73 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
     [Fact]
     public async Task ByExternalId_MissingConnection()
     {
+        // Arrange
+        _fixture.Services.WithMock<IInstitutionConnectionRefreshService>(mock =>
+        {
+            mock.Setup(e => e.Refresh(
+                    "SomeExternalIdMissing",
+                    It.IsAny<CancellationToken>()))
+                .Callback((string externalConnectionId, CancellationToken _)
+                    => throw new InstitutionConnectionNotFoundException(externalConnectionId));
+        });
+
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             ExternalId = "SomeExternalIdMissing"
         });
 
         // Assert
-        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
+        result.MatchSnapshot(m => m
+            .IgnoreField("errors[0].extensions.timestamp")
+            .IgnoreField("errors[0].extensions.exception"));
     }
 
     [Fact]
     public async Task ById_Success()
     {
+        // Arrange
+        _fixture.Services.WithMock<IInstitutionConnectionRefreshService>(mock =>
+        {
+            mock.Setup(e => e.Refresh(
+                    _fixture.InstitutionConnectionEntity.Id,
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_fixture.InstitutionConnectionEntity);
+        });
+
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        var result = await _fixture.Client.ExecuteQuery(new
         {
             _fixture.InstitutionConnectionEntity.Id
         });
 
-        // Assert response
+        // Assert
         result.MatchSnapshot();
-
-        // Assert database
-        _fixture.WithData(context =>
-        {
-            context.InstitutionConnections
-                .Include(e => e.Accounts)
-                .First(e => e.Id == _fixture.InstitutionConnectionEntity.Id)
-                .Accounts.Should().HaveCount(2);
-        });
     }
 
     [Fact]
     public async Task ById_MissingConnection()
     {
-        // Act
-        var result = await _fixture.Server.ExecuteQuery(new
+        // Arrange
+        var id = new Guid("59a35c45-6e8d-4dc7-bacc-f151f94da93d");
+        _fixture.Services.WithMock<IInstitutionConnectionRefreshService>(mock =>
         {
-            Id = new Guid("59a35c45-6e8d-4dc7-bacc-f151f94da93d")
+            mock.Setup(e => e.Refresh(
+                    id,
+                    It.IsAny<CancellationToken>()))
+                .Callback((Guid institutionConnectionId, CancellationToken _)
+                    => throw new InstitutionConnectionNotFoundException(institutionConnectionId));
+        });
+
+        // Act
+        var result = await _fixture.Client.ExecuteQuery(new
+        {
+            Id = id
         });
 
         // Assert
-        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
-    }
-
-    [Fact]
-    public async Task ByExternalId_OnlyWithinOrganisation()
-    {
-        // Act
-        var result = await _fixture.Server.ExecuteQuery(new
-        {
-            _fixture.OrganisationMissmatchInstitutionConnectionEntity.ExternalId
-        });
-
-        // Assert response
-        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
-    }
-
-    [Fact]
-    public async Task ById_OnlyWithinOrganisation()
-    {
-        // Act
-        var result = await _fixture.Server.ExecuteQuery(new
-        {
-            _fixture.OrganisationMissmatchInstitutionConnectionEntity.Id
-        });
-
-        // Assert response
-        result.MatchSnapshot(m => m.IgnoreField("errors[0].extensions.timestamp"));
+        result.MatchSnapshot(m => m
+            .IgnoreField("errors[0].extensions.timestamp")
+            .IgnoreField("errors[0].extensions.exception"));
     }
 }

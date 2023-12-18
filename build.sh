@@ -12,11 +12,20 @@ set -a
 CURRENT_ENV=$(declare -p -x)
 source .env
 test -f .deploy.env && source .deploy.env
+# Unset any APP_VERSION env var to generate new if previous build generated one
+unset APP_VERSION
 test -f .local.env && source .local.env
 eval "${CURRENT_ENV}"
 set +a
 
 set -x
+
+if [[ -z "${APP_VERSION}" ]]; then
+  APP_VERSION="dev-$(git describe --tags --always)-$(date +%Y%m%d%H%M%S)"
+  echo "APP_VERSION=${APP_VERSION}" >> .deploy.env
+fi
+
+echo "## Running build on ${APP_ENVIRONMENT} ${APP_VERSION} ##"
 
 CONTAINER_REGISTRY_HOSTNAME=${APP_PROJECT_SLUG//-/}
 CONTAINER_REGISTRY="${CONTAINER_REGISTRY_HOSTNAME}.azurecr.io"
@@ -40,9 +49,6 @@ function docker_build {
     IMAGE=$(echo "${TARGET}" | tr '[:upper:]' '[:lower:]')
     REGISTRY="${CONTAINER_REGISTRY}"
 
-    # check if we need to login, if so do it
-    az acr login --name "${CONTAINER_REGISTRY_HOSTNAME}"
-
     docker buildx build . \
         --file "${TARGET}/Dockerfile" \
         --tag "${REGISTRY}/${IMAGE}:${APP_VERSION}" \
@@ -58,12 +64,18 @@ function docker_build {
     docker push "${REGISTRY}/${IMAGE}:${APP_VERSION}"
 }
 
+# check if we need to login, if so do it
+if [[ "${1}" != "frontend" ]]; then
+  az acr login --name "${CONTAINER_REGISTRY_HOSTNAME}"
+fi
+
 if [ "$#" -ne 0 ]; then
     for arg in "$@"; do
         build $arg
     done
 else
     build App.Backend
-    build App.Data.Migrations
+    build App.DataMigrations
+    build App.Job.InstitutionAccountTransactionImport
     build frontend
 fi

@@ -1,10 +1,10 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 
 namespace App.Backend.GraphQL.Type;
 
 public static class InstitutionConnectionAccountMapper
 {
-    public static InstitutionConnectionAccount ToGraphQLType(this InstitutionConnectionAccountEntity entity)
+    public static InstitutionConnectionAccount ToGraphQLType(this InstitutionAccountEntity entity)
     {
         return new InstitutionConnectionAccount
         {

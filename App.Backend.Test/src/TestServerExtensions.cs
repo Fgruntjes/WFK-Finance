@@ -1,49 +1,43 @@
-using GraphQL.AspNet.Execution.Contexts;
-using GraphQL.AspNet.Schemas;
-using GraphQL.AspNet.Tests.Framework;
+using System.Text;
+using App.Backend.Test.Auth;
+using Newtonsoft.Json;
 using Snapshooter.Core;
 
 namespace App.Backend.Test;
 
-public static class TestServerExtensions
+public static class HttpClientExtensions
 {
     private static readonly ISnapshotFullNameReader _testNameResolver = new XunitSnapshotFullNameReader();
 
-    public static async Task<string> ExecuteQuery<TSchema>(
-        this TestServer<TSchema> server,
+    public static async Task<string> ExecuteQuery(
+        this HttpClient client,
         string? queryFile,
-        object? variables = null)
-        where TSchema : GraphSchema
+        object? variables = null,
+        string? user = AppFixture.TestUserId)
     {
-        var context = server.BuildQueryContext(queryFile, variables);
-        return await server.RenderResult(context);
-    }
-
-    public static async Task<string> ExecuteQuery<TSchema>(
-        this TestServer<TSchema> server,
-        object? variables = null)
-        where TSchema : GraphSchema
-    {
-        var context = server.BuildQueryContext(null, variables);
-        return await server.RenderResult(context);
-    }
-
-    public static QueryExecutionContext BuildQueryContext<TSchema>(
-        this TestServer<TSchema> server,
-        string? queryFile,
-        object? variables = null)
-        where TSchema : GraphSchema
-    {
-        var queryText = LoadQueryFile(queryFile);
-        var queryBuilder = server.CreateQueryContextBuilder();
-        queryBuilder.AddQueryText(queryText);
-
-        if (variables != null)
+        var queryObject = new
         {
-            queryBuilder.AddVariableData(variables);
+            query = LoadQueryFile(queryFile),
+            variables
+        };
+        var json = JsonConvert.SerializeObject(queryObject);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        if (user != null)
+        {
+            content.Headers.Add(TestAuthHandler.TestUserHeader, user);
         }
 
-        return queryBuilder.Build();
+        var response = await client.PostAsync("/graphql", content);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public static async Task<string> ExecuteQuery(
+        this HttpClient client,
+        object? variables = null,
+        string? user = AppFixture.TestUserId)
+    {
+        return await client.ExecuteQuery(null, variables, user);
     }
 
     private static string LoadQueryFile(string? queryFile)

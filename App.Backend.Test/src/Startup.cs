@@ -1,8 +1,5 @@
-using App.Backend.Test.Controllers;
-using App.Backend.Test.Database;
-using App.Data;
+using App.Lib.Test;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit.DependencyInjection.Logging;
 
 namespace App.Backend.Test;
 
@@ -10,13 +7,6 @@ public static class Startup
 {
     public static void ConfigureServices(IServiceCollection services)
     {
-        services.RegisterDatabaseContainer();
-        services.AddLogging(x => x.AddXunitOutput());
-
-        services.AddScoped<AppFixture>();
-        services.AddScoped<InstitutionConnectionFixture>();
-        services.AddScoped<InstitutionConnectionListFixture>();
-        services.AddScoped<InstitutionConnectionRefreshFixture>();
-        services.RegisterMigrationInitializer<DatabaseContext>();
+        services.ConfigureServices();
     }
 }

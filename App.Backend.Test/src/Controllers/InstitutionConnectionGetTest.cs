@@ -1,4 +1,4 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
 
@@ -15,7 +15,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task Success()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -32,13 +32,13 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
             InstitutionId = _fixture.InstitutionEntity.Id,
             OrganisationId = _fixture.AltOrganisationId,
         };
-        _fixture.SeedData(c =>
+        _fixture.Database.SeedData(c =>
         {
             c.InstitutionConnections.Add(connectionEntity);
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { connectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { connectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -48,7 +48,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task WithInstitution()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();
@@ -58,23 +58,23 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     public async Task WithAccounts()
     {
         // Arrange
-        var InstitutionConnectionAccounts = new List<InstitutionConnectionAccountEntity>();
+        var InstitutionConnectionAccounts = new List<InstitutionAccountEntity>();
         for (int i = 0; i < 3; i++)
         {
-            InstitutionConnectionAccounts.Add(new InstitutionConnectionAccountEntity()
+            InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
             {
                 ExternalId = $"SomeExternalId-organisation-account-{i}",
                 InstitutionConnectionId = _fixture.InstitutionConnectionEntity.Id,
                 Iban = $"IBAN{i}",
             });
         }
-        _fixture.SeedData(c =>
+        _fixture.Database.SeedData(c =>
         {
             c.InstitutionConnectionAccounts.AddRange(InstitutionConnectionAccounts);
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
+        var result = await _fixture.Client.ExecuteQuery(new { Id = _fixture.InstitutionConnectionEntity.Id });
 
         // Assert
         result.MatchSnapshot();

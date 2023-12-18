@@ -1,5 +1,5 @@
 using App.Backend.GraphQL.Type;
-using App.Backend.Service;
+using App.Lib.InstitutionConnection.Service;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -9,9 +9,9 @@ namespace App.Backend.Controllers;
 [GraphRoute("institution")]
 public class InstitutionListController : GraphController
 {
-    private readonly InstitutionSearchService _searchService;
+    private readonly IInstitutionSearchService _searchService;
 
-    public InstitutionListController(InstitutionSearchService searchService)
+    public InstitutionListController(IInstitutionSearchService searchService)
     {
         _searchService = searchService;
     }

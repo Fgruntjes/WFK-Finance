@@ -1,5 +1,5 @@
-using App.Backend.Test.Database;
-using App.Data.Entity;
+using App.Lib.Test.Database;
+using App.Lib.Data.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace App.Backend.Test.Controllers;
@@ -27,7 +27,7 @@ public class InstitutionConnectionFixture : AppFixture
             OrganisationId = OrganisationId,
         };
 
-        SeedData(context =>
+        Database.SeedData(context =>
         {
             context.Institutions.Add(InstitutionEntity);
             context.InstitutionConnections.Add(InstitutionConnectionEntity);

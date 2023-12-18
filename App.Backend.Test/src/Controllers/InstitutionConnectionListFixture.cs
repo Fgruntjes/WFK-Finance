@@ -1,5 +1,5 @@
-using App.Backend.Test.Database;
-using App.Data.Entity;
+using App.Lib.Test.Database;
+using App.Lib.Data.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace App.Backend.Test.Controllers;
@@ -21,7 +21,7 @@ public class InstitutionConnectionListFixture : InstitutionConnectionFixture
             });
         }
 
-        SeedData(context =>
+        Database.SeedData(context =>
         {
             context.InstitutionConnections.AddRange(connectionList);
         });

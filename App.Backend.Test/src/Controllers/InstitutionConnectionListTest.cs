@@ -1,4 +1,4 @@
-using App.Data.Entity;
+using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
 
@@ -15,7 +15,7 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     public async Task WithoutSkipLimit()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery();
+        var result = await _fixture.Client.ExecuteQuery();
 
         // Assert
         result.MatchSnapshot();
@@ -25,7 +25,7 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     public async Task WithSkipLimit()
     {
         // Act
-        var result = await _fixture.Server.ExecuteQuery(new { offset = 1, limit = 1 });
+        var result = await _fixture.Client.ExecuteQuery(new { offset = 1, limit = 1 });
 
         // Assert
         result.MatchSnapshot();
@@ -42,13 +42,13 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
             InstitutionId = _fixture.InstitutionEntity.Id,
             OrganisationId = _fixture.AltOrganisationId,
         };
-        _fixture.SeedData(c =>
+        _fixture.Database.SeedData(c =>
         {
             c.InstitutionConnections.Add(connectionEntity);
         });
 
         // Act
-        var result = await _fixture.Server.ExecuteQuery();
+        var result = await _fixture.Client.ExecuteQuery();
 
         // Assert
         result.MatchSnapshot();

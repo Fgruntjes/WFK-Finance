@@ -1,0 +1,14 @@
+﻿{
+  "data": {
+    "institution": {
+      "list": [
+        {
+          "name": "MyFakeName-NL1"
+        },
+        {
+          "name": "MyFakeName-NL2"
+        }
+      ]
+    }
+  }
+}

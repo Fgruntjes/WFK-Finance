@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "Connection not found",
+      "message": "InstitutionConnection {ExternalConnectionId} not found",
       "locations": [
         {
           "line": 3,
@@ -14,8 +14,11 @@
       ],
       "extensions": {
         "code": "BAD_REQUEST",
-        "timestamp": "2023-09-19T19:44:20.927+02:00",
-        "severity": "CRITICAL"
+        "timestamp": "2023-12-09T16:22:32.184+01:00",
+        "severity": "CRITICAL",
+        "metaData": {
+          "ExternalConnectionId": "SomeExternalIdMissing"
+        }
       }
     }
   ],

@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "Connection not found",
+      "message": "InstitutionConnection {InstitutionConnectionId} not found",
       "locations": [
         {
           "line": 3,
@@ -14,8 +14,11 @@
       ],
       "extensions": {
         "code": "BAD_REQUEST",
-        "timestamp": "2023-09-19T19:44:20.960+02:00",
-        "severity": "CRITICAL"
+        "timestamp": "2023-12-09T16:22:31.958+01:00",
+        "severity": "CRITICAL",
+        "metaData": {
+          "InstitutionConnectionId": "59a35c45-6e8d-4dc7-bacc-f151f94da93d"
+        }
       }
     }
   ],

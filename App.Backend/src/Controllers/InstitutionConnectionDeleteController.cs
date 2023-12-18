@@ -1,4 +1,4 @@
-using App.Data;
+using App.Lib.Data;
 using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -10,9 +10,9 @@ namespace App.Backend.Controllers;
 public class InstitutionConnectionDeleteController : GraphController
 {
     private readonly DatabaseContext _database;
-    private readonly OrganisationIdProvider _organisationIdProvider;
+    private readonly IOrganisationIdProvider _organisationIdProvider;
 
-    public InstitutionConnectionDeleteController(DatabaseContext database, OrganisationIdProvider organisationIdProvider)
+    public InstitutionConnectionDeleteController(DatabaseContext database, IOrganisationIdProvider organisationIdProvider)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;

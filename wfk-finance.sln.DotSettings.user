@@ -1,13 +1,14 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e0207a7a_002Dd677_002D44f6_002D8425_002D81e93ae9d4ea/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="InstitutionConnectionDeleteTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=512b59f4_002D24c6_002D4632_002D8bcd_002D3ecdc1c1ffcb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Or&gt;
-    &lt;And&gt;
-      &lt;Namespace&gt;App.Backend.Test.Controllers&lt;/Namespace&gt;
-      &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Backend.Test" Presentation="&amp;lt;App.Backend.Test&amp;gt;" /&gt;
-    &lt;/And&gt;
+    &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Backend.Test" Presentation="&amp;lt;App.Backend.Test&amp;gt;" /&gt;
+    &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.IntegrationTest" Presentation="&amp;lt;App.IntegrationTest&amp;gt;" /&gt;
     &lt;TestAncestor&gt;
-      &lt;TestId&gt;xUnit::4ABEE1DD-A95E-42C0-B610-4E086D71D62C::net7.0::App.Test.Tests.InstitutionConnectTest.ConnectUnauthorized&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::E9F0AB98-8941-48F2-898B-25A46C7D114E::net7.0::App.Lib.InstitutionConnection.Test.Service.InstitutionConnectionCreateServiceTest&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::37386040-6F9B-4A4D-9C68-41B021F0D777::net7.0::App.Lib.ServiceBus.Test.RebusHandlerTest&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
+    &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Lib.InstitutionConnection.Test" Presentation="&amp;lt;App.Lib.InstitutionConnection.Test&amp;gt;" /&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=nordigen/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	</wpf:ResourceDictionary>
