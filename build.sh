@@ -12,6 +12,8 @@ set -a
 CURRENT_ENV=$(declare -p -x)
 source .env
 test -f .deploy.env && source .deploy.env
+# Unset any APP_VERSION env var to generate new if previous build generated one
+unset APP_VERSION
 test -f .local.env && source .local.env
 eval "${CURRENT_ENV}"
 set +a
@@ -47,9 +49,6 @@ function docker_build {
     IMAGE=$(echo "${TARGET}" | tr '[:upper:]' '[:lower:]')
     REGISTRY="${CONTAINER_REGISTRY}"
 
-    # check if we need to login, if so do it
-    az acr login --name "${CONTAINER_REGISTRY_HOSTNAME}"
-
     docker buildx build . \
         --file "${TARGET}/Dockerfile" \
         --tag "${REGISTRY}/${IMAGE}:${APP_VERSION}" \
@@ -65,6 +64,11 @@ function docker_build {
     docker push "${REGISTRY}/${IMAGE}:${APP_VERSION}"
 }
 
+# check if we need to login, if so do it
+if [[ "${1}" != "frontend" ]]; then
+  az acr login --name "${CONTAINER_REGISTRY_HOSTNAME}"
+fi
+
 if [ "$#" -ne 0 ]; then
     for arg in "$@"; do
         build $arg
@@ -72,5 +76,6 @@ if [ "$#" -ne 0 ]; then
 else
     build App.Backend
     build App.DataMigrations
+    build App.Job.InstitutionAccountTransactionImport
     build frontend
 fi

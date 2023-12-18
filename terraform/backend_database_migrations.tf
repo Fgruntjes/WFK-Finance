@@ -1,5 +1,5 @@
 resource "azurerm_container_group" "backend_database_migrations" {
-  name                = "${var.app_project_slug}-${var.app_environment}-database-migrations"
+  name                = "${var.app_environment}-database-migrations"
   resource_group_name = var.app_project_slug
   location            = var.arm_location
   os_type             = "Linux"
@@ -10,8 +10,8 @@ resource "azurerm_container_group" "backend_database_migrations" {
   container {
     name   = "app"
     image  = "${data.azurerm_container_registry.app.login_server}/app.datamigrations:${var.app_version}"
-    cpu    = "1"
-    memory = "2"
+    cpu    = "0.25"
+    memory = "0.5"
 
     ports {
       port = 8080
@@ -19,7 +19,7 @@ resource "azurerm_container_group" "backend_database_migrations" {
 
     secure_environment_variables = {
       Sentry__Dsn                 = local.backend_settings.Sentry.Dsn,
-      ConnectionStrings__Database = local.backend_settings_database_admin.ConnectionStrings.Database,
+      ConnectionStrings__Database = local.connection_strings.database.admin,
     }
   }
 

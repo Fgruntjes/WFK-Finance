@@ -131,8 +131,8 @@ public class InstitutionConnectionRefreshServiceTest
                 .Should()
                 .BeEquivalentTo(new List<InstitutionAccountEntity>()
                     {
-                        new() { Iban = "IBAN-1" },
-                        new() { Iban = "IBAN-2" }
+                        new() { Iban = "IBAN-1", ImportStatus = ImportStatus.Queued },
+                        new() { Iban = "IBAN-2", ImportStatus = ImportStatus.Queued }
                     },
                     options => options.Including(a => a.Iban));
         });

@@ -27,6 +27,7 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
         // Override configurations
         builder.ConfigureLogging(_loggerProvider);
         builder.ConfigureDatabase(_database.ConnectionString);
+        builder.ConfigureServiceBus();
 
         builder.ConfigureServices(services =>
         {

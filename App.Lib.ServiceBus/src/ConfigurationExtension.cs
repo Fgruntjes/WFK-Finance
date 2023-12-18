@@ -2,11 +2,11 @@
 using System.Runtime.CompilerServices;
 using App.Lib.Configuration;
 using App.Lib.ServiceBus.Messages;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Rebus.Config;
 using Rebus.Routing;
 using Rebus.Routing.TypeBased;
@@ -23,7 +23,7 @@ public static class ConfigurationExtension
         where THandler : IMessageHandler<TMessage>
         where TMessage : IMessage
     {
-        builder.UseOptions<ServiceBusOptions>(ServiceBusOptions.Section);
+        var queueOptions = builder.UseOptions<ServiceBusOptions>(ServiceBusOptions.Section);
 
         builder.ConfigureHostConfiguration(configBuilder =>
         {
@@ -39,7 +39,6 @@ public static class ConfigurationExtension
             var queue = GetQueueName<TMessage>();
 
             ConfigureServices(services);
-            services.AddHostedService<ApplicationIdleHostService>();
             services.AddRebusHandler<RebusHandler<TMessage, THandler>>();
             services.AddRebus(rebusConfig =>
             {
@@ -53,19 +52,25 @@ public static class ConfigurationExtension
                 }
                 else
                 {
-                    rebusConfig.Transport(t => t.UseAzureServiceBus(connectionString, queue));
+                    rebusConfig.Transport(t => t.UseAzureServiceBus(
+                        connectionString,
+                        queue,
+                        GetAzureIdentity(connectionString, queueOptions))
+                        .DoNotCreateQueues()
+                        .DoNotCheckQueueConfiguration());
                 }
 
                 rebusConfig.Routing(RebusRouteConfig(messageAssemblies));
                 return rebusConfig;
-            },
-                onCreated: bus => bus.Subscribe<TMessage>());
+            });
         });
     }
 
-    public static IHostBuilder UseServiceBusPublisher(this IHostBuilder host, IEnumerable<Assembly?>? messageAssemblies = null)
+    public static IHostBuilder UseServiceBusPublisher(this IHostBuilder builder, IEnumerable<Assembly?>? messageAssemblies = null)
     {
-        return host.ConfigureServices((hostContext, services) =>
+        var queueOptions = builder.UseOptions<ServiceBusOptions>(ServiceBusOptions.Section);
+
+        return builder.ConfigureServices((hostContext, services) =>
         {
             var connectionString = GetConnectionString(hostContext.Configuration);
 
@@ -82,25 +87,35 @@ public static class ConfigurationExtension
                 }
                 else
                 {
-                    rebusConfig.Transport(t => t.UseAzureServiceBusAsOneWayClient(connectionString));
+                    rebusConfig.Transport(t => t.UseAzureServiceBusAsOneWayClient(
+                        connectionString,
+                        GetAzureIdentity(connectionString, queueOptions)));
                 }
 
                 rebusConfig.Routing(RebusRouteConfig(messageAssemblies));
                 return rebusConfig;
-            }, isDefaultBus: true);
+            });
         });
     }
 
-    public static string GetQueueName(this MemberInfo type)
+    private static string GetQueueName(this MemberInfo type)
     {
         var name = type.Name;
-        return name.EndsWith("Job") ? name[..^3] : name;
+        name = name.EndsWith("Job") ? name[..^3] : name;
+        name = name.ToLowerInvariant();
+        return name;
     }
 
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IServiceBus, RebusServiceBus>();
-        services.AddSingleton<ApplicationIdleService>();
+    }
+
+    private static TokenCredential? GetAzureIdentity(string connectionString, ServiceBusOptions serviceBusOptions)
+    {
+        return connectionString.Contains("SharedAccessKeyName")
+            ? null
+            : new ManagedIdentityCredential(serviceBusOptions.AzureClientId);
     }
 
     private static bool IsInMemoryConnectionString(string connectionString)
@@ -117,7 +132,7 @@ public static class ConfigurationExtension
 
     private static string GetQueueName<TMessage>()
     {
-        return typeof(TMessage).GetQueueName();
+        return typeof(TMessage).GetQueueName().ToLowerInvariant();
     }
 
     private static Action<StandardConfigurer<IRouter>> RebusRouteConfig(IEnumerable<Assembly?>? messageAssemblies = null)

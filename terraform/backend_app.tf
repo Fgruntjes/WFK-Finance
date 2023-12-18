@@ -1,16 +1,6 @@
-resource "azurerm_container_app_environment" "backend_app" {
-  name                = "v${var.app_environment}-backend-app"
-  location            = var.arm_location
-  resource_group_name = var.app_project_slug
-
-  tags = {
-    environment = var.app_environment
-  }
-}
-
 resource "azurerm_container_app" "backend_app" {
   name                         = "v${var.app_environment}-backend-app"
-  container_app_environment_id = azurerm_container_app_environment.backend_app.id
+  container_app_environment_id = azurerm_container_app_environment.backend.id
   resource_group_name          = var.app_project_slug
   revision_mode                = "Single"
 
@@ -36,6 +26,7 @@ resource "azurerm_container_app" "backend_app" {
       azurerm_user_assigned_identity.backend_database_read_write.id,
       azurerm_user_assigned_identity.keyvault.id,
       azurerm_user_assigned_identity.container_registry_pull.id,
+      azurerm_user_assigned_identity.service_bus_send.id,
     ]
   }
 
@@ -45,11 +36,19 @@ resource "azurerm_container_app" "backend_app" {
   }
 
   secret {
-    name  = "settings"
-    value = jsonencode(local.backend_settings_database_readwrite)
+    name = "settings"
+    value = jsonencode(merge(local.backend_settings, {
+      ConnectionStrings = {
+        Database   = local.connection_strings.database.readwrite
+        ServiceBus = local.connection_strings.service_bus.prod
+      }
+    }))
   }
 
   template {
+    min_replicas = 0
+    max_replicas = 10
+
     container {
       name  = "app"
       image = "${data.azurerm_container_registry.app.login_server}/app.backend:${var.app_version}"
@@ -66,7 +65,7 @@ resource "azurerm_container_app" "backend_app" {
       }
       env {
         name  = "ASPNETCORE_ENVIRONMENT"
-        value = var.app_environment == "main" ? "Production" : "Staging"
+        value = "Production"
       }
       liveness_probe {
         path      = "/.health/live"

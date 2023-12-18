@@ -1,7 +1,6 @@
 using System.Reflection;
 using App.Lib.ServiceBus.Test.Messages;
 using App.Lib.Test;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,14 +15,7 @@ public class AppFixture
     public AppFixture(ILoggerProvider loggerProvider)
     {
         var hostBuilder = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration(config =>
-            {
-                config.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    {"ConnectionStrings:ServiceBus", "inmemory://"},
-                    {"ServiceBus:QuitWhenIdle", "false"}
-                });
-            })
+            .ConfigureServiceBus()
             .UseServiceBusListener<TestMessage, TestMessageHandler>(new[]
             {
                 Assembly.GetAssembly(typeof(TestMessage))

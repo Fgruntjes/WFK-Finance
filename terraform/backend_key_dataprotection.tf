@@ -24,7 +24,9 @@ resource "azurerm_storage_blob" "backend_data_protection" {
   storage_container_name = azurerm_storage_container.backend_data_protection.name
   type                   = "Block"
   lifecycle {
-    ignore_changes = ["content_md5"]
+    ignore_changes = [
+      content_md5
+    ]
   }
 }
 

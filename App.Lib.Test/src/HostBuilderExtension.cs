@@ -34,6 +34,7 @@ public static class HostBuilderExtension
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 {"ConnectionStrings:ServiceBus", "inmemory://"},
+                {"ServiceBus:QuitWhenIdle", "false"}
             });
         });
     }

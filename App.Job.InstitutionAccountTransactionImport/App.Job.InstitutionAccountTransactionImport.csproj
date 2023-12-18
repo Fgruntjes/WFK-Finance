@@ -16,4 +16,11 @@
     <PackageReference Include="xunit" Version="2.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+      <DependentUpon>Dockerfile</DependentUpon>
+    </Content>
+  </ItemGroup>
+
 </Project>

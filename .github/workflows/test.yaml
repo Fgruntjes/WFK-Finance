@@ -81,9 +81,9 @@ jobs:
             - uses: actions/setup-dotnet@v3
               with:
                   dotnet-version: 7.0
-            - run: dotnet build App.Backend.Test
+            - run: dotnet build ${{ matrix.project }}
             - run: |
-                  dotnet test App.Backend.Test \
+                  dotnet test ${{ matrix.project }} \
                       --no-build \
                       --blame \
                       --blame-hang-timeout 2m
