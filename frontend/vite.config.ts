@@ -12,9 +12,9 @@ export default defineConfig(({ mode }) => {
 		console.log('Starting env', process.env);
 	}
 
-	function envVal(name: string) {
+	function envVal(name: string, defaultValue: string|undefined = undefined) {
 		if (!process.env[name]) {
-			return `__MISSING_ENV_VAR__${name}__`;
+			return defaultValue || `__MISSING_ENV_VAR__${name}__`;
 		}
 
 		return JSON.stringify(process.env[name]);

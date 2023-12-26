@@ -1,3 +1,4 @@
+using App.Lib.Configuration;
 using App.Lib.Data;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NodaTime;
 using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Accounts;
 using VMelnalksnis.NordigenDotNet.Requisitions;
@@ -26,6 +28,7 @@ public class AppFixture : FunctionalTestFixture
             .ConfigureDatabase(Database.ConnectionString)
             .ConfigureServices(services =>
             {
+                services.MockSingleton<IClock>();
                 services.MockTransient<INordigenClient>();
                 services.MockTransient<IRequisitionClient>();
                 services.MockTransient<IAccountClient>();

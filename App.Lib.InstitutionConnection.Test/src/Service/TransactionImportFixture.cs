@@ -30,6 +30,7 @@ public class TransactionImportFixture : AppFixture
             ExternalId = "44eb1c40-17c5-4412-98a0-f26368ad3366",
             Iban = "NL48INGB0001234128",
             InstitutionConnectionId = institutionConnection.Id,
+            ImportStatus = ImportStatus.Queued,
         };
 
         Database.SeedData(context =>
