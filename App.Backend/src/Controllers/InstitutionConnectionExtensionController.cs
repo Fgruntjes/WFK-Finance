@@ -29,7 +29,7 @@ public class InstitutionConnectionExtensionController : GraphController
     public async Task<IList<InstitutionConnectionAccount>> GetAccounts(InstitutionConnection connection, CancellationToken cancellationToken = default)
     {
         return await _database
-            .InstitutionConnectionAccounts
+            .InstitutionAccounts
             .Where(e => e.InstitutionConnectionId == connection.Id)
             .OrderBy(e => e.CreatedAt)
             .Select(e => e.ToGraphQLType())

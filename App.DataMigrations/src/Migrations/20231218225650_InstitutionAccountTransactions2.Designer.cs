@@ -4,16 +4,19 @@ using App.Lib.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace App.DataMigrations
+namespace App.DataMigrations.src.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231218225650_InstitutionAccountTransactions2")]
+    partial class InstitutionAccountTransactions2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace App.DataMigrations
                     b.HasIndex("ExternalId", "InstitutionConnectionId")
                         .IsUnique();
 
-                    b.ToTable("InstitutionAccounts");
+                    b.ToTable("InstitutionConnectionAccounts");
                 });
 
             modelBuilder.Entity("App.Lib.Data.Entity.InstitutionAccountTransactionEntity", b =>

@@ -107,7 +107,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         foreach (var accountEntity in removeAccounts)
         {
             entity.Accounts.Remove(accountEntity);
-            _database.InstitutionConnectionAccounts.Remove(accountEntity);
+            _database.InstitutionAccounts.Remove(accountEntity);
         }
 
         // Add new accounts that are not in the current list

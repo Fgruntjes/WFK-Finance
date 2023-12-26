@@ -61,6 +61,11 @@ public static class ConfigurationExtension
                 }
 
                 rebusConfig.Routing(RebusRouteConfig(messageAssemblies));
+                rebusConfig.Options(o =>
+                {
+                    o.SetNumberOfWorkers(1);
+                    o.SetMaxParallelism(1);
+                });
                 return rebusConfig;
             });
         });

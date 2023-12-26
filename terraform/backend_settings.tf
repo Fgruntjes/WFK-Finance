@@ -32,6 +32,7 @@ locals {
       ]),
     }
     service_bus = {
+      local      = "amqp://username:password@localhost:5672/",
       prod       = "Endpoint=sb://${azurerm_servicebus_namespace.service_bus.name}.servicebus.windows.net/",
       cicd       = one(azurerm_servicebus_namespace_authorization_rule.service_bus[*].primary_connection_string),
       autoscaler = azurerm_servicebus_namespace_authorization_rule.autoscaler.primary_connection_string
@@ -73,7 +74,7 @@ resource "local_file" "dev_env_tests" {
   content = jsonencode(merge(local.backend_settings, {
     ConnectionStrings = {
       Database   = local.connection_strings.database.dev
-      ServiceBus = local.connection_strings.service_bus.cicd
+      ServiceBus = local.connection_strings.service_bus.local
     }
   }))
   filename = "../appsettings.local.json"

@@ -70,7 +70,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
         }
         _fixture.Database.SeedData(c =>
         {
-            c.InstitutionConnectionAccounts.AddRange(InstitutionConnectionAccounts);
+            c.InstitutionAccounts.AddRange(InstitutionConnectionAccounts);
         });
 
         // Act

@@ -73,7 +73,7 @@ public class InstitutionConnectionRefreshServiceTest
         // Assert
         fixture.Database.WithData(context =>
         {
-            context.InstitutionConnectionAccounts
+            context.InstitutionAccounts
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()
@@ -125,7 +125,7 @@ public class InstitutionConnectionRefreshServiceTest
         // Assert
         fixture.Database.WithData(context =>
         {
-            context.InstitutionConnectionAccounts
+            context.InstitutionAccounts
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()
@@ -176,13 +176,13 @@ public class InstitutionConnectionRefreshServiceTest
         var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
         fixture.Database.SeedData(context =>
         {
-            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
                 Iban = "IBAN-1"
             });
-            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127",
@@ -210,7 +210,7 @@ public class InstitutionConnectionRefreshServiceTest
         // Assert
         fixture.Database.WithData(context =>
         {
-            context.InstitutionConnectionAccounts
+            context.InstitutionAccounts
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()
@@ -230,7 +230,7 @@ public class InstitutionConnectionRefreshServiceTest
         var newAccountId = new Guid("582a2fcd-b842-45e3-b1b3-ab2a54e42127");
         fixture.Database.SeedData(context =>
         {
-            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
@@ -271,7 +271,7 @@ public class InstitutionConnectionRefreshServiceTest
         // Assert
         fixture.Database.WithData(context =>
         {
-            context.InstitutionConnectionAccounts
+            context.InstitutionAccounts
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()
@@ -295,13 +295,13 @@ public class InstitutionConnectionRefreshServiceTest
         var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
         fixture.Database.SeedData(context =>
         {
-            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
                 Iban = "IBAN-1"
             });
-            context.InstitutionConnectionAccounts.Add(new InstitutionAccountEntity()
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
             {
                 InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
                 ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127",
@@ -333,7 +333,7 @@ public class InstitutionConnectionRefreshServiceTest
         // Assert
         fixture.Database.WithData(context =>
         {
-            context.InstitutionConnectionAccounts
+            context.InstitutionAccounts
                 .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
                 .ToList()
                 .Should()

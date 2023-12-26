@@ -6,7 +6,7 @@ using NodaTime;
 namespace App.Lib.Data.Entity;
 
 [Index(nameof(ExternalId), nameof(AccountId), IsUnique = true)]
-public class InstitutionAccountTransaction
+public class InstitutionAccountTransactionEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -21,21 +21,22 @@ public class InstitutionAccountTransaction
 
     public string ExternalId { get; set; } = null!;
 
-    public string RemittanceInformationUnstructured { get; set; } = null!;
+    public string UnstructuredInformation { get; set; } = null!;
 
-    public string ProprietaryBankTransactionCode { get; set; } = null!;
+    public string? TransactionCode { get; set; }
 
     public string? CounterPartyName { get; set; }
 
     public string? CounterPartyAccount { get; set; }
 
+    [Column(TypeName = "decimal(18,4)")]
     public decimal Amount { get; set; }
 
     public string Currency { get; set; } = null!;
 
     public Instant Date { get; set; }
 
-    public InstitutionAccountTransaction()
+    public InstitutionAccountTransactionEntity()
     {
         Id = Guid.NewGuid();
         CreatedAt = SystemClock.Instance.GetCurrentInstant();

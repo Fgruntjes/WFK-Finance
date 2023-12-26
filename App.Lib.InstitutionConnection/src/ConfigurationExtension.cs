@@ -31,6 +31,7 @@ public static class ConfigurationExtension
             services.AddScoped<IInstitutionConnectionCreateService, InstitutionConnectionCreateService>();
             services.AddScoped<IInstitutionConnectionRefreshService, InstitutionConnectionRefreshService>();
             services.AddScoped<IInstitutionSearchService, InstitutionSearchService>();
+            services.AddScoped<ITransactionImportService, TransactionImportService>();
         });
     }
 
