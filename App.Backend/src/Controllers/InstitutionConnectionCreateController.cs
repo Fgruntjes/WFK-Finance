@@ -1,17 +1,18 @@
-using App.Backend.GraphQL.Controllers;
-using App.Backend.GraphQL.Type;
+using App.Backend.Dto;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.InstitutionConnection.Service;
-using GraphQL.AspNet.Attributes;
-using GraphQL.AspNet.Controllers;
-using GraphQL.AspNet.Interfaces.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace App.Backend.Controllers;
 
-[GraphRoute("institutionConnection")]
-public class InstitutionConnectionCreateController : GraphController
+[ApiController]
+[Authorize]
+[Route(InstitutionConnectionGetController.RouteBase)]
+public class InstitutionConnectionCreateController : ControllerBase
 {
+    public const string RouteName = nameof(InstitutionConnectionCreateController);
+
     private readonly IInstitutionConnectionCreateService _createService;
 
     public InstitutionConnectionCreateController(IInstitutionConnectionCreateService createService)
@@ -19,21 +20,24 @@ public class InstitutionConnectionCreateController : GraphController
         _createService = createService;
     }
 
-    [Authorize]
-    [Mutation("create", typeof(InstitutionConnection))]
-    public async Task<IGraphActionResult> Create(
-        Guid institutionId,
-        [FromGraphQL(TypeExpression = "Type!")] Uri returnUrl,
+    [ProducesResponseType(typeof(InstitutionConnection), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [HttpPost(Name = RouteName)]
+    public async Task<IActionResult> Create(
+        [FromBody] InstitutionConnectionCreate request,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var entity = await _createService.Connect(institutionId, returnUrl, cancellationToken);
-            return Ok(entity.ToGraphQLType());
+            var entity = await _createService.Connect(request.InstitutionId, request.ReturnUrl, cancellationToken);
+            return CreatedAtRoute(
+                InstitutionConnectionGetController.RouteName,
+                new { id = entity.Id },
+                entity.ToDto());
         }
         catch (InstitutionNotFoundException exception)
         {
-            return new BadRequestGraphQlActionResult(exception);
+            return BadRequest(exception.ToProblemDetails());
         }
     }
 }

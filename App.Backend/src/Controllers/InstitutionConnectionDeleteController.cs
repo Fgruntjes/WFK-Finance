@@ -1,14 +1,18 @@
 using App.Lib.Data;
-using GraphQL.AspNet.Attributes;
-using GraphQL.AspNet.Controllers;
+using App.Lib.InstitutionConnection.Exception;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
-[GraphRoute("institutionConnection")]
-public class InstitutionConnectionDeleteController : GraphController
+[ApiController]
+[Authorize]
+[Route(InstitutionConnectionGetController.RouteBase)]
+public class InstitutionConnectionDeleteController : ControllerBase
 {
+    public const string RouteName = nameof(InstitutionConnectionDeleteController);
+
     private readonly DatabaseContext _database;
     private readonly IOrganisationIdProvider _organisationIdProvider;
 
@@ -18,19 +22,21 @@ public class InstitutionConnectionDeleteController : GraphController
         _organisationIdProvider = organisationIdProvider;
     }
 
-    [Authorize]
-    [Mutation("delete")]
-    public async Task<int> Delete(ICollection<Guid> connectionIds, CancellationToken cancellationToken = default)
+    [HttpDelete(Name = RouteName)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Delete(
+        [FromBody] ICollection<Guid> connectionIds,
+        CancellationToken cancellationToken = default)
     {
         var organisationId = _organisationIdProvider.GetOrganisationId();
         var entities = _database.InstitutionConnections
-                .Where(e => e.OrganisationId == organisationId)
-                .Where(e => connectionIds.Contains(e.Id));
+            .Where(e => e.OrganisationId == organisationId)
+            .Where(e => connectionIds.Contains(e.Id));
         var deleteCount = await entities.CountAsync(cancellationToken);
 
         _database.InstitutionConnections.RemoveRange(entities);
         await _database.SaveChangesAsync(cancellationToken);
 
-        return deleteCount;
+        return Ok(deleteCount);
     }
 }

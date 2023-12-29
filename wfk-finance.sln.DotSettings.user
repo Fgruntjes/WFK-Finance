@@ -1,5 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	
+	
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=512b59f4_002D24c6_002D4632_002D8bcd_002D3ecdc1c1ffcb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Or&gt;
     &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Backend.Test" Presentation="&amp;lt;App.Backend.Test&amp;gt;" /&gt;
@@ -11,4 +13,6 @@
     &lt;Project Location="/home/freek/Projects/private/wfk-finance/App.Lib.InstitutionConnection.Test" Presentation="&amp;lt;App.Lib.InstitutionConnection.Test&amp;gt;" /&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
+	
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=institutionconnection/@EntryIndexedValue">True</s:Boolean>
 	</wpf:ResourceDictionary>

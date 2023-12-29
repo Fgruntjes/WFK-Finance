@@ -1,10 +1,10 @@
 using App.Lib.Data.Entity;
 
-namespace App.Backend.GraphQL.Type;
+namespace App.Backend.Dto;
 
 public static class InstitutionMapper
 {
-    public static Institution ToGraphQLType(this InstitutionEntity entity)
+    public static Institution ToDto(this InstitutionEntity entity)
     {
         return new Institution
         {

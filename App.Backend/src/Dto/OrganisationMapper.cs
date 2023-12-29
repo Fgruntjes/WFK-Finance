@@ -1,10 +1,10 @@
 using App.Lib.Data.Entity;
 
-namespace App.Backend.GraphQL.Type;
+namespace App.Backend.Dto;
 
 public static class OrganisationMapper
 {
-    public static Organisation ToGraphQLType(this OrganisationEntity entity)
+    public static Organisation ToDto(this OrganisationEntity entity)
     {
         return new Organisation()
         {

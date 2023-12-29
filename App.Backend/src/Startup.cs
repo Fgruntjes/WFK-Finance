@@ -1,19 +1,16 @@
-using System.Reflection;
+using System.Text.RegularExpressions;
 using App.Lib.Configuration;
 using App.Lib.Configuration.Options;
 using App.Lib.Data;
-using GraphQL.AspNet.Configuration;
-using GraphQL.AspNet.Security;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace App.Backend;
 
-public class Startup : IDisposable
+public class Startup
 {
-    // Lock used due to GraphQL.AspNet.Configuration.GraphQLSchemaBuilderExtensions.SCHEMA_REGISTRATIONS being static
-    private static object _lock = new();
-
     private IHostEnvironment Environment { get; }
 
     public Startup(IHostEnvironment environment)
@@ -23,25 +20,21 @@ public class Startup : IDisposable
 
     public void ConfigureServices(IServiceCollection services)
     {
-        var lockWasTaken = false;
-        Monitor.Enter(_lock, ref lockWasTaken);
-
+        services.AddControllers(options =>
+        {
+            options.Filters.Add(new ProducesAttribute("application/json"));
+            options.Filters.Add(new ConsumesAttribute("application/json"));
+        });
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(config =>
+        {
+            config.TagActionsBy(api =>
+            {
+                return new[] { GetControllerTag(api.ActionDescriptor) };
+            });
+        });
         services.AddProblemDetails();
-        services.AddResponseCompression(options =>
-        {
-            options.MimeTypes = new[] { "application/json", "application/graphql-response+json" };
-        });
-
-        services.AddGraphQL(c =>
-        {
-            c.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;
-            c.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.All;
-            c.ResponseOptions.ExposeExceptions = Environment.IsDevelopment();
-            c.ExecutionOptions.DebugMode = Environment.IsDevelopment() || Environment.IsStaging();
-
-            // Register all controllers
-            c.AddAssembly(Assembly.GetAssembly(typeof(Startup)));
-        });
+        services.AddResponseCompression();
 
         var corsPolicy = new CorsPolicyBuilder();
         services.PostConfigure<AppOptions>(appOptions =>
@@ -73,8 +66,14 @@ public class Startup : IDisposable
         logger.LogInformation("Frontend URL {AppFrontendUrl}",
             appOptions.FrontendUrl);
 
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+
         app.UseResponseCompression();
         app.UseExceptionHandler();
         app.UseStatusCodePages();
@@ -83,21 +82,22 @@ public class Startup : IDisposable
 
         if (Environment.IsDevelopment())
         {
-            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+    }
+
+    private static string GetControllerTag(ActionDescriptor descriptor)
+    {
+        var controllerName = descriptor.RouteValues["controller"]
+            ?? throw new Exception("Can not determine controller name from route values");
+        var matches = Regex.Matches(controllerName, "[A-Z][a-z]*");
+        if (matches.Count <= 1)
+        {
+            throw new Exception("Can not determine controller name from route values");
         }
 
-        app.UseGraphQL();
-        Unlock();
-    }
-
-    public void Dispose()
-    {
-        Unlock();
-    }
-
-    private static void Unlock()
-    {
-        GraphQLSchemaBuilderExtensions.Clear();
-        Monitor.Exit(_lock);
+        var lastMatchIndex = matches[^1].Index;
+        return controllerName[..lastMatchIndex];
     }
 }

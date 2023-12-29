@@ -1,7 +1,0 @@
-query institution($CountryIso2: String!) {
-    institution {
-        list(countryIso2: $CountryIso2) {
-            name
-        }
-    }
-}

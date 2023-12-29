@@ -1,14 +1,17 @@
-using App.Backend.GraphQL.Type;
+using App.Backend.Dto;
 using App.Lib.InstitutionConnection.Service;
-using GraphQL.AspNet.Attributes;
-using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace App.Backend.Controllers;
 
-[GraphRoute("institution")]
-public class InstitutionListController : GraphController
+[ApiController]
+[Authorize]
+[Route(InstitutionGetController.RouteBase)]
+public class InstitutionListController : ControllerBase
 {
+    public const string RouteName = nameof(InstitutionListController);
+
     private readonly IInstitutionSearchService _searchService;
 
     public InstitutionListController(IInstitutionSearchService searchService)
@@ -16,13 +19,19 @@ public class InstitutionListController : GraphController
         _searchService = searchService;
     }
 
-    [Authorize]
-    [Query("list", TypeExpression = $"[Type!]!")]
-    public async Task<IEnumerable<Institution>> List(
+    [HttpGet("{countryIso2:length(2)}", Name = RouteName)]
+    [ProducesResponseType(typeof(ICollection<Institution>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> List(
         string countryIso2,
         CancellationToken cancellationToken = default)
     {
-        return (await _searchService.Search(countryIso2, cancellationToken))
-            .Select(e => e.ToGraphQLType());
+        var result = (await _searchService.Search(countryIso2, cancellationToken)).ToList();
+        if (!result.Any())
+        {
+            return NotFound();
+        }
+
+        return Ok(result.Select(e => e.ToDto()));
     }
 }

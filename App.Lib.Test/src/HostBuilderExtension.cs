@@ -12,6 +12,7 @@ public static class HostBuilderExtension
         return builder.ConfigureLogging(loggingBuilder =>
         {
             loggingBuilder.ClearProviders();
+            loggingBuilder.SetMinimumLevel(LogLevel.Trace);
             loggingBuilder.Services.AddSingleton(loggerProvider);
         });
     }

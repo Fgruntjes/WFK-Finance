@@ -21,6 +21,10 @@ public static class ConfigurationExtension
                 var isProduction = context.HostingEnvironment.IsProduction();
                 config.AddJsonFileTraverse("appsettings.json", !isProduction, !isProduction);
                 config.AddJsonFileTraverse("appsettings.local.json", !isProduction, !isProduction);
+                if (!isProduction)
+                {
+                    config.AddJsonFileTraverse($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", true, true);
+                }
             })
             .ConfigureLogging(_ => { })
             .ConfigureServices((hostContext, services) =>

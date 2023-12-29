@@ -1,6 +1,6 @@
 using App.Lib.Data;
 
-namespace App.Backend.GraphQL.Type;
+namespace App.Backend.Dto;
 
 public class OrganisationUser
 {

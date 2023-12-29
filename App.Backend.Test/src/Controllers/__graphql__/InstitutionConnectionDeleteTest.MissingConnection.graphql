@@ -1,5 +1,0 @@
-mutation DeleteInstitutionConnection($ConnectionIds: [Guid!]!){
-	institutionConnection {
-		delete(connectionIds: $ConnectionIds)
-	}
-}

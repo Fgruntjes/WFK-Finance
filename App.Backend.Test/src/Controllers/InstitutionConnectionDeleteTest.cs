@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
@@ -28,25 +29,38 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new
-        {
-            ConnectionIds = new List<Guid> { institutionConnectionEntity.Id }
-        });
+        var response = await _fixture.Client.SendWithAuthAsync(
+            new HttpRequestMessage(HttpMethod.Delete, "/institutionconnection")
+            {
+                Content = JsonContent.Create(new List<Guid> { institutionConnectionEntity.Id })
+            });
+        var body = await response.Content.ReadFromJsonAsync<int>();
 
         // Assert
-        result.MatchSnapshot();
+        body.Should().Be(1);
+        _fixture.Database.WithData(context =>
+        {
+            context.InstitutionConnections.Find(institutionConnectionEntity.Id)
+                .Should()
+                .BeNull();
+        });
     }
 
     [Fact]
     public async Task MissingConnection()
     {
+        // Arrange
+        var connectionId = new Guid("5dcb861b-b879-427e-ad47-4c4eade20813");
+
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new
-        {
-            ConnectionIds = new List<Guid> { new("5dcb861b-b879-427e-ad47-4c4eade20813") }
-        });
+        var response = await _fixture.Client.SendWithAuthAsync(
+            new HttpRequestMessage(HttpMethod.Delete, "/institutionconnection")
+            {
+                Content = JsonContent.Create(new List<Guid> { connectionId })
+            });
+        var body = await response.Content.ReadFromJsonAsync<int>();
 
         // Assert
-        result.MatchSnapshot();
+        body.Should().Be(0);
     }
 }

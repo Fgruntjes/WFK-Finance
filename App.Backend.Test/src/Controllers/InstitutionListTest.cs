@@ -1,3 +1,5 @@
+using System.Net;
+using App.Backend.Dto;
 using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.Test;
@@ -15,7 +17,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
     }
 
     [Fact]
-    public async Task Search()
+    public async Task SearchWithinCountry()
     {
         // Arrange
         _fixture.Services.WithMock<IInstitutionSearchService>(mock =>
@@ -41,9 +43,34 @@ public class InstitutionListTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new { CountryIso2 = "NL" });
+        var result = await _fixture.Client.GetWithAuthAsync<List<Institution>>("/institution/NL");
 
         // Assert
-        result.MatchSnapshot();
+        result.Should().BeEquivalentTo(new List<Institution>()
+        {
+            new ()
+            {
+                Name = "MyFakeName-NL1",
+                ExternalId = "SomeExternalId-NL1",
+                Country = "NL"
+            },
+            new ()
+            {
+                Name = "MyFakeName-NL2",
+                ExternalId = "SomeExternalId-NL2",
+                Country = "NL"
+            }
+        },
+        options => options.Excluding(e => e.Id));
+    }
+
+    [Fact]
+    public async Task SearchNotFound()
+    {
+        // Act
+        var response = await _fixture.Client.GetWithAuthAsync("institution/BE");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
