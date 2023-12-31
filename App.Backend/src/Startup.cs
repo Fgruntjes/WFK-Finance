@@ -1,4 +1,7 @@
 using System.Text.RegularExpressions;
+using App.Backend.Dto;
+using App.Backend.Mvc;
+using App.Backend.OpenApi;
 using App.Lib.Configuration;
 using App.Lib.Configuration.Options;
 using App.Lib.Data;
@@ -6,6 +9,8 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 namespace App.Backend;
 
@@ -22,12 +27,16 @@ public class Startup
     {
         services.AddControllers(options =>
         {
+            options.ModelBinderProviders.Insert(0, new RangeParameterBinderProvider());
+            
             options.Filters.Add(new ProducesAttribute("application/json"));
             options.Filters.Add(new ConsumesAttribute("application/json"));
         });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
+            config.ParameterFilter<RangeFilter>();
+            config.OperationFilter<RangeFilter>();
             config.TagActionsBy(api =>
             {
                 return new[] { GetControllerTag(api.ActionDescriptor) };
@@ -41,8 +50,9 @@ public class Startup
         {
             corsPolicy
                 .WithOrigins(appOptions.FrontendUrl.TrimEnd('/'))
-                .WithHeaders("Authorization", "Content-Type")
-                .WithMethods("GET", "POST");
+                .WithExposedHeaders("Content-Range")
+                .WithMethods("GET", "POST", "DELETE", "PUT")
+                .WithHeaders("Authorization", "Content-Type", "Range");
         });
         services.AddCors(corsOptions =>
         {
@@ -66,6 +76,7 @@ public class Startup
         logger.LogInformation("Frontend URL {AppFrontendUrl}",
             appOptions.FrontendUrl);
 
+        app.UseCors();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
@@ -77,7 +88,6 @@ public class Startup
         app.UseResponseCompression();
         app.UseExceptionHandler();
         app.UseStatusCodePages();
-        app.UseCors();
         app.UseAppHealthChecks();
 
         if (Environment.IsDevelopment())

@@ -8,7 +8,7 @@ namespace App.Backend.Controllers;
 
 [ApiController]
 [Authorize]
-[Route(InstitutionConnectionGetController.RouteBase)]
+[Route(InstitutionConnectionListController.RouteBase)]
 public class InstitutionConnectionRefreshController : ControllerBase
 {
     public const string RouteNameByExternalId = $"{nameof(InstitutionConnectionListController)}_ByExternalId";

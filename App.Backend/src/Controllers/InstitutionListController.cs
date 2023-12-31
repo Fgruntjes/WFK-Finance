@@ -1,4 +1,5 @@
 using App.Backend.Dto;
+using App.Backend.Mvc;
 using App.Lib.InstitutionConnection.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +8,10 @@ namespace App.Backend.Controllers;
 
 [ApiController]
 [Authorize]
-[Route(InstitutionGetController.RouteBase)]
+[Route(RouteBase)]
 public class InstitutionListController : ControllerBase
 {
+    public const string RouteBase = "/institutions";
     public const string RouteName = nameof(InstitutionListController);
 
     private readonly IInstitutionSearchService _searchService;
@@ -26,12 +28,18 @@ public class InstitutionListController : ControllerBase
         string countryIso2,
         CancellationToken cancellationToken = default)
     {
-        var result = (await _searchService.Search(countryIso2, cancellationToken)).ToList();
+        var result = (await _searchService.Search(countryIso2, cancellationToken))
+            .ToList();
         if (!result.Any())
         {
             return NotFound();
         }
 
-        return Ok(result.Select(e => e.ToDto()));
+        return new ListResult<Institution>(
+            result.Select(e => e.ToDto()),
+            RouteBase,
+            0,
+            1000,
+            result.Count);
     }
 }

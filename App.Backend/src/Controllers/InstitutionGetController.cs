@@ -8,10 +8,9 @@ namespace App.Backend.Controllers;
 
 [ApiController]
 [Authorize]
-[Route(RouteBase)]
+[Route(InstitutionListController.RouteBase)]
 public class InstitutionGetController : ControllerBase
 {
-    public const string RouteBase = "institution";
     public const string RouteName = nameof(InstitutionGetController);
 
     private readonly DatabaseContext _database;

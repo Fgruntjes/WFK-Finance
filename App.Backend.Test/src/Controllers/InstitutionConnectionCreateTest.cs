@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.InstitutionConnection.Service;
@@ -36,7 +37,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
 
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Post, "/institutionconnection")
+            new HttpRequestMessage(HttpMethod.Post, InstitutionConnectionListController.RouteBase)
             {
                 Content = JsonContent.Create(new InstitutionConnectionCreate
                 {
@@ -73,7 +74,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
 
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Post, "/institutionconnection")
+            new HttpRequestMessage(HttpMethod.Post, InstitutionConnectionListController.RouteBase)
             {
                 Content = JsonContent.Create(new InstitutionConnectionCreate
                 {

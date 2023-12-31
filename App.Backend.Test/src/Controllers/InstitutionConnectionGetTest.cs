@@ -1,4 +1,5 @@
 using System.Net;
+using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.Data.Entity;
 
@@ -18,7 +19,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
     {
         // Act
         var response = await _fixture.Client.GetWithAuthAsync<InstitutionConnection>(
-            $"/institutionconnection/{_fixture.InstitutionConnectionEntity.Id}");
+            $"{InstitutionConnectionListController.RouteBase}/{_fixture.InstitutionConnectionEntity.Id}");
 
         // Assert
         response.Should().BeEquivalentTo(new InstitutionConnection()

@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using App.Backend.Controllers;
 using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
@@ -30,7 +31,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
 
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Delete, "/institutionconnection")
+            new HttpRequestMessage(HttpMethod.Delete, InstitutionConnectionListController.RouteBase)
             {
                 Content = JsonContent.Create(new List<Guid> { institutionConnectionEntity.Id })
             });
@@ -54,7 +55,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
 
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Delete, "/institutionconnection")
+            new HttpRequestMessage(HttpMethod.Delete, InstitutionConnectionListController.RouteBase)
             {
                 Content = JsonContent.Create(new List<Guid> { connectionId })
             });

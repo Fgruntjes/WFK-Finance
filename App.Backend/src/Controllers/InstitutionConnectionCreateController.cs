@@ -8,7 +8,7 @@ namespace App.Backend.Controllers;
 
 [ApiController]
 [Authorize]
-[Route(InstitutionConnectionGetController.RouteBase)]
+[Route(InstitutionConnectionListController.RouteBase)]
 public class InstitutionConnectionCreateController : ControllerBase
 {
     public const string RouteName = nameof(InstitutionConnectionCreateController);

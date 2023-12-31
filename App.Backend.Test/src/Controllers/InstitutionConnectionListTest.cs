@@ -1,3 +1,5 @@
+using System.Net.Http.Json;
+using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.Data.Entity;
 
@@ -16,11 +18,12 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     public async Task WithoutSkipLimit()
     {
         // Act
-        var result = await _fixture.Client
-            .GetWithAuthAsync<ListResult<InstitutionConnection>>("/institutionconnection");
+        var response = await _fixture.Client
+            .GetWithAuthAsync(InstitutionConnectionListController.RouteBase);
+        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert
-        result.Items.Should().BeEquivalentTo(new List<InstitutionConnection>()
+        result.Should().BeEquivalentTo(new List<InstitutionConnection>()
         {
             new() { ExternalId = "SomeExternalId-organisation-match-0" },
             new() { ExternalId = "SomeExternalId-organisation-list-0" },
@@ -52,18 +55,19 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
             .Excluding(e => e.ConnectUrl)
             .Excluding(e => e.Accounts)
             .Excluding(e => e.InstitutionId));
-        result.TotalCount.Should().Be(31);
+        response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionconnections 0-25/31");
     }
 
     [Fact]
     public async Task WithSkipLimit()
     {
         // Act
-        var result = await _fixture.Client
-            .GetWithAuthAsync<ListResult<InstitutionConnection>>("/institutionconnection?offset=1&limit=1");
+        var response = await _fixture.Client
+            .GetWithAuthAsync($"{InstitutionConnectionListController.RouteBase}?range=[1,2]");
+        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert
-        result.Items.Should().BeEquivalentTo(new List<InstitutionConnection>()
+        result.Should().BeEquivalentTo(new List<InstitutionConnection>()
         {
             new() { ExternalId = "SomeExternalId-organisation-list-0" },
         },
@@ -71,7 +75,7 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
             .Excluding(e => e.ConnectUrl)
             .Excluding(e => e.Accounts)
             .Excluding(e => e.InstitutionId));
-        result.TotalCount.Should().Be(31);
+        response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionconnections 1-2/31");
     }
 
     [Fact]
@@ -80,7 +84,7 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         // Arrange
         var connectionEntity = new InstitutionConnectionEntity()
         {
-            ExternalId = $"SomeExternalId-organisation-missmatch-0",
+            ExternalId = "SomeExternalId-organisation-missmatch-0",
             ConnectUrl = new Uri($"https://www.example-organisation-missmatch-0.com/"),
             InstitutionId = _fixture.InstitutionEntity.Id,
             OrganisationId = _fixture.AltOrganisationId,
@@ -91,15 +95,12 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         });
 
         // Act
-        var result = await _fixture.Client
-            .GetWithAuthAsync<ListResult<InstitutionConnection>>("/institutionconnection?offset=0&limit=100");
+        var response = await _fixture.Client
+            .GetWithAuthAsync($"{InstitutionConnectionListController.RouteBase}?range=[0,100]");
+        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert
-        result.Items
-            .Should()
-            .NotContain(c => c.ExternalId == "SomeExternalId-organisation-missmatch-0");
-        result.TotalCount
-            .Should()
-            .Be(31);
+        result.Should().NotContain(c => c.ExternalId == "SomeExternalId-organisation-missmatch-0");
+        response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionconnections 0-31/31");
     }
 }

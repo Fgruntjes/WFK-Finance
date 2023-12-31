@@ -1,4 +1,5 @@
 using System.Net;
+using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Service;
@@ -43,7 +44,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.Client.GetWithAuthAsync<List<Institution>>("/institution/NL");
+        var result = await _fixture.Client.GetWithAuthAsync<List<Institution>>($"{InstitutionListController.RouteBase}/NL");
 
         // Assert
         result.Should().BeEquivalentTo(new List<Institution>()
@@ -68,7 +69,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
     public async Task SearchNotFound()
     {
         // Act
-        var response = await _fixture.Client.GetWithAuthAsync("institution/BE");
+        var response = await _fixture.Client.GetWithAuthAsync($"{InstitutionListController.RouteBase}/BE");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
