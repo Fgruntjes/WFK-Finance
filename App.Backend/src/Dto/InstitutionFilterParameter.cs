@@ -1,13 +1,7 @@
 namespace App.Backend.Dto;
 
-public class InstitutionFilterParameter : FilterParameter
+public class InstitutionFilterParameter
 {
-    public required string Country
-    {
-        get => this["country"];
-        set
-        {
-            this["country"] = value;
-        }
-    }
+    public string? CountryIso2 { get; set; }
+    public ICollection<Guid>? Id { get; set; }
 }

@@ -30,6 +30,7 @@ public class InstitutionGetController : ControllerBase
             .OrderBy(e => e.CreatedAt)
             .Take(1)
             .SingleOrDefaultAsync(cancellationToken);
+
         if (entity == null)
         {
             return NotFound();

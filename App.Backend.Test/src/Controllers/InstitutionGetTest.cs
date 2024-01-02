@@ -40,7 +40,7 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
             ExternalId = institutionEntity.ExternalId,
             Name = institutionEntity.Name,
             Logo = institutionEntity.Logo,
-            Country = institutionEntity.CountryIso2,
+            CountryIso2 = institutionEntity.CountryIso2,
         });
     }
 

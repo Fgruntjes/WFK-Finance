@@ -12,7 +12,7 @@ public static class InstitutionMapper
             ExternalId = entity.ExternalId,
             Name = entity.Name,
             Logo = entity.Logo,
-            Country = entity.CountryIso2,
+            CountryIso2 = entity.CountryIso2,
         };
     }
 }

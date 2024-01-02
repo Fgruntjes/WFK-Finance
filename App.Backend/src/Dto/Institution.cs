@@ -10,5 +10,5 @@ public class Institution
 
     public Uri? Logo { get; init; }
 
-    public required string Country { get; init; }
+    public required string CountryIso2 { get; init; }
 }

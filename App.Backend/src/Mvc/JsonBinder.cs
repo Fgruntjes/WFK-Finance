@@ -5,38 +5,45 @@ namespace App.Backend.Mvc;
 
 internal class JsonBinder<T> : IModelBinder
 {
-	public Task BindModelAsync(ModelBindingContext bindingContext)
-	{
-		if (bindingContext == null)
-		{
-			throw new ArgumentNullException(nameof(bindingContext));
-		}
+    private readonly JsonSerializerOptions? _options;
 
-		var modelName = bindingContext.ModelName;
-		var valueProviderResult = bindingContext.ValueProvider.GetValue(modelName);
+    public JsonBinder(JsonSerializerOptions? options = null)
+    {
+        _options = options ?? JsonOptions.Options;
+    }
 
-		if (valueProviderResult == ValueProviderResult.None)
-			return Task.CompletedTask;
+    public Task BindModelAsync(ModelBindingContext bindingContext)
+    {
+        if (bindingContext == null)
+        {
+            throw new ArgumentNullException(nameof(bindingContext));
+        }
 
-		bindingContext.ModelState.SetModelValue(modelName, valueProviderResult);
+        var modelName = bindingContext.ModelName;
+        var valueProviderResult = bindingContext.ValueProvider.GetValue(modelName);
 
-		var value = valueProviderResult.FirstValue;
-		if (value == null)
-			return Task.CompletedTask;
+        if (valueProviderResult == ValueProviderResult.None)
+            return Task.CompletedTask;
 
-		try
-		{
-			var parameter = JsonSerializer.Deserialize<T>(value, JsonOptions.Options);
-			if (parameter == null)
-				return Task.CompletedTask;
+        bindingContext.ModelState.SetModelValue(modelName, valueProviderResult);
 
-			bindingContext.Result = ModelBindingResult.Success(parameter);
-		}
-		catch (JsonException exception)
-		{
-			bindingContext.ModelState.TryAddModelError(modelName, exception.Message);
-		}
+        var value = valueProviderResult.FirstValue;
+        if (value == null)
+            return Task.CompletedTask;
 
-		return Task.CompletedTask;
-	}
+        try
+        {
+            var parameter = JsonSerializer.Deserialize<T>(value, _options);
+            if (parameter == null)
+                return Task.CompletedTask;
+
+            bindingContext.Result = ModelBindingResult.Success(parameter);
+        }
+        catch (JsonException exception)
+        {
+            bindingContext.ModelState.TryAddModelError(modelName, exception.Message);
+        }
+
+        return Task.CompletedTask;
+    }
 }

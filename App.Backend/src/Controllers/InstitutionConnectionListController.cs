@@ -49,8 +49,7 @@ public class InstitutionConnectionListController : ControllerBase
         return new ListResult<InstitutionConnection>(
             result,
             RouteBase,
-            range.Start,
-            range.End,
+            range,
             totalCount);
     }
 }

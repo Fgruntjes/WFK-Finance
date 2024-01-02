@@ -34,6 +34,7 @@ public class Startup
         }).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new RangeParameterJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new FilterParameterJsonConverter());
         });
 
         services.AddEndpointsApiExplorer();

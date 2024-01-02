@@ -4,24 +4,29 @@ using App.Backend.Dto;
 using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.Test;
+using App.Lib.Test.Database;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionListTest : IClassFixture<AppFixture>
+public class InstitutionListTest
 {
-    private readonly AppFixture _fixture;
+    private readonly DatabasePool _databasePool;
+    private readonly ILoggerProvider _loggerProvider;
 
-    public InstitutionListTest(AppFixture fixture)
+    public InstitutionListTest(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
-        _fixture = fixture;
+        _databasePool = databasePool;
+        _loggerProvider = loggerProvider;
     }
 
     [Fact]
     public async Task FilterCountry()
     {
         // Arrange
-        _fixture.Services.WithMock<IInstitutionSearchService>(mock =>
+        var fixture = new AppFixture(_databasePool, _loggerProvider);
+        fixture.Services.WithMock<IInstitutionSearchService>(mock =>
         {
             mock.Setup(s => s.Search(
                 "NL",
@@ -44,9 +49,9 @@ public class InstitutionListTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.Client.GetListWithAuthAsync<Institution>(
+        var result = await fixture.Client.GetListWithAuthAsync<Institution>(
             InstitutionListController.RouteBase,
-            filter: new InstitutionFilterParameter { Country = "NL" });
+            filter: new FilterParameter() { { "countryIso2", "NL" } });
 
         // Assert
         result.Should().BeEquivalentTo(new List<Institution>()
@@ -55,13 +60,13 @@ public class InstitutionListTest : IClassFixture<AppFixture>
             {
                 Name = "MyFakeName - NL1",
                 ExternalId = "SomeExternalId-NL1",
-                Country = "NL"
+                CountryIso2 = "NL"
             },
             new ()
             {
                 Name = "MyFakeName - NL2",
                 ExternalId = "SomeExternalId-NL2",
-                Country = "NL"
+                CountryIso2 = "NL"
             }
         },
         options => options.Excluding(e => e.Id));
@@ -71,11 +76,78 @@ public class InstitutionListTest : IClassFixture<AppFixture>
     public async Task SearchNotFound()
     {
         // Act
-        var response = await _fixture.Client.GetListWithAuthAsync(
+        var fixture = new AppFixture(_databasePool, _loggerProvider);
+        var result = await fixture.Client.GetListWithAuthAsync<Institution>(
             InstitutionListController.RouteBase,
-            filter: new InstitutionFilterParameter { Country = "BE" });
+            filter: new FilterParameter() { { "countryIso2", "BE" } });
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Should().HaveCount(0);
+    }
+
+    [Fact]
+    public async Task FilterById()
+    {
+        // Arrange
+        var fixture = new AppFixture(_databasePool, _loggerProvider);
+        fixture.Database.SeedData(context =>
+        {
+            context.Institutions.Add(new InstitutionEntity()
+            {
+                Id = new Guid("2fdc768e-e916-47ca-9f09-90f939547fa8"),
+                Name = "MyFakeName - NL1",
+                ExternalId = "SomeExternalId-NL1",
+                CountryIso2 = "NL"
+            });
+            context.Institutions.Add(new InstitutionEntity()
+            {
+                Id = new Guid("2fdc768e-e916-47ca-9f09-90f939547fa9"),
+                Name = "MyFakeName - NL2",
+                ExternalId = "SomeExternalId-NL2",
+                CountryIso2 = "NL"
+            });
+            context.Institutions.Add(new InstitutionEntity()
+            {
+                Id = new Guid("2fdc768e-e916-47ca-9f09-90f939547fa0"),
+                Name = "MyFakeName - NL3",
+                ExternalId = "SomeExternalId-NL3",
+                CountryIso2 = "NL"
+            });
+        });
+
+        // Act
+        var result = await fixture.Client.GetListWithAuthAsync<Institution>(
+            InstitutionListController.RouteBase,
+            filter: new FilterParameter() {{
+                "id", new[] { "2fdc768e-e916-47ca-9f09-90f939547fa8", "2fdc768e-e916-47ca-9f09-90f939547fa0" }}});
+
+        // Assert
+        result.Should().BeEquivalentTo(new List<Institution>()
+        {
+            new ()
+            {
+                Name = "MyFakeName - NL1",
+                ExternalId = "SomeExternalId-NL1",
+                CountryIso2 = "NL"
+            },
+            new ()
+            {
+                Name = "MyFakeName - NL3",
+                ExternalId = "SomeExternalId-NL3",
+                CountryIso2 = "NL"
+            }
+        },
+            options => options.Excluding(e => e.Id));
+    }
+
+    [Fact]
+    public async Task NoFilterBadRequest()
+    {
+        // Act
+        var fixture = new AppFixture(_databasePool, _loggerProvider);
+        var response = await fixture.Client.GetListWithAuthAsync(InstitutionListController.RouteBase);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
 using App.Backend.Dto;
+using App.Backend.Mvc;
 using App.Backend.Test.Auth;
 using App.Lib.Test;
 using Xunit.Sdk;
@@ -79,7 +80,8 @@ public static class HttpClientExtensions
     {
         var response = await client.GetListWithAuthAsync(requestUri, range, sort, filter, cancellationToken);
 
-        return await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(cancellationToken: cancellationToken)
+        var result = await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(cancellationToken: cancellationToken);
+        return result
             ?? throw FailException.ForFailure("Could not deserialize response value");
     }
 
