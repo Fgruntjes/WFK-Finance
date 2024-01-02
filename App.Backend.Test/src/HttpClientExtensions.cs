@@ -63,11 +63,9 @@ public static class HttpClientExtensions
         if (sort != null)
             query["sort"] = JsonSerializer.Serialize(sort, JsonOptions.Options);
         if (range != null)
-            query["range"] = JsonSerializer.Serialize(range, JsonOptions.Options);
-
+            query["range"] = $"[{range.Start},{range.End}]";
 
         uri = new UriBuilder(uri) { Query = query.ToString() }.Uri;
-
         return await client.GetWithAuthAsync(uri, cancellationToken);
     }
 

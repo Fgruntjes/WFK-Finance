@@ -8,15 +8,24 @@ public class RangeParameterJsonConverter : JsonConverter<RangeParameter>
 {
     public override RangeParameter Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        // Assuming the value is in the format "[from,to]"
-        var rangeValues = reader.GetString()?.TrimStart('[').TrimEnd(']').Split(',')
-            ?? throw new JsonException("Range must be in the format [from,to]");
-
-        if (rangeValues.Length != 2 ||
-            !int.TryParse(rangeValues[0], out var start) ||
-            !int.TryParse(rangeValues[1], out var end))
+        if (reader.TokenType != JsonTokenType.StartArray)
         {
-            throw new JsonException("Range must be in the format [from,to]");
+            throw new JsonException("Expected start of array");
+        }
+
+        if (!reader.Read() || reader.TokenType != JsonTokenType.Number || !reader.TryGetInt32(out var start))
+        {
+            throw new JsonException("Expected start of range");
+        }
+
+        if (!reader.Read() || reader.TokenType != JsonTokenType.Number || !reader.TryGetInt32(out var end))
+        {
+            throw new JsonException("Expected end of range");
+        }
+
+        if (!reader.Read() || reader.TokenType != JsonTokenType.EndArray)
+        {
+            throw new JsonException("Expected end of array");
         }
 
         return new RangeParameter(start, end);
