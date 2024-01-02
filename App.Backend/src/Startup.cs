@@ -28,7 +28,7 @@ public class Startup
         services.AddControllers(options =>
         {
             options.ModelBinderProviders.Insert(0, new RangeParameterBinderProvider());
-            
+
             options.Filters.Add(new ProducesAttribute("application/json"));
             options.Filters.Add(new ConsumesAttribute("application/json"));
         });
@@ -37,6 +37,7 @@ public class Startup
         {
             config.ParameterFilter<RangeFilter>();
             config.OperationFilter<RangeFilter>();
+            config.SchemaFilter<RequireNonNullableFilter>();
             config.TagActionsBy(api =>
             {
                 return new[] { GetControllerTag(api.ActionDescriptor) };
