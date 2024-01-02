@@ -2,11 +2,11 @@ namespace App.Backend.Dto;
 
 public class User
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
 
-    public string ExternalId { get; set; } = null!;
+    public required string ExternalId { get; set; }
 
-    public IReadOnlyList<Organisation> Organisations { get; set; }
+    public required IReadOnlyList<Organisation> Organisations { get; set; }
 
     public User()
     {

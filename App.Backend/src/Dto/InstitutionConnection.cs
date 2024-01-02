@@ -4,11 +4,11 @@ public class InstitutionConnection
 {
     public Guid Id { get; set; }
 
-    public string ExternalId { get; set; } = null!;
+    public required string ExternalId { get; set; }
 
     public Guid InstitutionId { get; set; }
 
-    public Uri ConnectUrl { get; set; } = null!;
+    public required Uri ConnectUrl { get; set; }
 
-    public ICollection<InstitutionConnectionAccount> Accounts { get; set; } = null!;
+    public required ICollection<InstitutionConnectionAccount> Accounts { get; set; }
 }

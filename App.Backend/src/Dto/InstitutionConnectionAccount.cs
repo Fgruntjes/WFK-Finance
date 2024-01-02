@@ -4,7 +4,7 @@ public class InstitutionConnectionAccount
 {
     public Guid Id { get; set; }
 
-    public string ExternalId { get; set; } = null!;
+    public required string ExternalId { get; set; }
 
-    public string Iban { get; set; } = null!;
+    public required string Iban { get; set; }
 }

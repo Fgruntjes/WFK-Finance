@@ -18,7 +18,7 @@ public class InstitutionListTest : IClassFixture<AppFixture>
     }
 
     [Fact]
-    public async Task SearchWithinCountry()
+    public async Task FilterCountry()
     {
         // Arrange
         _fixture.Services.WithMock<IInstitutionSearchService>(mock =>
@@ -30,13 +30,13 @@ public class InstitutionListTest : IClassFixture<AppFixture>
                 {
                     new ()
                     {
-                        Name = "MyFakeName-NL1",
+                        Name = "MyFakeName - NL1",
                         ExternalId = "SomeExternalId-NL1",
                         CountryIso2 = "NL"
                     },
                     new ()
                     {
-                        Name = "MyFakeName-NL2",
+                        Name = "MyFakeName - NL2",
                         ExternalId = "SomeExternalId-NL2",
                         CountryIso2 = "NL"
                     }
@@ -44,20 +44,22 @@ public class InstitutionListTest : IClassFixture<AppFixture>
         });
 
         // Act
-        var result = await _fixture.Client.GetWithAuthAsync<List<Institution>>($"{InstitutionListController.RouteBase}/NL");
+        var result = await _fixture.Client.GetListWithAuthAsync<Institution>(
+            InstitutionListController.RouteBase,
+            filter: new InstitutionFilterParameter { Country = "NL" });
 
         // Assert
         result.Should().BeEquivalentTo(new List<Institution>()
         {
             new ()
             {
-                Name = "MyFakeName-NL1",
+                Name = "MyFakeName - NL1",
                 ExternalId = "SomeExternalId-NL1",
                 Country = "NL"
             },
             new ()
             {
-                Name = "MyFakeName-NL2",
+                Name = "MyFakeName - NL2",
                 ExternalId = "SomeExternalId-NL2",
                 Country = "NL"
             }
@@ -69,7 +71,9 @@ public class InstitutionListTest : IClassFixture<AppFixture>
     public async Task SearchNotFound()
     {
         // Act
-        var response = await _fixture.Client.GetWithAuthAsync($"{InstitutionListController.RouteBase}/BE");
+        var response = await _fixture.Client.GetListWithAuthAsync(
+            InstitutionListController.RouteBase,
+            filter: new InstitutionFilterParameter { Country = "BE" });
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

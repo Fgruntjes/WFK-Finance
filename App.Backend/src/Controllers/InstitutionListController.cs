@@ -21,15 +21,16 @@ public class InstitutionListController : ControllerBase
         _searchService = searchService;
     }
 
-    [HttpGet("{countryIso2:length(2)}", Name = RouteName)]
+    [HttpGet(Name = RouteName)]
     [ProducesResponseType(typeof(ICollection<Institution>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> List(
-        string countryIso2,
+        InstitutionFilterParameter filter,
         CancellationToken cancellationToken = default)
     {
-        var result = (await _searchService.Search(countryIso2, cancellationToken))
+        var result = (await _searchService.Search(filter.Country, cancellationToken))
             .ToList();
+
         if (!result.Any())
         {
             return NotFound();

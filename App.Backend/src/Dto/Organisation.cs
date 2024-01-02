@@ -2,7 +2,7 @@ namespace App.Backend.Dto;
 
 public class Organisation
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
 
-    public string Slug { get; set; } = null!;
+    public required string Slug { get; set; }
 }

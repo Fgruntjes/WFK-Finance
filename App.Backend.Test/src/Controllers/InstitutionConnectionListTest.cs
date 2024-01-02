@@ -15,41 +15,40 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     }
 
     [Fact]
-    public async Task WithoutSkipLimit()
+    public async Task WithoutRange()
     {
         // Act
-        var response = await _fixture.Client
-            .GetWithAuthAsync(InstitutionConnectionListController.RouteBase);
+        var response = await _fixture.Client.GetListWithAuthAsync(InstitutionConnectionListController.RouteBase);
         var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert
         result.Should().BeEquivalentTo(new List<InstitutionConnection>()
         {
-            new() { ExternalId = "SomeExternalId-organisation-match-0" },
-            new() { ExternalId = "SomeExternalId-organisation-list-0" },
-            new() { ExternalId = "SomeExternalId-organisation-list-1" },
-            new() { ExternalId = "SomeExternalId-organisation-list-2" },
-            new() { ExternalId = "SomeExternalId-organisation-list-3" },
-            new() { ExternalId = "SomeExternalId-organisation-list-4" },
-            new() { ExternalId = "SomeExternalId-organisation-list-5" },
-            new() { ExternalId = "SomeExternalId-organisation-list-6" },
-            new() { ExternalId = "SomeExternalId-organisation-list-7" },
-            new() { ExternalId = "SomeExternalId-organisation-list-8" },
-            new() { ExternalId = "SomeExternalId-organisation-list-9" },
-            new() { ExternalId = "SomeExternalId-organisation-list-10" },
-            new() { ExternalId = "SomeExternalId-organisation-list-11" },
-            new() { ExternalId = "SomeExternalId-organisation-list-12" },
-            new() { ExternalId = "SomeExternalId-organisation-list-13" },
-            new() { ExternalId = "SomeExternalId-organisation-list-14" },
-            new() { ExternalId = "SomeExternalId-organisation-list-15" },
-            new() { ExternalId = "SomeExternalId-organisation-list-16" },
-            new() { ExternalId = "SomeExternalId-organisation-list-17" },
-            new() { ExternalId = "SomeExternalId-organisation-list-18" },
-            new() { ExternalId = "SomeExternalId-organisation-list-19" },
-            new() { ExternalId = "SomeExternalId-organisation-list-20" },
-            new() { ExternalId = "SomeExternalId-organisation-list-21" },
-            new() { ExternalId = "SomeExternalId-organisation-list-22" },
-            new() { ExternalId = "SomeExternalId-organisation-list-23" },
+            CreateConnection("SomeExternalId-organisation-match-0"),
+            CreateConnection("SomeExternalId-organisation-list-0"),
+            CreateConnection("SomeExternalId-organisation-list-1"),
+            CreateConnection("SomeExternalId-organisation-list-2"),
+            CreateConnection("SomeExternalId-organisation-list-3"),
+            CreateConnection("SomeExternalId-organisation-list-4"),
+            CreateConnection("SomeExternalId-organisation-list-5"),
+            CreateConnection("SomeExternalId-organisation-list-6"),
+            CreateConnection("SomeExternalId-organisation-list-7"),
+            CreateConnection("SomeExternalId-organisation-list-8"),
+            CreateConnection("SomeExternalId-organisation-list-9"),
+            CreateConnection("SomeExternalId-organisation-list-10"),
+            CreateConnection("SomeExternalId-organisation-list-11"),
+            CreateConnection("SomeExternalId-organisation-list-12"),
+            CreateConnection("SomeExternalId-organisation-list-13"),
+            CreateConnection("SomeExternalId-organisation-list-14"),
+            CreateConnection("SomeExternalId-organisation-list-15"),
+            CreateConnection("SomeExternalId-organisation-list-16"),
+            CreateConnection("SomeExternalId-organisation-list-17"),
+            CreateConnection("SomeExternalId-organisation-list-18"),
+            CreateConnection("SomeExternalId-organisation-list-19"),
+            CreateConnection("SomeExternalId-organisation-list-20"),
+            CreateConnection("SomeExternalId-organisation-list-21"),
+            CreateConnection("SomeExternalId-organisation-list-22"),
+            CreateConnection("SomeExternalId-organisation-list-23"),
         },
         options => options.Excluding(e => e.Id)
             .Excluding(e => e.ConnectUrl)
@@ -58,18 +57,29 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionconnections 0-25/31");
     }
 
+    private static InstitutionConnection CreateConnection(string externalId)
+    {
+        return new InstitutionConnection
+        {
+            ExternalId = externalId,
+            Accounts = new List<InstitutionConnectionAccount>(),
+            ConnectUrl = new Uri($"https://www.{externalId}.com/"),
+        };
+    }
+
     [Fact]
-    public async Task WithSkipLimit()
+    public async Task WithRange()
     {
         // Act
-        var response = await _fixture.Client
-            .GetWithAuthAsync($"{InstitutionConnectionListController.RouteBase}?range=[1,2]");
+        var response = await _fixture.Client.GetListWithAuthAsync(
+            InstitutionConnectionListController.RouteBase,
+            range: new RangeParameter(1, 2));
         var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert
         result.Should().BeEquivalentTo(new List<InstitutionConnection>()
         {
-            new() { ExternalId = "SomeExternalId-organisation-list-0" },
+            CreateConnection("SomeExternalId-organisation-list-0"),
         },
         options => options.Excluding(e => e.Id)
             .Excluding(e => e.ConnectUrl)
@@ -95,8 +105,9 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         });
 
         // Act
-        var response = await _fixture.Client
-            .GetWithAuthAsync($"{InstitutionConnectionListController.RouteBase}?range=[0,100]");
+        var response = await _fixture.Client.GetListWithAuthAsync(
+            InstitutionConnectionListController.RouteBase,
+            range: new RangeParameter(0, 100));
         var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert

@@ -4,11 +4,11 @@ public class Institution
 {
     public Guid Id { get; init; }
 
-    public string ExternalId { get; init; } = null!;
+    public required string ExternalId { get; init; }
 
-    public string Name { get; init; } = null!;
+    public required string Name { get; init; }
 
     public Uri? Logo { get; init; }
 
-    public string Country { get; init; } = null!;
+    public required string Country { get; init; }
 }

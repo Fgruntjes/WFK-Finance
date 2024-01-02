@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using App.Backend.Dto;
+using App.Backend.Json;
 using App.Backend.Mvc;
 using App.Backend.OpenApi;
 using App.Lib.Configuration;
@@ -27,17 +28,20 @@ public class Startup
     {
         services.AddControllers(options =>
         {
-            options.ModelBinderProviders.Insert(0, new RangeParameterBinderProvider());
-
+            options.ModelBinderProviders.Insert(0, new JsonBinderProvider());
             options.Filters.Add(new ProducesAttribute("application/json"));
             options.Filters.Add(new ConsumesAttribute("application/json"));
+        }).AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new RangeParameterJsonConverter());
         });
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
             config.ParameterFilter<RangeFilter>();
             config.OperationFilter<RangeFilter>();
-            config.SchemaFilter<RequireNonNullableFilter>();
+            config.SchemaFilter<NonNullableFilter>();
             config.TagActionsBy(api =>
             {
                 return new[] { GetControllerTag(api.ActionDescriptor) };

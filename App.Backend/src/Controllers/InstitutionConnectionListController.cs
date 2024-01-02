@@ -1,10 +1,10 @@
 using App.Backend.Dto;
+using App.Backend.Linq;
 using App.Backend.Mvc;
 using App.Lib.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RabbitMQ.Client;
 using InstitutionConnection = App.Backend.Dto.InstitutionConnection;
 
 namespace App.Backend.Controllers;
@@ -33,7 +33,7 @@ public class InstitutionConnectionListController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         range ??= new RangeParameter();
-        
+
         var organisationId = _organisationIdProvider.GetOrganisationId();
         var query = _database.InstitutionConnections
             .Where(e => e.OrganisationId == organisationId);
@@ -41,8 +41,7 @@ public class InstitutionConnectionListController : ControllerBase
         var totalCount = await query.CountAsync(cancellationToken);
         var result = await query
             .OrderBy(e => e.CreatedAt)
-            .Skip(range.Offset)
-            .Take(range.Limit)
+            .ApplyRange(range)
             .Include(e => e.Accounts)
             .Select(e => e.ToDto())
             .ToListAsync(cancellationToken);
