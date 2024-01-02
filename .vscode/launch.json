@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "name": "Attach Backend",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "App.Backend"
+    }
+  ]
+}
