@@ -42,7 +42,7 @@ locals {
     App = {
       Environment = var.app_environment,
       Version     = var.app_version,
-      FrontendUrl = local.app_frontend_url,
+      FrontendUrl = "${local.app_frontend_url}/",
     }
     DataProtection = {
       Enabled           = "true",

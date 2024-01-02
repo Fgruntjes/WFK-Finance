@@ -38,13 +38,13 @@ resource "azurerm_mssql_server" "backend_database" {
 }
 
 resource "azurerm_mssql_database" "backend_database" {
-  name         = "${var.app_environment}-backend"
-  server_id    = azurerm_mssql_server.backend_database.id
-  collation    = "SQL_Latin1_General_CP1_CI_AS"
-  license_type = "LicenseIncluded"
-  sku_name     = "S0"
-  # auto_pause_delay_in_minutes = 60
-  storage_account_type = "Local"
+  name                        = "${var.app_environment}-backend"
+  server_id                   = azurerm_mssql_server.backend_database.id
+  collation                   = "SQL_Latin1_General_CP1_CI_AS"
+  sku_name                    = "GP_S_Gen5_1"
+  auto_pause_delay_in_minutes = 60
+  min_capacity                = 0.5
+  storage_account_type        = "Local"
 
   dynamic "short_term_retention_policy" {
     for_each = local.backend_database_backups_enabled ? [1] : []
