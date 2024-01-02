@@ -86,7 +86,8 @@ jobs:
                   dotnet test ${{ matrix.project }} \
                       --no-build \
                       --blame \
-                      --blame-hang-timeout 2m
+                      --blame-hang-timeout 2m \
+                      --logger "console;verbosity=normal"
 
     #########################################################
     # PR check
