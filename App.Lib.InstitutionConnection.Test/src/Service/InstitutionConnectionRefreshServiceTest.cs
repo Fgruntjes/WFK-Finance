@@ -8,6 +8,7 @@ using App.Lib.Test.Database;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NodaTime;
 using VMelnalksnis.NordigenDotNet.Accounts;
 using VMelnalksnis.NordigenDotNet.Requisitions;
 
@@ -169,184 +170,7 @@ public class InstitutionConnectionRefreshServiceTest
     }
 
     [Fact]
-    public async Task ById_RemoveOldAccounts()
-    {
-        // Arrange
-        var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
-        var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
-        fixture.Database.SeedData(context =>
-        {
-            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
-            {
-                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
-                ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
-                Iban = "IBAN-1"
-            });
-            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
-            {
-                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
-                ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127",
-                Iban = "IBAN-2"
-            });
-        });
-        fixture.Services.WithMock<IRequisitionClient>(mock =>
-        {
-            var externalGuid = new Guid(fixture.InstitutionConnectionEntity.ExternalId);
-            var nordigenRequisitionResult = new Requisition
-            {
-                Link = new Uri("https://www.example.com/connect-url/nordigen-requisition"),
-                Id = externalGuid,
-                Accounts = new List<Guid> { new("582a2fcd-b842-45e3-b1b3-ab2a54e42127") }
-            };
-
-            mock.Reset();
-            mock.Setup(r => r.Get(externalGuid, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(nordigenRequisitionResult);
-        });
-
-        // Act
-        await service.Refresh(fixture.InstitutionConnectionEntity.Id);
-
-        // Assert
-        fixture.Database.WithData(context =>
-        {
-            context.InstitutionAccounts
-                .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
-                .ToList()
-                .Should()
-                .BeEquivalentTo(new List<InstitutionAccountEntity>
-                {
-                    new () { ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127" }
-                }, options => options.Including(a => a.ExternalId));
-        });
-    }
-
-    [Fact]
-    public async Task ById_AddNewAccounts()
-    {
-        // Arrange
-        var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
-        var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
-        var newAccountId = new Guid("582a2fcd-b842-45e3-b1b3-ab2a54e42127");
-        fixture.Database.SeedData(context =>
-        {
-            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
-            {
-                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
-                ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
-                Iban = "IBAN-1"
-            });
-        });
-        fixture.Services.WithMock<IRequisitionClient>(mock =>
-        {
-            var externalGuid = new Guid(fixture.InstitutionConnectionEntity.ExternalId);
-            var nordigenRequisitionResult = new Requisition
-            {
-                Link = new Uri("https://www.example.com/connect-url/nordigen-requisition"),
-                Id = externalGuid,
-                Accounts = new List<Guid>
-                {
-                    new ("a1fd81b4-3ef1-4036-8899-d337314a1638"),
-                    newAccountId
-                }
-            };
-
-            mock.Reset();
-            mock.Setup(r => r.Get(externalGuid, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(nordigenRequisitionResult);
-        });
-        fixture.Services.WithMock<IAccountClient>(mock =>
-        {
-            mock.Setup(a => a.Get(newAccountId, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Account()
-                {
-                    Id = newAccountId,
-                    Iban = "IBAN-2",
-                });
-        });
-
-        // Act
-        await service.Refresh(fixture.InstitutionConnectionEntity.Id);
-
-        // Assert
-        fixture.Database.WithData(context =>
-        {
-            context.InstitutionAccounts
-                .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
-                .ToList()
-                .Should()
-                .BeEquivalentTo(
-                    new List<InstitutionAccountEntity>
-                    {
-                        new () { ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638", Iban = "IBAN-1"},
-                        new () { ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127", Iban = "IBAN-2" }
-                    },
-                    options => options
-                        .Including(a => a.ExternalId)
-                        .Including(a => a.Iban));
-        });
-    }
-
-    [Fact]
-    public async Task ById_DoNothingWhenEqual()
-    {
-        // Arrange
-        var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
-        var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
-        fixture.Database.SeedData(context =>
-        {
-            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
-            {
-                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
-                ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
-                Iban = "IBAN-1"
-            });
-            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
-            {
-                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
-                ExternalId = "582a2fcd-b842-45e3-b1b3-ab2a54e42127",
-                Iban = "IBAN-2"
-            });
-        });
-        fixture.Services.WithMock<IRequisitionClient>(mock =>
-        {
-            var externalGuid = new Guid(fixture.InstitutionConnectionEntity.ExternalId);
-            var nordigenRequisitionResult = new Requisition
-            {
-                Link = new Uri("https://www.example.com/connect-url/nordigen-requisition"),
-                Id = externalGuid,
-                Accounts = new List<Guid>
-                {
-                    new ("a1fd81b4-3ef1-4036-8899-d337314a1638"),
-                    new ("582a2fcd-b842-45e3-b1b3-ab2a54e42127"),
-                }
-            };
-
-            mock.Reset();
-            mock.Setup(r => r.Get(externalGuid, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(nordigenRequisitionResult);
-        });
-
-        // Act
-        await service.Refresh(fixture.InstitutionConnectionEntity.Id);
-
-        // Assert
-        fixture.Database.WithData(context =>
-        {
-            context.InstitutionAccounts
-                .Where(a => a.InstitutionConnectionId == fixture.InstitutionConnectionEntity.Id)
-                .ToList()
-                .Should()
-                .HaveCount(2);
-        });
-        fixture.Services.WithMock<IAccountClient>(mock =>
-        {
-            mock.Verify(m => m.Get(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
-        });
-    }
-
-    [Fact]
-    public async Task QueueRefreshJobs()
+    public async Task QueueRefreshJobsOnlyWhenNotAlreadyQueued()
     {
         // Arrange
         var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
@@ -370,6 +194,89 @@ public class InstitutionConnectionRefreshServiceTest
                         ),
                     Times.Exactly(2));
             }
+        });
+    }
+
+    [Fact]
+    public async Task QueueRefreshJobsMaxOncePer12Hours()
+    {
+        // Arrange
+        var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
+        var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
+        var now = new LocalDateTime(2023, 12, 1, 10, 0).InUtc().ToInstant();
+        fixture.Services.WithMock<IClock>(mock =>
+        {
+            mock.Setup(m => m.GetCurrentInstant()).Returns(now);
+        });
+
+        fixture.Database.SeedData(context =>
+        {
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
+            {
+                Id = new Guid("1cb4f693-fd2b-46f0-8559-842dbd3090a4"),
+                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
+                ExternalId = "e0e3febd-7e7f-46c3-9376-04d5d4343ced",
+                Iban = "IBAN-1",
+                LastImportRequested = now
+            });
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
+            {
+                Id = new Guid("31ba4686-d399-46ee-a2c7-f81644b5d61e"),
+                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
+                ExternalId = "d586a811-d757-4f65-aba6-22576b81abce",
+                Iban = "IBAN-2",
+                LastImportRequested = now.Minus(Duration.FromHours(13)),
+            });
+        });
+
+        // Act
+        await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
+        await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
+
+        // Assert
+        fixture.Services.WithMock<IServiceBus>(mock =>
+        {
+            mock.Verify(
+                m => m.Send(
+                    It.Is<InstitutionAccountTransactionImportJob>(j =>
+                        j.InstitutionConnectionAccountId == new Guid("31ba4686-d399-46ee-a2c7-f81644b5d61e")),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+
+            mock.Verify(
+                m => m.Send(
+                    It.IsAny<InstitutionAccountTransactionImportJob>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once());
+        });
+    }
+
+    [Fact]
+    public async Task LimitRefreshAccountsOnlyWhenNoAccountsAreSet()
+    {
+        var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
+        var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
+        fixture.Database.SeedData(context =>
+        {
+            context.InstitutionAccounts.Add(new InstitutionAccountEntity()
+            {
+                InstitutionConnectionId = fixture.InstitutionConnectionEntity.Id,
+                ExternalId = "a1fd81b4-3ef1-4036-8899-d337314a1638",
+                Iban = "IBAN-1"
+            });
+        });
+
+        // Act
+        await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
+        var result = await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
+
+        // Assert
+        result.Accounts.Should().HaveCount(1);
+        fixture.Services.WithMock<IRequisitionClient>(mock =>
+        {
+            mock.Verify(
+                m => m.Get(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+                Times.Never());
         });
     }
 }

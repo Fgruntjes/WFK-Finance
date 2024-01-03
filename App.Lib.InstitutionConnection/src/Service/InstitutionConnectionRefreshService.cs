@@ -5,6 +5,8 @@ using App.Lib.InstitutionConnection.Exception;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NodaTime;
 using VMelnalksnis.NordigenDotNet;
 
 namespace App.Lib.InstitutionConnection.Service;
@@ -15,17 +17,23 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
     private readonly IOrganisationIdProvider _organisationIdProvider;
     private readonly INordigenClient _nordigenClient;
     private readonly IServiceBus _serviceBus;
+    private readonly IClock _clock;
+    private readonly ILogger<InstitutionConnectionRefreshService> _log;
 
     public InstitutionConnectionRefreshService(
         DatabaseContext database,
         IOrganisationIdProvider organisationIdProvider,
         INordigenClient nordigenClient,
-        IServiceBus serviceBus)
+        IServiceBus serviceBus,
+        IClock clock,
+        ILoggerFactory loggerFactory)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;
         _nordigenClient = nordigenClient;
         _serviceBus = serviceBus;
+        _clock = clock;
+        _log = loggerFactory.CreateLogger<InstitutionConnectionRefreshService>();
     }
 
     public async Task<InstitutionConnectionEntity> Refresh(
@@ -69,21 +77,29 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
             .Take(1)
             .FirstAsync(cancellationToken);
 
-        var connectionAccounts = await _nordigenClient.Requisitions.Get(
-            Guid.Parse(entity.ExternalId),
-            cancellationToken);
-
         // Update accounts
-        await UpdateAccounts(entity, connectionAccounts.Accounts.ToArray());
+        await UpdateAccounts(entity, cancellationToken);
 
         // Publish 
+        var now = _clock.GetCurrentInstant();
+        var importDelay = Duration.FromHours(12);
         foreach (var account in entity.Accounts)
         {
+            if (account.LastImportRequested != null && account.LastImportRequested + importDelay > now)
+            {
+                _log.LogInformation(
+                    "Skipping refresh for {InstitutionAccountId} as it was refreshed at {LastImport}",
+                    account.Id,
+                    account.LastImport);
+                continue;
+            }
+
             await _serviceBus.Send(new InstitutionAccountTransactionImportJob
             {
                 InstitutionConnectionAccountId = account.Id,
             }, cancellationToken);
 
+            account.LastImportRequested = _clock.GetCurrentInstant();
             account.ImportStatus = ImportStatus.Queued;
         }
 
@@ -91,29 +107,18 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         return entity;
     }
 
-    private async Task UpdateAccounts(InstitutionConnectionEntity entity, IEnumerable<Guid> externalIdList)
+    private async Task UpdateAccounts(InstitutionConnectionEntity entity, CancellationToken cancellationToken = default)
     {
-        var entityAccounts = entity.Accounts.ToList();
-        var localIds = new HashSet<Guid>(entityAccounts.Select(a => new Guid(a.ExternalId)));
-        var externalIds = new HashSet<Guid>(externalIdList);
-
-        if (localIds.SetEquals(externalIds))
+        if (entity.Accounts.Any())
         {
+            _log.LogInformation(
+                "Skipping update accounts for {InstitutionConnectionId} it already has accounts, to update remove the connection and recreate",
+                entity.Id);
             return;
         }
 
-        // Remove accounts that are not in the new list
-        var removeAccounts = entityAccounts
-            .Where(account => !externalIds.Contains(new Guid(account.ExternalId)));
-        foreach (var accountEntity in removeAccounts)
-        {
-            entity.Accounts.Remove(accountEntity);
-            _database.InstitutionAccounts.Remove(accountEntity);
-        }
-
-        // Add new accounts that are not in the current list
-        var newIds = externalIds.Where(id => !localIds.Contains(id));
-        foreach (var newId in newIds)
+        var requisition = await _nordigenClient.Requisitions.Get(Guid.Parse(entity.ExternalId), cancellationToken);
+        foreach (var newId in requisition.Accounts)
         {
             var accountInfo = await _nordigenClient.Accounts.Get(newId);
             entity.Accounts.Add(new InstitutionAccountEntity
