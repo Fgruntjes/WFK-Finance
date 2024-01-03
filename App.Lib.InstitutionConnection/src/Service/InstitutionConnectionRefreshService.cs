@@ -83,6 +83,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
             {
                 InstitutionConnectionAccountId = account.Id,
             }, cancellationToken);
+
             account.ImportStatus = ImportStatus.Queued;
         }
 
