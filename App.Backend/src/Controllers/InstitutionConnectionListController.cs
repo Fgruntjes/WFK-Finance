@@ -5,7 +5,6 @@ using App.Lib.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InstitutionConnection = App.Backend.Dto.InstitutionConnection;
 
 namespace App.Backend.Controllers;
 
@@ -43,7 +42,22 @@ public class InstitutionConnectionListController : ControllerBase
             .OrderBy(e => e.CreatedAt)
             .ApplyRange(range)
             .Include(e => e.Accounts)
-            .Select(e => e.ToDto())
+            .Select(e => new InstitutionConnection
+            {
+                Id = e.Id,
+                InstitutionId = e.InstitutionId,
+                ExternalId = e.ExternalId,
+                ConnectUrl = e.ConnectUrl,
+                Accounts = e.Accounts.Select(a => new InstitutionAccount
+                {
+                    Id = a.Id,
+                    ExternalId = a.ExternalId,
+                    Iban = a.Iban,
+                    ImportStatus = a.ImportStatus,
+                    LastImport = a.LastImport.HasValue ? a.LastImport.Value.ToDateTimeUtc() : null,
+                    TransactionCount = a.Transactions.Count
+                }).ToList()
+            })
             .ToListAsync(cancellationToken);
 
         return new ListResult<InstitutionConnection>(

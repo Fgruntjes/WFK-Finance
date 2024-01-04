@@ -80,6 +80,6 @@ public class InstitutionListController : ControllerBase
             return (list, list.Count);
         }
 
-        throw new Exception("Invalid filter");
+        throw new System.Exception("Invalid filter");
     }
 }

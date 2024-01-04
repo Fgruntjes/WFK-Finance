@@ -62,7 +62,7 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         return new InstitutionConnection
         {
             ExternalId = externalId,
-            Accounts = new List<InstitutionConnectionAccount>(),
+            Accounts = new List<InstitutionAccount>(),
             ConnectUrl = new Uri($"https://www.{externalId}.com/"),
         };
     }

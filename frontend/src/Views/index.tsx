@@ -3,3 +3,5 @@ export { default as InstitutionConnectionCreateView } from "./InstitutionConnect
 export { default as InstitutionConnectionListView } from "./InstitutionConnections/ListView";
 
 export { default as InstitutionRecordRepresentation } from "./Institutions/RecordRepresentation";
+
+export { default as InstitutionAccountShowView } from "./InstitutionAccount/ShowView";

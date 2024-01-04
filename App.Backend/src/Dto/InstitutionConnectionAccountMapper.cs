@@ -4,13 +4,15 @@ namespace App.Backend.Dto;
 
 public static class InstitutionConnectionAccountMapper
 {
-    public static InstitutionConnectionAccount ToDto(this InstitutionAccountEntity entity)
+    public static InstitutionAccount ToDto(this InstitutionAccountEntity entity)
     {
-        return new InstitutionConnectionAccount
+        return new InstitutionAccount
         {
             Id = entity.Id,
             ExternalId = entity.ExternalId,
             Iban = entity.Iban,
+            ImportStatus = entity.ImportStatus,
+            LastImport = entity.LastImport?.ToDateTimeUtc(),
         };
     }
 }

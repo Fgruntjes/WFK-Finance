@@ -1,7 +1,9 @@
 import { Admin, CustomRoutes, Resource } from "react-admin";
 import { BrowserRouter, Route } from "react-router-dom";
+import AppLayout from "./AppLayout";
 import Dashboard from "./Dashboard";
 import {
+  InstitutionAccountShowView,
   InstitutionConnectionCreateReturnView,
   InstitutionConnectionCreateView,
   InstitutionConnectionListView,
@@ -20,6 +22,7 @@ function App() {
   return (
     <BrowserRouter>
       <Admin
+        layout={AppLayout}
         dataProvider={dataProvider}
         authProvider={authProvider}
         i18nProvider={i18nProvider}
@@ -27,15 +30,20 @@ function App() {
       >
         <CustomRoutes>
           <Route path="/" element={<Dashboard />} />
-          <Route
-            path="/institutionconnections/create-return"
-            element={<InstitutionConnectionCreateReturnView />}
-          />
         </CustomRoutes>
         <Resource
           name="institutionconnections"
           list={<InstitutionConnectionListView />}
           create={<InstitutionConnectionCreateView />}
+        >
+          <Route
+            path="create-return"
+            element={<InstitutionConnectionCreateReturnView />}
+          />
+        </Resource>
+        <Resource
+          name="institutionaccounts"
+          show={<InstitutionAccountShowView />}
         />
         <Resource
           name="institutions"

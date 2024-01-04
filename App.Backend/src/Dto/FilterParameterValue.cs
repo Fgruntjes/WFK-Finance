@@ -7,13 +7,13 @@ public class FilterParameterValue
     public int? IntValue { get; set; }
     public ICollection<int>? IntCollectionValue { get; set; }
 
-    public static implicit operator FilterParameterValue(string value)
+    public static implicit operator FilterParameterValue(string? value)
         => new() { StringValue = value };
 
     public static implicit operator FilterParameterValue(string[] value)
         => new() { StringCollectionValue = value.ToList() };
 
-    public static implicit operator FilterParameterValue(int value)
+    public static implicit operator FilterParameterValue(int? value)
         => new() { IntValue = value };
 
     public static implicit operator FilterParameterValue(int[] value)

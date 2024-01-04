@@ -76,9 +76,9 @@ internal class NonNullableFilter : ISchemaFilter
     private static bool IsNullable(MemberInfo memberInfo)
     {
         var targetObject = memberInfo.ReflectedType
-            ?? throw new Exception("Property does not have a target object");
+            ?? throw new System.Exception("Property does not have a target object");
         var targetProperty = targetObject.GetProperty(memberInfo.Name)
-            ?? throw new Exception("Property not found on target object");
+            ?? throw new System.Exception("Property not found on target object");
 
         return IsNullable(targetProperty);
     }

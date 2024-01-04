@@ -33,6 +33,9 @@ public class RangeParameterJsonConverter : JsonConverter<RangeParameter>
 
     public override void Write(Utf8JsonWriter writer, RangeParameter value, JsonSerializerOptions options)
     {
-        writer.WriteStringValue($"[{value.Start},{value.End}]");
+        writer.WriteStartArray();
+        writer.WriteNumberValue(value.Start);
+        writer.WriteNumberValue(value.End);
+        writer.WriteEndArray();
     }
 }

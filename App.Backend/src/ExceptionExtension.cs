@@ -7,7 +7,7 @@ namespace App.Backend;
 public static class ExceptionExtension
 {
     public static ProblemDetails ToProblemDetails(
-        this Exception exception,
+        this System.Exception exception,
         HttpStatusCode statusCode = HttpStatusCode.BadRequest)
     {
         var problemDetails = new ProblemDetails

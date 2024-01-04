@@ -28,7 +28,7 @@ public class InstitutionConnectionGetTest : IClassFixture<InstitutionConnectionF
             Id = _fixture.InstitutionConnectionEntity.Id,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
             InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
-            Accounts = _fixture.InstitutionConnectionEntity.Accounts.Select(a => new InstitutionConnectionAccount()
+            Accounts = _fixture.InstitutionConnectionEntity.Accounts.Select(a => new InstitutionAccount()
             {
                 Id = a.Id,
                 ExternalId = a.ExternalId,

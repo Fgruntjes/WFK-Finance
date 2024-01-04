@@ -1,12 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.Test;
-using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -54,7 +52,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
             ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
             InstitutionId = _fixture.InstitutionEntity.Id,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
-            Accounts = new List<InstitutionConnectionAccount>(),
+            Accounts = new List<InstitutionAccount>(),
         });
     }
 

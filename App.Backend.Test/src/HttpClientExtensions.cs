@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Web;
 using App.Backend.Dto;
 using App.Backend.Mvc;
@@ -44,7 +45,7 @@ public static class HttpClientExtensions
     {
         var response = await client.GetWithAuthAsync(requestUri, cancellationToken);
 
-        return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken)
+        return await response.Content.ReadFromJsonAsync<TResponse>(options: JsonOptions.Options, cancellationToken: cancellationToken)
             ?? throw FailException.ForFailure("Could not deserialize response value");
     }
 
@@ -52,7 +53,7 @@ public static class HttpClientExtensions
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
         RangeParameter? range = null,
-        SortOrder? sort = null,
+        SortParameter? sort = null,
         FilterParameter? filter = null,
         CancellationToken cancellationToken = default)
     {
@@ -74,13 +75,13 @@ public static class HttpClientExtensions
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
         FilterParameter? filter = null,
-        SortOrder? sort = null,
+        SortParameter? sort = null,
         RangeParameter? range = null,
         CancellationToken cancellationToken = default)
     {
         var response = await client.GetListWithAuthAsync(requestUri, range, sort, filter, cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(cancellationToken: cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(options: JsonOptions.Options, cancellationToken: cancellationToken);
         return result
             ?? throw FailException.ForFailure("Could not deserialize response value");
     }

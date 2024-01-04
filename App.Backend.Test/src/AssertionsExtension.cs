@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions.Primitives;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Backend.Test;

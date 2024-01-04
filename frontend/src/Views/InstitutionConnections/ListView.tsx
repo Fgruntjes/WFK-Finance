@@ -1,13 +1,14 @@
+import DateField from "@Components/DateField";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import {
   ArrayField,
-  ChipField,
   CreateButton,
   Datagrid,
   List,
+  NumberField,
   ReferenceField,
   ShowButton,
-  SingleFieldList,
+  TextField,
   TopToolbar,
 } from "react-admin";
 import RefreshButton from "./RefreshButton";
@@ -24,9 +25,13 @@ function ListView() {
       <Datagrid>
         <ReferenceField source="institutionId" reference="institutions" />
         <ArrayField source="accounts">
-          <SingleFieldList linkType={false}>
-            <ChipField source="iban" size="small" />
-          </SingleFieldList>
+          <Datagrid bulkActionButtons={false}>
+            <TextField source="iban" />
+            <TextField source="importStatus" />
+            <DateField source="lastImport" showTime />
+            <NumberField source="transactionCount" />
+            <ShowButton resource="institutionaccounts" />
+          </Datagrid>
         </ArrayField>
         <ButtonGroup>
           <RefreshButton />

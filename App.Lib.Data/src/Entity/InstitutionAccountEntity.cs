@@ -30,6 +30,9 @@ public class InstitutionAccountEntity
 
     public string? LastImportError { get; set; }
 
+    public ICollection<InstitutionAccountTransactionEntity> Transactions { get; set; } =
+        new List<InstitutionAccountTransactionEntity>();
+
     public InstitutionAccountEntity()
     {
         Id = Guid.NewGuid();

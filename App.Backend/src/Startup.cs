@@ -1,5 +1,4 @@
-using System.Text.RegularExpressions;
-using App.Backend.Dto;
+using System.Text.Json.Serialization;
 using App.Backend.Json;
 using App.Backend.Mvc;
 using App.Backend.OpenApi;
@@ -8,14 +7,11 @@ using App.Lib.Configuration.Options;
 using App.Lib.Data;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
 
 namespace App.Backend;
 
-public class Startup
+public partial class Startup
 {
     private IHostEnvironment Environment { get; }
 
@@ -33,6 +29,7 @@ public class Startup
             options.Filters.Add(new ConsumesAttribute("application/json"));
         }).AddJsonOptions(options =>
         {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             options.JsonSerializerOptions.Converters.Add(new RangeParameterJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new FilterParameterJsonConverter());
         });
@@ -40,13 +37,12 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
-            config.ParameterFilter<RangeFilter>();
-            config.OperationFilter<RangeFilter>();
+            config.UseInlineDefinitionsForEnums();
+            config.ParameterFilter<RangeParameterFilter>();
+            config.OperationFilter<RangeParameterFilter>();
             config.SchemaFilter<NonNullableFilter>();
-            config.TagActionsBy(api =>
-            {
-                return new[] { GetControllerTag(api.ActionDescriptor) };
-            });
+            config.SchemaFilter<FilterParameterFilter>();
+            config.TagActionsBy(ApiGroupTagger.GetTags);
         });
         services.AddProblemDetails();
         services.AddResponseCompression();
@@ -101,19 +97,5 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-    }
-
-    private static string GetControllerTag(ActionDescriptor descriptor)
-    {
-        var controllerName = descriptor.RouteValues["controller"]
-            ?? throw new Exception("Can not determine controller name from route values");
-        var matches = Regex.Matches(controllerName, "[A-Z][a-z]*");
-        if (matches.Count <= 1)
-        {
-            throw new Exception("Can not determine controller name from route values");
-        }
-
-        var lastMatchIndex = matches[^1].Index;
-        return controllerName[..lastMatchIndex];
     }
 }

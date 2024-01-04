@@ -9,7 +9,7 @@ function RecordRepresentation() {
 
   return (
     <>
-      {!!institution.logo ?? (
+      {!!institution.logo && (
         <img
           alt={institution.name}
           src={institution.logo as unknown as string}

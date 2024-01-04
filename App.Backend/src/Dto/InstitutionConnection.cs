@@ -10,5 +10,5 @@ public class InstitutionConnection
 
     public required Uri ConnectUrl { get; set; }
 
-    public required ICollection<InstitutionConnectionAccount> Accounts { get; set; }
+    public required ICollection<InstitutionAccount> Accounts { get; set; }
 }

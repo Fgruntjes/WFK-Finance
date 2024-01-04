@@ -1,7 +1,7 @@
 namespace App.Backend.Dto;
 
-public enum SortOrder
+public enum SortDirection
 {
-	Asc,
-	Desc,
+    Asc,
+    Desc,
 }

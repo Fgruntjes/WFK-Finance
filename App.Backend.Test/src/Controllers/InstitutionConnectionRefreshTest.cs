@@ -43,7 +43,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
             InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
             ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
-            Accounts = new List<InstitutionConnectionAccount>(),
+            Accounts = new List<InstitutionAccount>(),
         });
     }
 
@@ -99,7 +99,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
             InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
             ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
-            Accounts = new List<InstitutionConnectionAccount>(),
+            Accounts = new List<InstitutionAccount>(),
         });
     }
 
