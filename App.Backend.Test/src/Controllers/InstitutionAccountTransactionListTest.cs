@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.Data.Entity;
+using Gridify;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 
@@ -66,10 +67,9 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
         // Act
         var body = await _fixture.Client.GetListWithAuthAsync<InstitutionAccountTransaction>(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
-            sort: new SortParameter()
+            query: new GridifyQuery()
             {
-                Field = "date",
-                Direction = SortDirection.Desc,
+                OrderBy = "date desc"
             });
 
         // Assert
@@ -111,22 +111,20 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
-            sort: new SortParameter()
+            query: new GridifyQuery()
             {
-                Field = "InvalidProperty",
-                Direction = SortDirection.Desc,
+                OrderBy = "InvalidProperty desc"
             });
 
         // Assert
         await response.AssertProblemDetails(HttpStatusCode.BadRequest, new ProblemDetails
         {
             Title = "An error occurred",
-            Detail = "Property {Property} is not found on type {Type}",
+            Detail = "Property {Property} is not found",
             Status = (int)HttpStatusCode.BadRequest,
             Extensions =
             {
                 { "Property", "InvalidProperty" },
-                { "Type", "InstitutionAccountTransaction" }
             }
         });
     }
@@ -136,10 +134,10 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
-            range: new RangeParameter()
+            query: new GridifyQuery()
             {
-                Start = 1,
-                End = 2,
+                Page = 2,
+                PageSize = 1
             });
         var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransaction>>();
 
@@ -159,9 +157,9 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
-            filter: new FilterParameter()
+            query: new GridifyQuery()
             {
-                { "ExternalId", "SomeExternalId-organisation-match-0" }
+                Filter = "ExternalId = SomeExternalId-organisation-match-0"
             });
         var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransaction>>();
 
@@ -180,21 +178,20 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
-            filter: new FilterParameter()
+            query: new GridifyQuery()
             {
-                { "InvalidProperty", "SomeValue" }
+                Filter = "InvalidProperty = SomeValue"
             });
 
         // Assert
         await response.AssertProblemDetails(HttpStatusCode.BadRequest, new ProblemDetails
         {
             Title = "An error occurred",
-            Detail = "Property {Property} is not found on type {Type}",
+            Detail = "Property {Property} is not found",
             Status = (int)HttpStatusCode.BadRequest,
             Extensions =
             {
-                { "Property", "InvalidProperty" },
-                { "Type", "InstitutionAccountTransaction" }
+                { "Property", "InvalidProperty" }
             }
         });
     }

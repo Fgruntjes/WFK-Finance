@@ -15,9 +15,12 @@ public static class LocatorExtensions
         int screensTried = 0;
         do
         {
-            currentIndex = await actions
-                .Select(a => a.Locator)
-                .FirstAvailableIndexAsync();
+            var locatorTasks = actions.Select(a => a.Locator.WaitForAsync()).ToArray();
+            currentIndex = Task.WaitAny(locatorTasks);
+            if (locatorTasks[currentIndex].IsFaulted)
+            {
+                Task.WaitAll(locatorTasks);
+            }
 
             await actions[currentIndex].Action(actions[currentIndex].Locator);
             screensTried++;
@@ -33,26 +36,16 @@ public static class LocatorExtensions
         } while (currentIndex < actions.Length - 1);
     }
 
-    public static async Task<int> FirstAvailableIndexAsync(this IEnumerable<ILocator> locators)
+    private static async Task<bool> DidFindLocator(ILocator locator)
     {
-        return await locators.ToArray().FirstAvailableIndexAsync();
-    }
-
-    public static async Task<int> FirstAvailableIndexAsync(this ILocator[] locators)
-    {
-        var selectorTasks = locators
-            .Select(x => x.WaitForAsync())
-            .ToList();
-
-        var finishedTask = await Task.WhenAny(selectorTasks);
-        for (var index = 0; index < locators.Length; index++)
+        try
         {
-            if (selectorTasks[index] == finishedTask)
-            {
-                return index;
-            }
+            await locator.WaitForAsync();
+            return true;
         }
-
-        throw new Exception("None of the screens were found.");
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

@@ -1,7 +1,9 @@
-export { default as InstitutionConnectionCreateReturnView } from "./InstitutionConnections/CreateReturnView";
-export { default as InstitutionConnectionCreateView } from "./InstitutionConnections/CreateView";
-export { default as InstitutionConnectionListView } from "./InstitutionConnections/ListView";
+export { default as InstitutionConnectionsCreateReturnView } from "./InstitutionConnections/CreateReturnView";
+export { default as InstitutionConnectionsCreateView } from "./InstitutionConnections/CreateView";
+export { default as InstitutionConnectionsListView } from "./InstitutionConnections/ListView";
 
-export { default as InstitutionRecordRepresentation } from "./Institutions/RecordRepresentation";
+export { default as InstitutionsRecordRepresentation } from "./Institutions/RecordRepresentation";
 
-export { default as InstitutionAccountShowView } from "./InstitutionAccount/ShowView";
+export { default as InstitutionAccountsShowView } from "./InstitutionAccounts/ShowView";
+
+export { default as InstitutionAccountTransactionsList } from "./InstitutionAccountTransactions/ListView";

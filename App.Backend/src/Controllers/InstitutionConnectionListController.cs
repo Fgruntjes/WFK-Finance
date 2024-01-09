@@ -1,7 +1,8 @@
 using App.Backend.Dto;
-using App.Backend.Linq;
 using App.Backend.Mvc;
 using App.Lib.Data;
+using Gridify;
+using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,19 +29,15 @@ public class InstitutionConnectionListController : ControllerBase
     [HttpGet(Name = RouteName)]
     [ProducesResponseType(typeof(ICollection<InstitutionConnection>), StatusCodes.Status200OK)]
     public async Task<IActionResult> List(
-        [FromQuery] RangeParameter? range,
+        [FromQuery] GridifyQuery query,
         CancellationToken cancellationToken = default)
     {
-        range ??= new RangeParameter();
-
         var organisationId = _organisationIdProvider.GetOrganisationId();
-        var query = _database.InstitutionConnections
-            .Where(e => e.OrganisationId == organisationId);
+        var result = await _database.InstitutionConnections
+            .Where(e => e.OrganisationId == organisationId)
+            .GridifyQueryableAsync(query, null, cancellationToken);
 
-        var totalCount = await query.CountAsync(cancellationToken);
-        var result = await query
-            .OrderBy(e => e.CreatedAt)
-            .ApplyRange(range)
+        var items = await result.Query
             .Include(e => e.Accounts)
             .Select(e => new InstitutionConnection
             {
@@ -60,10 +57,7 @@ public class InstitutionConnectionListController : ControllerBase
             })
             .ToListAsync(cancellationToken);
 
-        return new ListResult<InstitutionConnection>(
-            result,
-            RouteBase,
-            range,
-            totalCount);
+        var start = query.Page * query.PageSize;
+        return ListResult<InstitutionConnection>.Create(items, RouteBase, query, result.Count);
     }
 }

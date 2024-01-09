@@ -1,22 +1,23 @@
-using System.Text.Json;
+using System.Text.RegularExpressions;
 using App.Backend.Dto;
-using App.Backend.Linq;
 using App.Backend.Mvc;
-using App.Backend.OpenApi;
 using App.Lib.Data;
-using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Service;
+using Gridify;
+using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
 [ApiController]
 [Authorize]
 [Route(RouteBase)]
-public class InstitutionListController : ControllerBase
+public partial class InstitutionListController : ControllerBase
 {
+    [GeneratedRegex("countryiso2 *= *([a-z]{2})", RegexOptions.IgnoreCase)]
+    private static partial Regex CountryFilterRegex();
+
     public const string RouteBase = "/institutions";
     public const string RouteName = nameof(InstitutionListController);
 
@@ -34,52 +35,37 @@ public class InstitutionListController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
-        [FromQuery] InstitutionFilterParameter filter,
-        [FromQuery] RangeParameter? range,
+        [FromQuery] GridifyQuery query,
         CancellationToken cancellationToken = default)
     {
-        range ??= new RangeParameter(0, 1000);
-        if (filter.Id == null && filter.CountryIso2 == null)
-            return BadRequest();
+        var result = await _database.Institutions.GridifyAsync(query, cancellationToken);
+        if (result.Count == 0)
+        {
+            var countryIso2 = FindCountryFilter(query.Filter);
+            if (countryIso2 != null)
+            {
+                result = (await _searchService.Search(countryIso2, cancellationToken))
+                    .AsQueryable()
+                    .Gridify(query);
+            }
+        }
 
-        var (result, count) = await CreateResultList(filter, range, cancellationToken);
-
-        return new ListResult<Institution>(
-            result.Select(e => e.ToDto()),
-            RouteBase,
-            range,
-            count);
+        return ListResult<Institution>.Create(RouteBase, query, result, entity => entity.ToDto());
     }
 
-    private async Task<(IList<InstitutionEntity>, int)> CreateResultList(
-        InstitutionFilterParameter filter,
-        RangeParameter? range,
-        CancellationToken cancellationToken)
+    private static string? FindCountryFilter(string? filter)
     {
-        if (filter.Id != null)
+        if (filter == null)
         {
-            var query = _database.Institutions.Where(e => filter.Id.Contains(e.Id));
-            if (filter.CountryIso2 != null)
-            {
-                query = query.Where(e => e.CountryIso2 == filter.CountryIso2);
-            }
-
-            var count = await query.CountAsync(cancellationToken);
-            if (range != null)
-            {
-                query = query.ApplyRange(range);
-            }
-
-            var list = await query.ToListAsync(cancellationToken);
-            return (list, count);
+            return null;
         }
 
-        if (filter.CountryIso2 != null)
+        var matches = CountryFilterRegex().Matches(filter);
+        if (matches.Count == 0)
         {
-            var list = (await _searchService.Search(filter.CountryIso2, cancellationToken)).ToList();
-            return (list, list.Count);
+            return null;
         }
 
-        throw new System.Exception("Invalid filter");
+        return matches[0].Groups[1].Value;
     }
 }

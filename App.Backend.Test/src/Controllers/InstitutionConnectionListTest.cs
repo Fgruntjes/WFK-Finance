@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.Data.Entity;
+using Gridify;
 
 namespace App.Backend.Test.Controllers;
 
@@ -73,7 +74,11 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionConnectionListController.RouteBase,
-            range: new RangeParameter(1, 2));
+            query: new GridifyQuery()
+            {
+                Page = 2,
+                PageSize = 1,
+            });
         var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert
@@ -107,7 +112,11 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionConnectionListController.RouteBase,
-            range: new RangeParameter(0, 100));
+            query: new GridifyQuery()
+            {
+                Page = 1,
+                PageSize = 100,
+            });
         var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
 
         // Assert

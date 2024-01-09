@@ -1,8 +1,9 @@
 using App.Backend.Dto;
-using App.Backend.Exception;
-using App.Backend.Linq;
 using App.Backend.Mvc;
 using App.Lib.Data;
+using App.Lib.Data.Entity;
+using Gridify;
+using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,15 +34,9 @@ public class InstitutionAccountTransactionListController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
         [FromRoute] Guid id,
-        [FromQuery] RangeParameter? range,
-        [FromQuery] FilterParameter? filter,
-        [FromQuery] SortParameter? sort,
+        [FromQuery] GridifyQuery query,
         CancellationToken cancellationToken = default)
     {
-        sort ??= new SortParameter();
-        range ??= new RangeParameter();
-        filter ??= new FilterParameter();
-
         var accountEntity = await _database.InstitutionAccounts
             .Where(e => e.Id == id)
             .Where(e => e.InstitutionConnection.OrganisationId == _organisationIdProvider.GetOrganisationId())
@@ -49,32 +44,14 @@ public class InstitutionAccountTransactionListController : ControllerBase
         if (accountEntity == null)
             return NotFound();
 
-        var organisationId = _organisationIdProvider.GetOrganisationId();
-        try
-        {
-            var query = _database.InstitutionAccountTransactions
-                .Where(e => e.AccountId == id)
-                .ApplyFilter(filter);
+        var result = await _database.InstitutionAccountTransactions
+            .Where(e => e.AccountId == id)
+            .GridifyAsync(query, cancellationToken);
 
-            var totalCount = await query.CountAsync(cancellationToken);
-            var result = await query
-                .OrderBy(e => e.CreatedAt)
-                .ApplySort(sort)
-                .ApplyRange(range)
-                .Select(e => e.ToDto())
-                .ToListAsync(cancellationToken);
-
-            return new ListResult<InstitutionAccountTransaction>(
-                result,
-                "institutionaccounttransactions",
-                range,
-                totalCount);
-        }
-        catch (InvalidPropertyException e)
-        {
-            var problemDetails = e.ToProblemDetails();
-            problemDetails.Extensions["Type"] = typeof(InstitutionAccountTransaction).Name;
-            return BadRequest(problemDetails);
-        }
+        return ListResult<InstitutionAccountTransaction>.Create(
+            "institutionaccounttransactions",
+            query,
+            result,
+            entity => entity.ToDto());
     }
 }

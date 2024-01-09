@@ -1,4 +1,4 @@
-using App.Backend.Dto;
+using Gridify;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Backend.Mvc;
@@ -25,12 +25,30 @@ public class ListResult<T> : ActionResult
         _totalCount = totalCount;
     }
 
-    public ListResult(
+    public static ListResult<T> Create(
         IEnumerable<T> items,
         string resource,
-        RangeParameter range,
-        int totalCount) : this(items, resource, range.Start, range.End, totalCount)
-    { }
+        GridifyQuery query,
+        int totalCount)
+    {
+        var page = int.Max(1, query.Page);
+        var start = (page - 1) * query.PageSize;
+        var end = (page - 1) * query.PageSize + items.Count();
+        return new ListResult<T>(items, resource, start, end, totalCount);
+    }
+
+    public static ListResult<T> Create<TEntity>(
+        string resource,
+        GridifyQuery query,
+        Paging<TEntity> paging,
+        Func<TEntity, T> dtoToEntity)
+    {
+        var items = paging.Data.Select(dtoToEntity);
+        var page = int.Max(1, query.Page);
+        var start = (page - 1) * query.PageSize;
+        var end = (page - 1) * query.PageSize + items.Count();
+        return new ListResult<T>(items, resource, start, end, paging.Count);
+    }
 
     public override async Task ExecuteResultAsync(ActionContext context)
     {

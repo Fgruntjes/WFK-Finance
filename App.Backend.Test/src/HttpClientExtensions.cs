@@ -3,16 +3,22 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
-using App.Backend.Dto;
-using App.Backend.Mvc;
 using App.Backend.Test.Auth;
 using App.Lib.Test;
+using Gridify;
 using Xunit.Sdk;
 
 namespace App.Backend.Test;
 
 public static class HttpClientExtensions
 {
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+    };
+
     public static async Task<HttpResponseMessage> GetWithAuthAsync(
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
@@ -45,43 +51,63 @@ public static class HttpClientExtensions
     {
         var response = await client.GetWithAuthAsync(requestUri, cancellationToken);
 
-        return await response.Content.ReadFromJsonAsync<TResponse>(options: JsonOptions.Options, cancellationToken: cancellationToken)
+        return await response.Content.ReadFromJsonAsync<TResponse>(_jsonOptions, cancellationToken: cancellationToken)
             ?? throw FailException.ForFailure("Could not deserialize response value");
     }
 
     public static async Task<HttpResponseMessage> GetListWithAuthAsync(
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
-        RangeParameter? range = null,
-        SortParameter? sort = null,
-        FilterParameter? filter = null,
+        GridifyQuery? query = null,
         CancellationToken cancellationToken = default)
     {
         var uri = new Uri(requestUri);
-        var query = HttpUtility.ParseQueryString(uri.Query);
+        var httpQuery = HttpUtility.ParseQueryString(uri.Query);
 
-        if (filter != null)
-            query["filter"] = JsonSerializer.Serialize(filter, JsonOptions.Options);
-        if (sort != null)
-            query["sort"] = JsonSerializer.Serialize(sort, JsonOptions.Options);
-        if (range != null)
-            query["range"] = $"[{range.Start},{range.End}]";
+        if (query?.Filter != null)
+        {
+            httpQuery["filter"] = query.Filter;
+        }
 
-        uri = new UriBuilder(uri) { Query = query.ToString() }.Uri;
+        if (query?.OrderBy != null)
+        {
+            httpQuery["orderBy"] = query.OrderBy;
+        }
+        else
+        {
+            httpQuery["orderBy"] = "createdAt asc";
+        }
+
+        if (query != null && query.Page != 0)
+        {
+            httpQuery["page"] = query.Page.ToString();
+        }
+
+        if (query != null && query.PageSize != 0)
+        {
+            httpQuery["pageSize"] = query.PageSize.ToString();
+        }
+        else
+        {
+            httpQuery["pageSize"] = "25";
+        }
+
+
+        uri = new UriBuilder(uri) { Query = httpQuery.ToString() }.Uri;
         return await client.GetWithAuthAsync(uri, cancellationToken);
     }
 
     public static async Task<ICollection<TResponse>> GetListWithAuthAsync<TResponse>(
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
-        FilterParameter? filter = null,
-        SortParameter? sort = null,
-        RangeParameter? range = null,
+        GridifyQuery? query = null,
         CancellationToken cancellationToken = default)
     {
-        var response = await client.GetListWithAuthAsync(requestUri, range, sort, filter, cancellationToken);
+        var response = await client.GetListWithAuthAsync(requestUri, query, cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(options: JsonOptions.Options, cancellationToken: cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(
+            _jsonOptions,
+            cancellationToken: cancellationToken);
         return result
             ?? throw FailException.ForFailure("Could not deserialize response value");
     }

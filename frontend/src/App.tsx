@@ -3,11 +3,11 @@ import { BrowserRouter, Route } from "react-router-dom";
 import AppLayout from "./AppLayout";
 import Dashboard from "./Dashboard";
 import {
-  InstitutionAccountShowView,
-  InstitutionConnectionCreateReturnView,
-  InstitutionConnectionCreateView,
-  InstitutionConnectionListView,
-  InstitutionRecordRepresentation,
+  InstitutionAccountsShowView,
+  InstitutionConnectionsCreateReturnView,
+  InstitutionConnectionsCreateView,
+  InstitutionConnectionsListView,
+  InstitutionsRecordRepresentation,
 } from "./Views";
 import auth0Client from "./authClient";
 import authProvider from "./authProvider";
@@ -33,21 +33,21 @@ function App() {
         </CustomRoutes>
         <Resource
           name="institutionconnections"
-          list={<InstitutionConnectionListView />}
-          create={<InstitutionConnectionCreateView />}
+          list={<InstitutionConnectionsListView />}
+          create={<InstitutionConnectionsCreateView />}
         >
           <Route
             path="create-return"
-            element={<InstitutionConnectionCreateReturnView />}
+            element={<InstitutionConnectionsCreateReturnView />}
           />
         </Resource>
         <Resource
           name="institutionaccounts"
-          show={<InstitutionAccountShowView />}
+          show={<InstitutionAccountsShowView />}
         />
         <Resource
           name="institutions"
-          recordRepresentation={<InstitutionRecordRepresentation />}
+          recordRepresentation={<InstitutionsRecordRepresentation />}
         />
       </Admin>
     </BrowserRouter>

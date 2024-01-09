@@ -5,6 +5,12 @@
       "type": "coreclr",
       "request": "attach",
       "processName": "App.Backend"
+    },
+    {
+      "name": "Attach Job.InstitutionAccountTransactionImport",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "App.Job.InstitutionAccountTransactionImport"
     }
   ]
 }

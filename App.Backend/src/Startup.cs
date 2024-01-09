@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using App.Backend.Json;
 using App.Backend.Mvc;
 using App.Backend.OpenApi;
 using App.Lib.Configuration;
@@ -24,24 +23,21 @@ public partial class Startup
     {
         services.AddControllers(options =>
         {
-            options.ModelBinderProviders.Insert(0, new JsonBinderProvider());
             options.Filters.Add(new ProducesAttribute("application/json"));
             options.Filters.Add(new ConsumesAttribute("application/json"));
+            options.Filters.Add(new GridifyMapperExceptionFilter());
         }).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            options.JsonSerializerOptions.Converters.Add(new RangeParameterJsonConverter());
-            options.JsonSerializerOptions.Converters.Add(new FilterParameterJsonConverter());
         });
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
             config.UseInlineDefinitionsForEnums();
-            config.ParameterFilter<RangeParameterFilter>();
-            config.OperationFilter<RangeParameterFilter>();
-            config.SchemaFilter<NonNullableFilter>();
-            config.SchemaFilter<FilterParameterFilter>();
+            config.ParameterFilter<LowerCaseParameterFilter>();
+            config.ParameterFilter<GridifyFilterParameterFilter>();
+            config.OperationFilter<RangeOperationFilter>();
             config.TagActionsBy(ApiGroupTagger.GetTags);
         });
         services.AddProblemDetails();

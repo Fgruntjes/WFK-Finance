@@ -21,11 +21,11 @@ class InstitutionConnectScreen
 
     public async Task ClickMenuAsync()
     {
-        await _page.GetByText("Bank accounts").ClickAsync();
+        await _page.GetByAppTestId("menu-item-institutionconnections").ClickAsync();
     }
 
     public async Task ClickAddAsync()
     {
-        await _page.GetByText("Add").ClickAsync();
+        await _page.GetByText("Create").ClickAsync();
     }
 }

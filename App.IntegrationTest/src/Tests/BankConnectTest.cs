@@ -56,5 +56,7 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         // Ensure we are on the list page and see the connected account
         await institutionConnectScreen.AssertIsOnScreen();
         await Assertions.Expect(page.GetByText("GL7839380000039382")).ToBeVisibleAsync();
+
+        // Go to accounts show page and check if we see transactions
     }
 }

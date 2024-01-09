@@ -5,6 +5,7 @@ using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.Test;
 using App.Lib.Test.Database;
+using Gridify;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -51,7 +52,10 @@ public class InstitutionListTest
         // Act
         var result = await fixture.Client.GetListWithAuthAsync<Institution>(
             InstitutionListController.RouteBase,
-            filter: new FilterParameter() { { "countryIso2", "NL" } });
+            query: new GridifyQuery()
+            {
+                Filter = "countryIso2 = NL"
+            });
 
         // Assert
         result.Should().BeEquivalentTo(new List<Institution>()
@@ -79,7 +83,10 @@ public class InstitutionListTest
         var fixture = new AppFixture(_databasePool, _loggerProvider);
         var result = await fixture.Client.GetListWithAuthAsync<Institution>(
             InstitutionListController.RouteBase,
-            filter: new FilterParameter() { { "countryIso2", "BE" } });
+            query: new GridifyQuery()
+            {
+                Filter = "countryIso2 = BE"
+            });
 
         // Assert
         result.Should().HaveCount(0);
@@ -118,8 +125,10 @@ public class InstitutionListTest
         // Act
         var result = await fixture.Client.GetListWithAuthAsync<Institution>(
             InstitutionListController.RouteBase,
-            filter: new FilterParameter() {{
-                "id", new[] { "2fdc768e-e916-47ca-9f09-90f939547fa8", "2fdc768e-e916-47ca-9f09-90f939547fa0" }}});
+            query: new GridifyQuery()
+            {
+                Filter = "id = 2fdc768e-e916-47ca-9f09-90f939547fa8 | id = 2fdc768e-e916-47ca-9f09-90f939547fa0"
+            });
 
         // Assert
         result.Should().BeEquivalentTo(new List<Institution>()
@@ -138,16 +147,5 @@ public class InstitutionListTest
             }
         },
             options => options.Excluding(e => e.Id));
-    }
-
-    [Fact]
-    public async Task NoFilterBadRequest()
-    {
-        // Act
-        var fixture = new AppFixture(_databasePool, _loggerProvider);
-        var response = await fixture.Client.GetListWithAuthAsync(InstitutionListController.RouteBase);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
