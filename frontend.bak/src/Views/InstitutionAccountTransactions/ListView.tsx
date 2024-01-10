@@ -3,12 +3,17 @@ import DateField from "@Components/DateField";
 import {
   Datagrid,
   List,
+  RefreshButton,
   TextField,
   TopToolbar,
   useTranslate,
 } from "react-admin";
 
-const ListActions = () => <TopToolbar></TopToolbar>;
+const ListActions = () => (
+  <TopToolbar>
+    <RefreshButton />
+  </TopToolbar>
+);
 
 type ListViewProps = {
   accountId: string | undefined;

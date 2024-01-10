@@ -30,11 +30,9 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
         });
 
         // Act
-        var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Delete, InstitutionConnectionListController.RouteBase)
-            {
-                Content = JsonContent.Create(new List<Guid> { institutionConnectionEntity.Id })
-            });
+        var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
+            HttpMethod.Delete,
+            $"{InstitutionConnectionListController.RouteBase}?id={institutionConnectionEntity.Id}"));
         var body = await response.Content.ReadFromJsonAsync<int>();
 
         // Assert

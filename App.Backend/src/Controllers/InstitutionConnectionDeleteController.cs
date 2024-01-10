@@ -1,5 +1,4 @@
 using App.Lib.Data;
-using App.Lib.InstitutionConnection.Exception;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,13 +24,13 @@ public class InstitutionConnectionDeleteController : ControllerBase
     [HttpDelete(Name = RouteName)]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(
-        [FromBody] ICollection<Guid> connectionIds,
+        [FromQuery] ICollection<Guid> id,
         CancellationToken cancellationToken = default)
     {
         var organisationId = _organisationIdProvider.GetOrganisationId();
         var entities = _database.InstitutionConnections
             .Where(e => e.OrganisationId == organisationId)
-            .Where(e => connectionIds.Contains(e.Id));
+            .Where(e => id.Contains(e.Id));
         var deleteCount = await entities.CountAsync(cancellationToken);
 
         _database.InstitutionConnections.RemoveRange(entities);

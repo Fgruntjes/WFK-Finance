@@ -38,6 +38,7 @@ public partial class Startup
             config.ParameterFilter<LowerCaseParameterFilter>();
             config.ParameterFilter<GridifyFilterParameterFilter>();
             config.OperationFilter<RangeOperationFilter>();
+            config.SchemaFilter<NonNullableFilter>();
             config.TagActionsBy(ApiGroupTagger.GetTags);
         });
         services.AddProblemDetails();
@@ -49,7 +50,7 @@ public partial class Startup
             corsPolicy
                 .WithOrigins(appOptions.FrontendUrl.TrimEnd('/'))
                 .WithExposedHeaders("Content-Range")
-                .WithMethods("GET", "POST", "DELETE", "PUT")
+                .WithMethods("GET", "POST", "DELETE", "PUT", "PATCH")
                 .WithHeaders("Authorization", "Content-Type", "Range");
         });
         services.AddCors(corsOptions =>

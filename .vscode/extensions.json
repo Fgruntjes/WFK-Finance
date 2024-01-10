@@ -3,6 +3,7 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "editorconfig.editorconfig",
-        "hashicorp.terraform"
+        "hashicorp.terraform",
+        "ms-dotnettools.csdevkit"
     ]
 }

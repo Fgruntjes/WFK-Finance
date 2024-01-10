@@ -3,12 +3,12 @@ locals {
 }
 
 resource "auth0_client" "frontend" {
-  name        = "${var.app_environment}-frontend"
-  description = "Frontend for ${var.app_environment}"
-  app_type    = "spa"
-  callbacks = [
-    "${local.app_frontend_url}/auth-callback",
-  ]
+  name                = "${var.app_environment}-frontend"
+  description         = "Frontend for ${var.app_environment}"
+  app_type            = "spa"
+  callbacks           = [local.app_frontend_url]
+  web_origins         = [local.app_frontend_url]
+  allowed_logout_urls = [local.app_frontend_url]
 
   oidc_conformant = true
   grant_types = [

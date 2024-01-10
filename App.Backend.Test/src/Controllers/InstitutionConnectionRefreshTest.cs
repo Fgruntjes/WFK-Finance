@@ -33,7 +33,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         // Act
         var externalId = _fixture.InstitutionConnectionEntity.ExternalId;
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Put, $"{InstitutionConnectionListController.RouteBase}/refresh/external/{externalId}"));
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/external/{externalId}"));
         var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
 
         // Assert
@@ -62,7 +62,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
 
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Put, $"{InstitutionConnectionListController.RouteBase}/refresh/external/SomeExternalIdMissing"));
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/external/SomeExternalIdMissing"));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -89,7 +89,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         // Act
         var id = _fixture.InstitutionConnectionEntity.Id;
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Put, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
         var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
 
         // Assert
@@ -119,7 +119,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
 
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Put, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

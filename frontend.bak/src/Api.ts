@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type FilterParameterValue = Record<string, string | number | string[] | number[]>;
+
 export interface Institution {
   /** @format uuid */
   id: string;
@@ -24,7 +26,7 @@ export interface InstitutionAccount {
   id: string;
   externalId: string;
   iban: string;
-  importStatus: InstitutionAccountImportStatusEnum;
+  importStatus: "Success" | "Queued" | "Working" | "Failed";
   /** @format date-time */
   lastImport?: string | null;
   /** @format int32 */
@@ -76,11 +78,4 @@ export interface ProblemDetails {
   detail?: string;
   instance?: string;
   [key: string]: any;
-}
-
-export enum InstitutionAccountImportStatusEnum {
-  Success = "Success",
-  Queued = "Queued",
-  Working = "Working",
-  Failed = "Failed",
 }

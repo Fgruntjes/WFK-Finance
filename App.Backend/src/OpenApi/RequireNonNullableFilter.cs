@@ -6,7 +6,7 @@ namespace App.Backend.OpenApi;
 
 internal class NonNullableFilter : ISchemaFilter
 {
-    private static NullabilityInfoContext _nullabilityContext = new();
+    private static readonly NullabilityInfoContext _nullabilityContext = new();
 
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {

@@ -1,5 +1,4 @@
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import { Alert } from "antd";
 import { useMemo } from "react";
 
 type ErrorType = Error | string | unknown | Error[] | string[] | unknown[];
@@ -31,26 +30,28 @@ const LocalError = (props: ErrorProps) => {
     () => normalizeErrors(props.error),
     [props.error],
   );
-  const title = useMemo(
-    () =>
-      normalizedErrors.length === 1
-        ? normalizedErrors[0].name ?? "Error"
-        : "Errors",
-    [normalizedErrors],
-  );
+  const title = useMemo(() => {
+    if (normalizedErrors.length > 1) {
+      return "Errors";
+    }
+    if (normalizedErrors.length === 1) {
+      if (
+        "statusCode" in normalizedErrors[0] &&
+        normalizedErrors[0].statusCode == 404
+      ) {
+        return "Not found";
+      }
+      return normalizedErrors[0].name ?? "Unknown error";
+    }
+    return "Unknown error";
+  }, [normalizedErrors]);
   const description = useMemo(
-    () =>
-      normalizedErrors.length === 1
-        ? normalizedErrors[0].message ?? "Unknown error"
-        : normalizedErrors.map((error) => error.message).join("\n"),
+    () => normalizedErrors.map((error) => error.message).join("\n"),
     [normalizedErrors],
   );
 
   return (
-    <Alert severity="error">
-      <AlertTitle>{title}</AlertTitle>
-      {description}
-    </Alert>
+    <Alert message={title} description={description} type="error" showIcon />
   );
 };
 

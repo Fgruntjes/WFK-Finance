@@ -1,4 +1,4 @@
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig, loadEnv } from "vite";
 
@@ -20,7 +20,6 @@ export default defineConfig(({ mode }) => {
     return JSON.stringify(process.env[name]);
   }
 
-  const appUrl = envVal("APP_FRONTEND_URL", "http://localhost:3000");
   return {
     server: {
       port: 3000,
@@ -32,10 +31,6 @@ export default defineConfig(({ mode }) => {
       "import.meta.env.AUTH0_DOMAIN": envVal("AUTH0_DOMAIN"),
       "import.meta.env.AUTH0_CLIENT_ID": envVal("AUTH0_CLIENT_ID"),
       "import.meta.env.AUTH0_AUDIENCE": envVal("AUTH0_AUDIENCE"),
-      "import.meta.env.LOGIN_REDIRECT_URL": JSON.stringify(
-        `${appUrl}/auth-callback`,
-      ),
-      "import.meta.env.LOGOUT_REDIRECT_URL": JSON.stringify(`${appUrl}`),
       "import.meta.env.SENTRY_DSN": envVal("SENTRY_DSN"),
     },
     build: {
@@ -43,9 +38,10 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        "@Api": path.resolve(__dirname, "./src/Api.ts"),
-        "@Components": path.resolve(__dirname, "./src/Components"),
-        "@Views": path.resolve(__dirname, "./src/Views"),
+        "@api": `${path.resolve(__dirname, "./src")}/Api.ts`,
+        "@components": path.resolve(__dirname, "./src/components"),
+        "@pages": path.resolve(__dirname, "./src/pages"),
+        "@hooks": path.resolve(__dirname, "./src/hooks"),
       },
     },
   };
