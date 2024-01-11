@@ -175,6 +175,11 @@ public class InstitutionConnectionRefreshServiceTest
         // Arrange
         var fixture = new InstitutionConnectionRefreshFixture(_databasePool, _loggerProvider);
         var service = fixture.Services.GetRequiredService<IInstitutionConnectionRefreshService>();
+        var now = new LocalDateTime(2023, 12, 1, 10, 0).InUtc().ToInstant();
+        fixture.Services.WithMock<IClock>(mock =>
+        {
+            mock.Setup(m => m.GetCurrentInstant()).Returns(now);
+        });
 
         // Act
         var result = await service.Refresh(fixture.InstitutionConnectionEntity.ExternalId);
@@ -188,11 +193,9 @@ public class InstitutionConnectionRefreshServiceTest
             {
                 mock.Verify(
                     m => m.Send(
-                        It.Is<InstitutionAccountTransactionImportJob>(job
-                            => job.InstitutionConnectionAccountId == account.Id),
-                        It.IsAny<CancellationToken>()
-                        ),
-                    Times.Exactly(2));
+                        It.Is<InstitutionAccountTransactionImportJob>(job => job.InstitutionConnectionAccountId == account.Id),
+                        It.IsAny<CancellationToken>()),
+                    Times.Exactly(1));
             }
         });
     }

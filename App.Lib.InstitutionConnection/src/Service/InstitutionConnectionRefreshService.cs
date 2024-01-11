@@ -4,6 +4,7 @@ using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;
+using Medallion.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -19,6 +20,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
     private readonly IServiceBus _serviceBus;
     private readonly IClock _clock;
     private readonly ILogger<InstitutionConnectionRefreshService> _log;
+    private readonly IDistributedLockProvider _lockProvider;
 
     public InstitutionConnectionRefreshService(
         DatabaseContext database,
@@ -26,14 +28,16 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         INordigenClient nordigenClient,
         IServiceBus serviceBus,
         IClock clock,
-        ILoggerFactory loggerFactory)
+        ILogger<InstitutionConnectionRefreshService> logger,
+        IDistributedLockProvider distributedLockProvider)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;
         _nordigenClient = nordigenClient;
         _serviceBus = serviceBus;
         _clock = clock;
-        _log = loggerFactory.CreateLogger<InstitutionConnectionRefreshService>();
+        _log = logger;
+        _lockProvider = distributedLockProvider;
     }
 
     public async Task<InstitutionConnectionEntity> Refresh(
@@ -69,42 +73,48 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         CancellationToken cancellationToken = default)
     {
         var organisationId = _organisationIdProvider.GetOrganisationId();
-        var entity = await _database.InstitutionConnections
+        var entityId = await _database.InstitutionConnections
             .Where(predicate)
             .Where(e => e.OrganisationId == organisationId)
-            .Include(e => e.Accounts)
-            .OrderBy(e => e.CreatedAt)
-            .Take(1)
+            .Select(e => e.Id)
             .FirstAsync(cancellationToken);
 
-        // Update accounts
-        await UpdateAccounts(entity, cancellationToken);
-
-        // Publish 
-        var now = _clock.GetCurrentInstant();
-        var importDelay = Duration.FromHours(12);
-        foreach (var account in entity.Accounts)
+        using (_lockProvider.AcquireLock($"InstitutionConnectionEntity:Refresh:{entityId}", TimeSpan.FromMinutes(2), cancellationToken))
         {
-            if (account.LastImportRequested != null && account.LastImportRequested + importDelay > now)
+            var entity = await _database.InstitutionConnections
+                .Where(e => e.Id == entityId)
+                .Include(e => e.Accounts)
+                .FirstAsync(cancellationToken);
+
+            // Update accounts
+            await UpdateAccounts(entity, cancellationToken);
+
+            // Publish 
+            var now = _clock.GetCurrentInstant();
+            var importDelay = Duration.FromHours(12);
+            foreach (var account in entity.Accounts)
             {
-                _log.LogInformation(
-                    "Skipping refresh for {InstitutionAccountId} as it was refreshed at {LastImport}",
-                    account.Id,
-                    account.LastImport);
-                continue;
+                if (account.LastImportRequested != null && account.LastImportRequested + importDelay > now)
+                {
+                    _log.LogInformation(
+                        "Skipping refresh for {InstitutionAccountId} as it was refreshed at {LastImport}",
+                        account.Id,
+                        account.LastImport);
+                    continue;
+                }
+
+                await _serviceBus.Send(new InstitutionAccountTransactionImportJob
+                {
+                    InstitutionConnectionAccountId = account.Id,
+                }, cancellationToken);
+
+                account.LastImportRequested = _clock.GetCurrentInstant();
+                account.ImportStatus = ImportStatus.Queued;
             }
 
-            await _serviceBus.Send(new InstitutionAccountTransactionImportJob
-            {
-                InstitutionConnectionAccountId = account.Id,
-            }, cancellationToken);
-
-            account.LastImportRequested = _clock.GetCurrentInstant();
-            account.ImportStatus = ImportStatus.Queued;
+            await _database.SaveChangesAsync(cancellationToken);
+            return entity;
         }
-
-        await _database.SaveChangesAsync(cancellationToken);
-        return entity;
     }
 
     private async Task UpdateAccounts(InstitutionConnectionEntity entity, CancellationToken cancellationToken = default)

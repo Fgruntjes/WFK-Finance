@@ -3,7 +3,8 @@ import { AuthBindings } from "@refinedev/core";
 import axiosInstance from "../rest-data-provider/utils/axios";
 
 function useAuthProvider() {
-  const { isLoading, user, logout, getAccessTokenSilently } = useAuth0();
+  const { isLoading, user, logout, getAccessTokenSilently, loginWithRedirect } =
+    useAuth0();
 
   const authProvider: AuthBindings = {
     login: async () => {
@@ -39,21 +40,21 @@ function useAuthProvider() {
             authenticated: true,
           };
         } else {
+          loginWithRedirect();
           return {
             authenticated: false,
             error: {
               message: "Check failed",
               name: "Token not found",
             },
-            redirectTo: "/login",
             logout: true,
           };
         }
       } catch (error: unknown) {
+        loginWithRedirect();
         return {
           authenticated: false,
           error: error as Error,
-          redirectTo: "/login",
           logout: true,
         };
       }

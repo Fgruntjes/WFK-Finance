@@ -12,7 +12,7 @@ public static class LocatorExtensions
     public static async Task GoToLastAsync(this LocatorAction[] actions)
     {
         int currentIndex;
-        int screensTried = 0;
+        var timeout = DateTime.Now.AddSeconds(30);
         do
         {
             var locatorTasks = actions.Select(a => a.Locator.WaitForAsync()).ToArray();
@@ -23,16 +23,10 @@ public static class LocatorExtensions
             }
 
             await actions[currentIndex].Action(actions[currentIndex].Locator);
-            screensTried++;
-
-            if (screensTried > actions.Length)
+            if (timeout < DateTime.Now)
             {
-                throw new Exception("Tried {screensTried} times, but never reached last screen.")
-                {
-                    Data = { { "ScreensTried", screensTried } }
-                };
+                throw new Exception("Tried for 30 seconds, but never reached last screen.");
             }
-
         } while (currentIndex < actions.Length - 1);
     }
 

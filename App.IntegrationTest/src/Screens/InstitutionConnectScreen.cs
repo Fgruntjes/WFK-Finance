@@ -15,13 +15,13 @@ class InstitutionConnectScreen
 
     public async Task AssertIsOnScreen()
     {
-        await Assertions.Expect(_page.GetByTestId("activeroute:/institutionconnections"))
+        await Assertions.Expect(_page.GetByTestId("activeroute:/bank-accounts"))
             .ToBeVisibleAsync();
     }
 
     public async Task ClickMenuAsync()
     {
-        await _page.GetByAppTestId("menu-item-institutionconnections").ClickAsync();
+        await _page.ClickMenuAsync("/bank-accounts");
     }
 
     public async Task ClickAddAsync()

@@ -18,6 +18,10 @@ const en: ResourceLanguage = {
       confirm: "Are you sure?",
     },
     error: {
+      undefined: {
+        title: "Error",
+        description: "An error has occurred.",
+      },
       404: {
         title: "Page not found",
         description: "The page you are looking for does not exist.",
@@ -35,7 +39,7 @@ const en: ResourceLanguage = {
       },
       importStatus: {
         success: "Success",
-        qQueued: "Queued",
+        queued: "Queued",
         working: "Working",
         failed: "Failed",
       },
@@ -49,7 +53,7 @@ const en: ResourceLanguage = {
       },
       fields: {
         countryIso2: "Country",
-        institutionId: "Institution",
+        institutionId: "Bank",
         accounts: "Accounts",
       },
     },

@@ -4,8 +4,14 @@ namespace App.IntegrationTest;
 
 internal static class IPageExtension
 {
-    public static ILocator GetByAppTestId(this IPage page, string testId)
+    public static async Task ClickMenuAsync(this IPage page, string route)
     {
-        return page.Locator($".apptest-{testId}");
+        await page.Locator($"[role='menuitem'] >> [href='{route}']").ClickAsync();
+    }
+
+    public static async Task SearchSelectOptionAsync(this IPage page, string fieldId, string value)
+    {
+        await page.ClickAsync($"#{fieldId}");
+        await page.Locator($"#{fieldId}_list + .rc-virtual-list >> [title*='{value}']").ClickAsync();
     }
 }

@@ -75,6 +75,7 @@ function CreateReturnView() {
         items={data?.data.accounts}
         hideTransactionCount
         size="small"
+        pagination={false}
       />
     </Show>
   );

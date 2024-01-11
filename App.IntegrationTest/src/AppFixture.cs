@@ -80,7 +80,8 @@ public class AppFixture : IAsyncDisposable
         await new List<LocatorAction> {
             new (authScreen.LoginLocator, async (_) => await authScreen.Login($"test-{appEnvironment}@test.com", "passpass$12$12")),
             new (authScreen.AuthorizeLocator, async (_) => await authScreen.AcceptAuthorization()),
-            new (homeScreen.Locator)}
+            new (homeScreen.Locator),
+            new (homeScreen.UserInfoLocator)}
             .GoToLastAsync();
     }
 }

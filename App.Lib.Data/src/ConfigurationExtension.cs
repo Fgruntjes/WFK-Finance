@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Medallion.Threading;
+using Medallion.Threading.SqlServer;
 
 namespace App.Lib.Data;
 
@@ -16,6 +18,7 @@ public static class ConfigurationExtension
             var connectionString = hostContext.Configuration.GetConnectionString("Database")
                 ?? throw new Exception("Missing 'ConnectionStrings::Database' setting.");
 
+            services.AddSingleton<IDistributedLockProvider>(new SqlDistributedSynchronizationProvider(connectionString));
             services.AddSqlServer<DatabaseContext>(connectionString, optionsBuilder =>
             {
                 optionsBuilder.ConfigureDatabaseOptions();
