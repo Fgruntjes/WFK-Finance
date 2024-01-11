@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using Gridify;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,7 +7,7 @@ namespace App.Backend.Mvc;
 
 internal partial class GridifyMapperExceptionFilter : IExceptionFilter
 {
-    [GeneratedRegex("^(Mapping|Property) '([a-zA-Z0-9]+)' not found\\.?$")]
+    [GeneratedRegex("^(Mapping|Property) '([a-zA-Z0-9]+).*' not found\\.?$")]
     private static partial Regex PropertyRegex();
 
     public void OnException(ExceptionContext context)

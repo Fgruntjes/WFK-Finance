@@ -108,7 +108,7 @@ function dataProvider(
 
     const generatedFilter = generateFilter(filters);
     if (generatedFilter) {
-      query.orderBy = generatedFilter;
+      query.filter = generatedFilter;
     }
 
     const { data, headers } = await request<TData[]>(

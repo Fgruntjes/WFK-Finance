@@ -9,7 +9,7 @@ import InstitutionSelect from "./InstitutionSelect";
 function CreateView() {
   const translate = useTranslate();
   const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const { formProps, saveButtonProps, queryResult } = useForm<
+  const { formProps, saveButtonProps } = useForm<
     InstitutionConnection,
     HttpError,
     InstitutionConnectionCreate

@@ -4,7 +4,13 @@
       "name": "Attach Backend",
       "type": "coreclr",
       "request": "attach",
-      "processName": "App.Backend"
+      "processName": "App.Backend",
+      "justMyCode": false,
+      "symbolOptions": {
+        "searchPaths": [],
+        "searchMicrosoftSymbolServer": true,
+        "searchNuGetOrgSymbolServer": true
+      }
     },
     {
       "name": "Attach Job.InstitutionAccountTransactionImport",
