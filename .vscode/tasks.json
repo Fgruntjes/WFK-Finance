@@ -2,7 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Watch App.Backend",
+      "label": "dev",
+      "type": "shell",
+      "command": "open http://localhost:3000/",
+      "problemMatcher": [],
+      "dependsOn": [
+        "dev frontend",
+      ]
+    },
+    {
+      "label": "watch App.Backend",
       "type": "shell",
       "command": "dotnet watch --project App.Backend",
       "isBackground": true,
@@ -12,10 +21,21 @@
           "DOTNET_ENVIRONMENT": "Development"
         }
       },
-      "problemMatcher": "$msCompile"
+      "problemMatcher": {
+        "base": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^$",
+          "endsPattern": "Application started"
+        }
+      },
+      "dependsOn": [
+        "docker compose up",
+        "database update"
+      ]
     },
     {
-      "label": "Watch Job.InstitutionAccountTransactionImport",
+      "label": "watch Job.InstitutionAccountTransactionImport",
       "type": "shell",
       "command": "dotnet watch --project App.Job.InstitutionAccountTransactionImport",
       "isBackground": true,
@@ -25,17 +45,87 @@
           "DOTNET_ENVIRONMENT": "Development"
         }
       },
-      "problemMatcher": "$msCompile"
+      "problemMatcher": {
+        "base": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^$",
+          "endsPattern": "Application started"
+        }
+      },
+      "dependsOn": [
+        "docker compose up",
+        "database update"
+      ]
     },
     {
-      "label": "Dev frontend",
+      "label": "database update",
+      "type": "shell",
+      "command": "./database.sh update",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "DOTNET_ENVIRONMENT": "Development"
+        }
+      },
+      "problemMatcher": [],
+      "dependsOn": [
+        "docker compose up"
+      ]
+    },
+    {
+      "label": "dev frontend",
       "type": "shell",
       "command": "npm run dev",
       "isBackground": true,
       "options": {
         "cwd": "${workspaceFolder}/frontend"
       },
-      "problemMatcher": []
+      "problemMatcher": [
+        "$eslint-stylish",
+        "$tsc",
+        "$lessc",
+        {
+          "pattern": {
+            "regexp": "^.*$",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^$",
+            "endsPattern": "http://localhost:3000/"
+          },
+        }
+      ],
+      "dependsOn": [
+        "watch App.Backend",
+        "watch Job.InstitutionAccountTransactionImport"
+      ]
+    },
+    {
+      "label": "docker compose up",
+      "type": "shell",
+      "command": "docker-compose up",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^$",
+          "endsPattern": "Recovery is complete"
+        }
+      }
     }
   ]
 }
