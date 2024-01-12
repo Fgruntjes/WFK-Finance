@@ -42,6 +42,7 @@ const en: ResourceLanguage = {
         iban: "IBAN",
         importStatus: "Import status",
         lastImport: "Last import",
+        lastImportNever: "Never",
         transactionCount: "Transaction count",
       },
       importStatus: {

@@ -15,6 +15,7 @@ export function ImportStatusBadge({ status }: ImportStatusBadgeProps) {
 
   return (
     <Tag
+      data-testid="import-status-badge"
       color={
         status === "Success" ? "green" : status === "Failed" ? "red" : "blue"
       }

@@ -61,7 +61,12 @@ function Table({
     ...item,
   }));
   return (
-    <AntdTable dataSource={dataSource} columns={columns} {...tableProps} />
+    <AntdTable
+      data-testid="institutionaccounts-table"
+      dataSource={dataSource}
+      columns={columns}
+      {...tableProps}
+    />
   );
 }
 

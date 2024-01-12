@@ -56,7 +56,11 @@ export function DetailsTab({ record }: DetailsTabProps) {
       </Title>
       <Text>
         <Space direction="horizontal" size="small">
-          <DateField value={record.lastImport} showTime />
+          {record.lastImport ? (
+            <DateField value={record.lastImport} showTime />
+          ) : (
+            translate("institutionaccounts.fields.lastImportNever")
+          )}
           <ImportStatusBadge status={record.importStatus} />
         </Space>
       </Text>

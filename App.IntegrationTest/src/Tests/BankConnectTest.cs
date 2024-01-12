@@ -1,4 +1,5 @@
 using App.IntegrationTest.Screens;
+using Microsoft.Extensions.Azure;
 using Microsoft.Playwright;
 
 namespace App.IntegrationTest.Tests;
@@ -58,6 +59,17 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         await Assertions.Expect(page.GetByText("GL7839380000039382")).ToBeVisibleAsync();
 
         // Go to accounts show page and check if we see transactions
-        await page.Locator("tr:has-text('GL7839380000039382') a").ClickAsync();
+        await page.GetRowButton("GL7839380000039382", "Show", "institutionaccounts-table").ClickAsync();
+
+        // Keep refreshing until import status is Success
+        await page.DoAndWait(
+            page.GetByTestId("import-status-badge").GetByText("Success"),
+            (page) => page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Refresh" }).ClickAsync());
+
+        await page.GetByRole(AriaRole.Tab, new PageGetByRoleOptions { Name = "Transactions" }).ClickAsync();
+
+        // Check if we see the transaction
+        var transactions = await page.GetByText("PAYMENT Alderaan Coffe").AllAsync();
+        await Assertions.Expect(transactions[0]).ToBeVisibleAsync();
     }
 }
