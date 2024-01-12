@@ -9,6 +9,7 @@ Pulumi.*.yaml
 
 # Playwright results
 TestResults/
+.test-videos/
 
 # Created by https://www.toptal.com/developers/gitignore/api/dotnetcore,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=dotnetcore,intellij

@@ -57,3 +57,8 @@ jobs:
               env:
                   APP_SETTINGS_JSON_ENCRYPTED: ${{ needs.deploy.outputs.app_settings_json }}
                   GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}
+            - uses: actions/upload-artifact@v2
+              if: failure()
+              with:
+                  name: test-videos
+                  path: .test-videos/*.webm
