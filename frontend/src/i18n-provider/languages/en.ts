@@ -16,6 +16,7 @@ const en: ResourceLanguage = {
       save: "Save",
       refresh: "Refresh",
       confirm: "Are you sure?",
+      returnToList: "Return to list",
     },
     error: {
       undefined: {
@@ -31,7 +32,13 @@ const en: ResourceLanguage = {
       actions: "Actions",
     },
     institutionaccounts: {
+      institutionaccounts: "Bank accounts",
+      tabs: {
+        general: "General",
+        transactions: "Transactions",
+      },
       fields: {
+        institution: "Bank institution",
         iban: "IBAN",
         importStatus: "Import status",
         lastImport: "Last import",
@@ -42,6 +49,17 @@ const en: ResourceLanguage = {
         queued: "Queued",
         working: "Working",
         failed: "Failed",
+      },
+      titles: {
+        show: "Bank account",
+      },
+    },
+    institutionaccounttransactions: {
+      fields: {
+        date: "Date",
+        amount: "Amount",
+        transactionCode: "Transaction code",
+        unstructuredInformation: "Description",
       },
     },
     institutionconnections: {
@@ -63,9 +81,12 @@ const en: ResourceLanguage = {
       default: "WFK Finance",
       suffix: " | WFK Finance",
       institutionconnections: {
-        show: "Show | Bank accounts | WFK Finance",
-        list: "List | Bank accounts | WFK Finance",
+        show: "Bank accounts | WFK Finance",
+        list: "Bank accounts | WFK Finance",
         create: "Connect bank account | WFK Finance",
+      },
+      institutionaccounts: {
+        show: "Bank accounts | WFK Finance",
       },
     },
   },

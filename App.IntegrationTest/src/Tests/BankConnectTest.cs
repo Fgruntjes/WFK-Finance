@@ -51,12 +51,13 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         await Assertions.Expect(page.GetByText("GL7839380000039382")).ToBeVisibleAsync();
 
         // Return to list
-        await page.GetByText("Bank accounts").ClickAsync();
+        await page.GetByText("Return to list").ClickAsync();
 
         // Ensure we are on the list page and see the connected account
         await institutionConnectScreen.AssertIsOnScreen();
         await Assertions.Expect(page.GetByText("GL7839380000039382")).ToBeVisibleAsync();
 
         // Go to accounts show page and check if we see transactions
+        await page.Locator("tr:has-text('GL7839380000039382') a").ClickAsync();
     }
 }

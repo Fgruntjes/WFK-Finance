@@ -25,6 +25,7 @@ public class InstitutionAccountGetTest : IClassFixture<InstitutionAccountFixture
         response.Should().BeEquivalentTo(new InstitutionAccount()
         {
             ExternalId = _fixture.InstitutionAccountEntity.ExternalId,
+            InstitutionId = _fixture.InstitutionAccountEntity.InstitutionConnection.InstitutionId,
             Id = _fixture.InstitutionAccountEntity.Id,
             Iban = _fixture.InstitutionAccountEntity.Iban,
         });

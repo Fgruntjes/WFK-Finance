@@ -1,6 +1,6 @@
 import { Institution, InstitutionAccount, InstitutionConnection } from "@api";
 import {
-  InstitutionAccountTable,
+  InstitutionAccountsTable,
   InstitutionsRecordRepresentation,
 } from "@pages";
 import { DeleteButton, List, useTable } from "@refinedev/antd";
@@ -47,7 +47,7 @@ function ListView() {
           dataIndex="accounts"
           title={translate("institutionconnections.fields.accounts")}
           render={(value: InstitutionAccount[]) => (
-            <InstitutionAccountTable
+            <InstitutionAccountsTable
               items={value}
               size="small"
               pagination={false}

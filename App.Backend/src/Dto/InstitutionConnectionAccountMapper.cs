@@ -9,6 +9,7 @@ public static class InstitutionConnectionAccountMapper
         return new InstitutionAccount
         {
             Id = entity.Id,
+            InstitutionId = entity.InstitutionConnection.InstitutionId,
             ExternalId = entity.ExternalId,
             Iban = entity.Iban,
             ImportStatus = entity.ImportStatus,

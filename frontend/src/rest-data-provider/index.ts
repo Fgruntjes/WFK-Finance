@@ -35,13 +35,18 @@ function dataProvider(
   apiUrl: string,
   httpClient: AxiosInstance = axiosInstance,
 ): Required<DataProvider> {
-  function resourceListUrl(resource: string, query?: object) {
-    const url = `${apiUrl}/${resource}`;
+  function resourceListUrl(resource: string, meta?: MetaQuery, query?: object) {
+    const url = `${apiUrl}/${meta?.operation ?? resource}`;
 
     return query ? `${url}?${stringify(query)}` : url;
   }
-  function resourceUrl(resource: string, id: BaseKey, query?: object) {
-    const url = `${apiUrl}/${resource}/${id}`;
+  function resourceUrl(
+    resource: string,
+    id: BaseKey,
+    meta?: MetaQuery,
+    query?: object,
+  ) {
+    const url = `${apiUrl}/${meta?.operation ?? resource}/${id}`;
 
     return query ? `${url}?${stringify(query)}` : url;
   }
@@ -110,10 +115,9 @@ function dataProvider(
     if (generatedFilter) {
       query.filter = generatedFilter;
     }
-
     const { data, headers } = await request<TData[]>(
       "get",
-      resourceListUrl(resource, query),
+      resourceListUrl(resource, meta, query),
       meta,
     );
 
@@ -132,7 +136,7 @@ function dataProvider(
   }: GetManyParams): Promise<GetManyResponse<TData>> {
     return await request<TData[]>(
       "get",
-      resourceListUrl(resource, { id: ids }),
+      resourceListUrl(resource, meta, { id: ids }),
       meta,
     );
   }
@@ -142,7 +146,7 @@ function dataProvider(
     id,
     meta,
   }: GetOneParams): Promise<GetOneResponse<TData>> {
-    return await request<TData>("get", resourceUrl(resource, id), meta);
+    return await request<TData>("get", resourceUrl(resource, id, meta), meta);
   }
 
   async function create<
@@ -171,7 +175,7 @@ function dataProvider(
   }: CreateManyParams<TVariables>): Promise<CreateManyResponse<TData>> {
     return await requestWithData<TData[]>(
       "post",
-      `${resourceListUrl(resource)}/bulk`,
+      `${resourceListUrl(resource, meta)}/bulk`,
       variables,
       meta,
     );
@@ -188,7 +192,7 @@ function dataProvider(
   }: UpdateParams<TVariables>): Promise<UpdateResponse<TData>> {
     return await requestWithData<TData>(
       "post",
-      resourceUrl(resource, id),
+      resourceUrl(resource, id, meta),
       variables,
       meta,
     );
@@ -205,7 +209,7 @@ function dataProvider(
   }: UpdateManyParams<TVariables>): Promise<UpdateManyResponse<TData>> {
     return await requestWithData<TData[]>(
       "post",
-      resourceListUrl(resource, { id: ids }),
+      resourceListUrl(resource, meta, { id: ids }),
       variables,
       meta,
     );
@@ -239,7 +243,7 @@ function dataProvider(
   }: DeleteManyParams<TVariables>): Promise<DeleteManyResponse<TData>> {
     return await request<TData[]>(
       "delete",
-      resourceListUrl(resource, { id: ids }),
+      resourceListUrl(resource, meta, { id: ids }),
       meta,
     );
   }
@@ -260,7 +264,7 @@ function dataProvider(
     let requestUrl = `${apiUrl}${url}`;
 
     const generatedSort = generateSort(sorters);
-    if (generatedSort.length > 0) {
+    if (generatedSort) {
       const sortQuery = {
         sortBy: generatedSort,
       };
@@ -268,7 +272,7 @@ function dataProvider(
     }
 
     const generatedFilter = generateFilter(filters);
-    if (generatedFilter.length > 0) {
+    if (generatedFilter) {
       const filterQuery = {
         filter: generatedFilter,
       };

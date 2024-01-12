@@ -34,6 +34,7 @@ public class InstitutionAccountGetController : ControllerBase
             .Select(e => new InstitutionAccount
             {
                 Id = e.Id,
+                InstitutionId = e.InstitutionConnection.InstitutionId,
                 ExternalId = e.ExternalId,
                 Iban = e.Iban,
                 ImportStatus = e.ImportStatus,

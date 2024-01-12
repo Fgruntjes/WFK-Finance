@@ -6,6 +6,8 @@ public class InstitutionAccount
 {
     public Guid Id { get; set; }
 
+    public Guid InstitutionId { get; set; }
+
     public required string ExternalId { get; set; }
 
     public required string Iban { get; set; }

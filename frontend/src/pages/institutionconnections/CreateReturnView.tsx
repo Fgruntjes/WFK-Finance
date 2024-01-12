@@ -2,7 +2,7 @@ import { Institution, InstitutionConnection } from "@api";
 import LocalError from "@components/LocalError";
 import LocalHttpError from "@components/LocalHttpError";
 import {
-  InstitutionAccountTable,
+  InstitutionAccountsTable,
   InstitutionsRecordRepresentation,
 } from "@pages";
 import { ListButton, Show } from "@refinedev/antd";
@@ -56,9 +56,11 @@ function CreateReturnView() {
       goBack={false}
       headerButtons={({ listButtonProps }) => (
         <ListButton
-          title={translate("institutionconnections")}
           {...listButtonProps}
-        />
+          title={translate("buttons.returnToList")}
+        >
+          {translate("buttons.returnToList")}
+        </ListButton>
       )}
     >
       <Title level={5}>
@@ -71,7 +73,7 @@ function CreateReturnView() {
       <Title level={5}>
         {translate("institutionconnections.fields.accounts")}
       </Title>
-      <InstitutionAccountTable
+      <InstitutionAccountsTable
         items={data?.data.accounts}
         hideTransactionCount
         size="small"

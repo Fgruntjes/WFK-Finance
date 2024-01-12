@@ -29,6 +29,8 @@ export interface InstitutionAccount {
   lastImport?: string | null;
   /** @format int32 */
   transactionCount: number;
+  /** @format uuid */
+  institutionId: string;
 }
 
 export interface InstitutionAccountTransaction {

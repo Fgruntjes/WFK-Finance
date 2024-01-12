@@ -1,29 +1,22 @@
-import { Authenticated, Refine } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
-import {
-  ErrorComponent,
-  ThemedLayoutV2,
-  useNotificationProvider,
-} from "@refinedev/antd";
+import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
-import {
-  InstitutionConnectionsCreateReturnView,
-  InstitutionConnectionsCreateView,
-  InstitutionConnectionsListView,
-} from "@pages";
 import routerBindings, {
   DocumentTitleHandler,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { App as AntdApp } from "antd";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./AppRoutes";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import useAuthProvider from "./hooks/useAuthProvider";
 import useI18nProvider from "./i18n-provider/useI18nProvider";
-import AppFooter from "./layout/AppFooter";
 import LoadingView from "./pages/LoadingView";
+import { resourceList } from "./resources";
 import dataProvider from "./rest-data-provider";
 
 function App() {
@@ -51,45 +44,13 @@ function App() {
                 useNewQueryKeys: true,
                 disableTelemetry: true,
               }}
-              resources={[
-                {
-                  name: "institutionconnections",
-                  list: "/bank-accounts",
-                  show: "/bank-accounts/:id",
-                  create: "/bank-accounts/create",
-                },
-              ]}
+              resources={resourceList}
             >
-              <Routes>
-                <Route
-                  element={
-                    <Authenticated key="authenticated-routes">
-                      <ThemedLayoutV2 dashboard Footer={AppFooter}>
-                        <Outlet />
-                      </ThemedLayoutV2>
-                    </Authenticated>
-                  }
-                >
-                  <Route index element={<div>Homepage</div>} />
-
-                  <Route path="/bank-accounts">
-                    <Route index element={<InstitutionConnectionsListView />} />
-                    <Route
-                      path="create"
-                      element={<InstitutionConnectionsCreateView />}
-                    />
-                    <Route
-                      path="create-return"
-                      element={<InstitutionConnectionsCreateReturnView />}
-                    />
-                  </Route>
-                </Route>
-
-                <Route path="*" element={<ErrorComponent />} />
-              </Routes>
+              <AppRoutes />
               <RefineKbar />
               <UnsavedChangesNotifier />
               <DocumentTitleHandler />
+              <ReactQueryDevtools initialIsOpen={false} />
             </Refine>
           </AntdApp>
         </ColorModeContextProvider>

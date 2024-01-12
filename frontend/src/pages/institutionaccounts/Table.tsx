@@ -2,31 +2,14 @@ import { InstitutionAccount, InstitutionAccountImportStatusEnum } from "@api";
 import DateField from "@components/field/DateField";
 import { NumberField, ShowButton } from "@refinedev/antd";
 import { useTranslate } from "@refinedev/core";
-import { Table as AntdTable, TableProps as AntdTableProps, Tag } from "antd";
+import { Table as AntdTable, TableProps as AntdTableProps } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { ImportStatusBadge } from "./ImportStatusBadge";
 
 type TableProps = {
   items?: InstitutionAccount[];
   hideTransactionCount?: boolean;
 } & AntdTableProps<InstitutionAccount>;
-
-type ImportStatusBadgeProps = {
-  status: InstitutionAccountImportStatusEnum;
-};
-
-function ImportStatusBadge({ status }: ImportStatusBadgeProps) {
-  const translate = useTranslate();
-
-  return (
-    <Tag
-      color={
-        status === "Success" ? "green" : status === "Failed" ? "red" : "blue"
-      }
-    >
-      {translate(`institutionaccounts.importStatus.${status.toLowerCase()}`)}
-    </Tag>
-  );
-}
 
 function Table({
   items,
