@@ -46,16 +46,11 @@ jobs:
             pull-requests: write
         steps:
             - uses: actions/checkout@v3
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-                  run_install: false
-                  package_json_file: frontend/package.json
             - uses: actions/setup-node@v4
               with:
                   node-version-file: frontend/package.json
-                  cache: "pnpm"
-                  cache-dependency-path: frontend/pnpm-lock.yaml
+                  cache: "npm"
+                  cache-dependency-path: frontend/package-lock.json
             - run: ./build.sh frontend
             - run: npm run lint
               working-directory: frontend
