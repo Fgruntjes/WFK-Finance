@@ -34,8 +34,8 @@ jobs:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
             - run: ./build.sh ${{ matrix.target }}
               env:
-                  APP_VERSION: '${{ inputs.version }}'
-                  APP_ENVIRONMENT: '${{ inputs.environment }}'
+                  APP_VERSION: "${{ inputs.version }}"
+                  APP_ENVIRONMENT: "${{ inputs.environment }}"
 
     deploy_backend:
         runs-on: ubuntu-latest
@@ -57,26 +57,26 @@ jobs:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
             - uses: hashicorp/setup-terraform@v3
               with:
-                  terraform_version: '~1.6.3'
+                  terraform_version: "~1.6.3"
                   terraform_wrapper: false
             - run: ./deploy.sh
               id: deploy
               env:
-                  APP_VERSION: '${{ inputs.version }}'
-                  APP_ENVIRONMENT: '${{ inputs.environment }}'
-                  GH_ENCRYPT_KEY: '${{ secrets.GH_ENCRYPT_KEY }}'
-                  ARM_LOCATION: '${{ vars.ARM_LOCATION }}'
-                  ARM_CLIENT_ID: '${{ vars.ARM_CLIENT_ID }}'
-                  ARM_CLIENT_SECRET: '${{ secrets.ARM_CLIENT_SECRET }}'
-                  ARM_SUBSCRIPTION_ID: '${{ vars.ARM_SUBSCRIPTION_ID }}'
-                  ARM_TENANT_ID: '${{ vars.ARM_TENANT_ID }}'
-                  AUTH0_DOMAIN: '${{ vars.AUTH0_DOMAIN }}'
-                  AUTH0_CLIENT_ID: '${{ vars.AUTH0_CLIENT_ID }}'
-                  AUTH0_CLIENT_SECRET: '${{ secrets.AUTH0_CLIENT_SECRET }}'
-                  NORDIGEN_SECRET_ID: '${{ vars.NORDIGEN_SECRET_ID }}'
-                  NORDIGEN_SECRET_KEY: '${{ secrets.NORDIGEN_SECRET_KEY }}'
-                  SENTRY_ORGANISATION: '${{ vars.SENTRY_ORGANISATION }}'
-                  SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
+                  APP_VERSION: "${{ inputs.version }}"
+                  APP_ENVIRONMENT: "${{ inputs.environment }}"
+                  GH_ENCRYPT_KEY: "${{ secrets.GH_ENCRYPT_KEY }}"
+                  ARM_LOCATION: "${{ vars.ARM_LOCATION }}"
+                  ARM_CLIENT_ID: "${{ vars.ARM_CLIENT_ID }}"
+                  ARM_CLIENT_SECRET: "${{ secrets.ARM_CLIENT_SECRET }}"
+                  ARM_SUBSCRIPTION_ID: "${{ vars.ARM_SUBSCRIPTION_ID }}"
+                  ARM_TENANT_ID: "${{ vars.ARM_TENANT_ID }}"
+                  AUTH0_DOMAIN: "${{ vars.AUTH0_DOMAIN }}"
+                  AUTH0_CLIENT_ID: "${{ vars.AUTH0_CLIENT_ID }}"
+                  AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+                  NORDIGEN_SECRET_ID: "${{ vars.NORDIGEN_SECRET_ID }}"
+                  NORDIGEN_SECRET_KEY: "${{ secrets.NORDIGEN_SECRET_KEY }}"
+                  SENTRY_ORGANISATION: "${{ vars.SENTRY_ORGANISATION }}"
+                  SENTRY_TOKEN: "${{ secrets.SENTRY_TOKEN }}"
             - uses: actions/upload-artifact@v3
               if: failure()
               with:
@@ -100,8 +100,8 @@ jobs:
             - uses: actions/setup-node@v4
               with:
                   node-version-file: frontend/package.json
-                  cache: 'pnpm'
-                  cache-dependency-path: frontend/pnpm-lock.yaml
+                  cache: "npm"
+                  cache-dependency-path: frontend/package-lock.json
             - run: ./build.sh frontend
               env:
                   APP_VERSION: ${{ inputs.version }}
@@ -141,4 +141,4 @@ jobs:
                   directory: frontend/build
                   gitHubToken: ${{ secrets.GITHUB_TOKEN }}
                   branch: ${{ inputs.environment }}
-                  wranglerVersion: '3'
+                  wranglerVersion: "3"
