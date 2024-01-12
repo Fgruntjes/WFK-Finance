@@ -47,6 +47,7 @@
     "build": "tsc && refine build",
     "preview": "refine start",
     "refine": "refine",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src/**/* && prettier --check src/**/*",
     "build:api": "swagger-typescript-api -p http://localhost:8080/swagger/v1/swagger.json -o src/ --no-client --extract-enums"
   },
   "browserslist": {
