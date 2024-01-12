@@ -116,7 +116,7 @@ jobs:
             - uses: actions/upload-artifact@v3
               with:
                   name: frontend
-                  path: frontend/build
+                  path: frontend/dist
 
     deploy_frontend:
         runs-on: ubuntu-latest
@@ -132,13 +132,13 @@ jobs:
             - uses: actions/download-artifact@v3
               with:
                   name: frontend
-                  path: frontend/build
+                  path: frontend/dist
             - uses: cloudflare/pages-action@v1
               with:
                   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
                   accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
                   projectName: ${{ vars.APP_PROJECT_SLUG }}
-                  directory: frontend/build
+                  directory: frontend/dist
                   gitHubToken: ${{ secrets.GITHUB_TOKEN }}
                   branch: ${{ inputs.environment }}
                   wranglerVersion: "3"
