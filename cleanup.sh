@@ -53,6 +53,9 @@ for ENVIRONMENT in $DEPLOYED_ENVIRONMENTS; do
     fi
 done
 
+
+# Purge images registry
+echo "## Delete images no longer in use"
 # Fetch all images in use
 IMAGES_IN_USE=$(
     az containerapp list |
@@ -60,15 +63,25 @@ IMAGES_IN_USE=$(
         awk -F ':' '{print $2}' |
         tr '\n' '|'
 )
-IMAGES_IN_USE="${IMAGES_IN_USE%|}"
 
-# Purge images registry
-echo "## Delete images no longer in use"
 echo "  images in use: ${IMAGES_IN_USE}"
-az acr run \
-    --registry "${APP_PROJECT_SLUG//-/}" \
-    --cmd "acr purge --keep 2 --ago 8h --filter \".*:(${IMAGES_IN_USE})\"" \
-    /dev/null
+IMAGE_REPOSITORIES=$(az acr repository list --name "${APP_PROJECT_SLUG//-/}" --output tsv)
+for IMAGE_REPOSITORY in $IMAGE_REPOSITORIES; do
+    IMAGE_TAGS=$(az acr repository show-tags --name "${APP_PROJECT_SLUG//-/}" --repository "${IMAGE_REPOSITORY}" --output tsv)
+    for IMAGE_TAG in $IMAGE_TAGS; do
+        IMAGE="${IMAGE_REPOSITORY}:${IMAGE_TAG}"
+        
+        # Check if image is in IMAGES_IN_USE
+        if [[ "${IMAGES_IN_USE}" == *"${IMAGE_TAG}"* ]]; then
+            echo " SKIPPED ${IMAGE}"
+            continue
+        else
+            echo " DELETE ${IMAGE}"
+            az acr repository delete --name "${APP_PROJECT_SLUG//-/}" --image "${IMAGE}" --yes
+        fi
+    done
+done
+
 
 # Deploy frontends
 echo "::warning file=cleanup.sh,::Delete frontends not implmented yet"
