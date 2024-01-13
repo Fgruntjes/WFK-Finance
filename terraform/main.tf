@@ -4,35 +4,35 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.84.0"
+      version = "~> 3.87.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "~> 2.46.0"
+      version = "~> 2.47.0"
     }
     mssql = {
       source  = "betr-io/mssql"
-      version = "~> 0.2.7"
+      version = "~> 0.3.0"
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "~> 1.0.0"
+      version = "~> 1.1.2"
     }
     local = {
       source  = "hashicorp/local"
-      version = "~> 2.4.0"
+      version = "~> 2.4.1"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.5.1"
+      version = "~> 3.6.0"
     }
     time = {
       source  = "hashicorp/time"
-      version = "~> 0.9.1"
+      version = "~> 0.10.0"
     }
     sentry = {
       source  = "jianyuan/sentry"
-      version = "~> 0.11.2"
+      version = "~> 0.12.1"
     }
   }
   backend "azurerm" {
