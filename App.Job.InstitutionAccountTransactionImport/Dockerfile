@@ -22,4 +22,5 @@ RUN dotnet publish "App.Job.InstitutionAccountTransactionImport/App.Job.Institut
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY appsettings.json ./
 ENTRYPOINT ["dotnet", "App.Job.InstitutionAccountTransactionImport.dll"]

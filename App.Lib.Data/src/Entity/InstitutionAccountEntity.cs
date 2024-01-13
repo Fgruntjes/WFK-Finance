@@ -26,8 +26,12 @@ public class InstitutionAccountEntity
     public ImportStatus ImportStatus { get; set; } = ImportStatus.Success;
 
     public Instant? LastImport { get; set; }
+    public Instant? LastImportRequested { get; set; }
 
     public string? LastImportError { get; set; }
+
+    public ICollection<InstitutionAccountTransactionEntity> Transactions { get; set; } =
+        new List<InstitutionAccountTransactionEntity>();
 
     public InstitutionAccountEntity()
     {

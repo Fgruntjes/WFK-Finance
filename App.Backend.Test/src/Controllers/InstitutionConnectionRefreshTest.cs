@@ -1,3 +1,7 @@
+using System.Net;
+using System.Net.Http.Json;
+using App.Backend.Controllers;
+using App.Backend.Dto;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.Test;
@@ -27,13 +31,20 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new
-        {
-            _fixture.InstitutionConnectionEntity.ExternalId
-        });
+        var externalId = _fixture.InstitutionConnectionEntity.ExternalId;
+        var response = await _fixture.Client.SendWithAuthAsync(
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/external/{externalId}"));
+        var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
 
         // Assert
-        result.MatchSnapshot();
+        body.Should().BeEquivalentTo(new InstitutionConnection
+        {
+            Id = _fixture.InstitutionConnectionEntity.Id,
+            InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
+            ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
+            ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
+            Accounts = new List<InstitutionAccount>(),
+        });
     }
 
     [Fact]
@@ -50,15 +61,17 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new
-        {
-            ExternalId = "SomeExternalIdMissing"
-        });
+        var response = await _fixture.Client.SendWithAuthAsync(
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/external/SomeExternalIdMissing"));
 
         // Assert
-        result.MatchSnapshot(m => m
-            .IgnoreField("errors[0].extensions.timestamp")
-            .IgnoreField("errors[0].extensions.exception"));
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        _fixture.Services.WithMock<IInstitutionConnectionRefreshService>(mock =>
+        {
+            mock.Verify(e => e.Refresh(
+                "SomeExternalIdMissing",
+                It.IsAny<CancellationToken>()), Times.Once);
+        });
     }
 
     [Fact]
@@ -74,13 +87,20 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new
-        {
-            _fixture.InstitutionConnectionEntity.Id
-        });
+        var id = _fixture.InstitutionConnectionEntity.Id;
+        var response = await _fixture.Client.SendWithAuthAsync(
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
+        var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
 
         // Assert
-        result.MatchSnapshot();
+        body.Should().BeEquivalentTo(new InstitutionConnection
+        {
+            Id = _fixture.InstitutionConnectionEntity.Id,
+            InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
+            ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
+            ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
+            Accounts = new List<InstitutionAccount>(),
+        });
     }
 
     [Fact]
@@ -98,14 +118,16 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         });
 
         // Act
-        var result = await _fixture.Client.ExecuteQuery(new
-        {
-            Id = id
-        });
+        var response = await _fixture.Client.SendWithAuthAsync(
+            new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
 
         // Assert
-        result.MatchSnapshot(m => m
-            .IgnoreField("errors[0].extensions.timestamp")
-            .IgnoreField("errors[0].extensions.exception"));
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        _fixture.Services.WithMock<IInstitutionConnectionRefreshService>(mock =>
+        {
+            mock.Verify(e => e.Refresh(
+                id,
+                It.IsAny<CancellationToken>()), Times.Once);
+        });
     }
 }

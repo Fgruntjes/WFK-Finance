@@ -1,3 +1,6 @@
+using System.Net;
+using App.Backend.Controllers;
+using App.Backend.Dto;
 using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
@@ -27,20 +30,27 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
             context.Institutions.Add(institutionEntity);
         });
 
-        // Act
-        var result = await _fixture.Client.ExecuteQuery(new { institutionEntity.Id });
+        //Act
+        var response = await _fixture.Client.GetWithAuthAsync<Institution>($"{InstitutionListController.RouteBase}/{institutionEntity.Id}");
 
         // Assert
-        result.MatchSnapshot();
+        response.Should().BeEquivalentTo(new Institution
+        {
+            Id = institutionEntity.Id,
+            ExternalId = institutionEntity.ExternalId,
+            Name = institutionEntity.Name,
+            Logo = institutionEntity.Logo,
+            CountryIso2 = institutionEntity.CountryIso2,
+        });
     }
 
     [Fact]
     public async Task NotFound()
     {
-        // Act
-        var result = await _fixture.Client.ExecuteQuery(new { Id = new Guid("484cc24c-3a50-4b05-b550-c7c1be8eed05") });
+        //Act
+        var response = await _fixture.Client.GetWithAuthAsync($"{InstitutionListController.RouteBase}/484cc24c-3a50-4b05-b550-c7c1be8eed05");
 
         // Assert
-        result.MatchSnapshot();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

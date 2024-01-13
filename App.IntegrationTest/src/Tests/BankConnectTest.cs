@@ -23,9 +23,9 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         await institutionConnectScreen.ClickAddAsync();
 
         // Add new institution
-        await page.GetByLabel("Select country").SelectOptionAsync("NL");
-        await page.GetByLabel("Select your bank").SelectOptionAsync(new SelectOptionValue() { Label = "TEST_INSTITUTION" });
-        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Connect" }).ClickAsync();
+        await page.SearchSelectOptionAsync("countryIso2", "Netherlands");
+        await page.SearchSelectOptionAsync("institutionId", "TEST_INSTITUTION");
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Save" }).ClickAsync();
 
         // Follow nordigen flow
         await new List<LocatorAction>()
@@ -43,7 +43,7 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
                 async (locator) => await locator.ClickAsync()
             ),
             new (
-                page.GetByTestId("activeroute:/institutionconnections/create-return")
+                page.GetByTestId("activeroute:/bank-accounts/create-return")
             )
         }.GoToLastAsync();
 
@@ -56,5 +56,18 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         // Ensure we are on the list page and see the connected account
         await institutionConnectScreen.AssertIsOnScreen();
         await Assertions.Expect(page.GetByText("GL7839380000039382")).ToBeVisibleAsync();
+
+        // Go to accounts show page and check if we see transactions
+        await page.GetRowButton("GL7839380000039382", "Show", "institutionaccounts-table").ClickAsync();
+
+        // Keep refreshing until import status is Success
+        await page.DoAndWait(
+            page.GetByTestId("import-status-badge").GetByText("Success"),
+            (page) => page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Refresh" }).ClickAsync());
+
+        await page.GetByRole(AriaRole.Tab, new PageGetByRoleOptions { Name = "Transactions" }).ClickAsync();
+
+        // Check if we see the transaction
+        await Assertions.Expect(page.Locator(":has-text('PAYMENT Alderaan Coffe')").Locator("nth=0")).ToBeVisibleAsync();
     }
 }

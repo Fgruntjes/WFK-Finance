@@ -1,15 +1,18 @@
+using App.Backend.Dto;
 using App.Lib.Data;
-using App.Backend.GraphQL.Type;
-using GraphQL.AspNet.Attributes;
-using GraphQL.AspNet.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
-[GraphRoute("institutionConnection")]
-public class InstitutionConnectionGetController : GraphController
+[ApiController]
+[Authorize]
+[Route(InstitutionConnectionListController.RouteBase)]
+public class InstitutionConnectionGetController : ControllerBase
 {
+    public const string RouteName = nameof(InstitutionConnectionGetController);
+
     private readonly DatabaseContext _database;
     private readonly IOrganisationIdProvider _organisationIdProvider;
 
@@ -19,16 +22,24 @@ public class InstitutionConnectionGetController : GraphController
         _organisationIdProvider = organisationIdProvider;
     }
 
-    [Authorize]
-    [Query("get")]
-    public async Task<InstitutionConnection?> Get(Guid id, CancellationToken cancellationToken = default)
+    [HttpGet("{id:guid}", Name = RouteName)]
+    [ProducesResponseType(typeof(InstitutionConnection), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken = default)
     {
         var organisationId = _organisationIdProvider.GetOrganisationId();
-        return await _database.InstitutionConnections
+        var organisationEntity = await _database.InstitutionConnections
             .Where(e => e.Id == id && e.OrganisationId == organisationId)
             .OrderBy(e => e.CreatedAt)
+            .Include(e => e.Accounts)
             .Take(1)
-            .Select(e => e.ToGraphQLType())
             .SingleOrDefaultAsync(cancellationToken);
+
+        if (organisationEntity == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(organisationEntity.ToDto());
     }
 }

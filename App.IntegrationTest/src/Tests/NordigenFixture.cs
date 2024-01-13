@@ -31,7 +31,7 @@ public class NordigenFixture : AppFixture, IAsyncLifetime
         Database.SeedData(context =>
         {
             // Ensure we start with a clean slate
-            context.InstitutionConnectionAccounts.ExecuteDelete();
+            context.InstitutionAccounts.ExecuteDelete();
             context.InstitutionConnections.ExecuteDelete();
             context.Institutions.ExecuteDelete();
 

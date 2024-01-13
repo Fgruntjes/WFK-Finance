@@ -1,22 +1,20 @@
+using App.Lib.InstitutionConnection.Service;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;
-using Microsoft.Extensions.Logging;
 
 namespace App.Job.InstitutionAccountTransactionImport;
 
 public class MessageHandler : IMessageHandler<InstitutionAccountTransactionImportJob>
 {
-    private readonly ILogger<MessageHandler> _logger;
+    private readonly ITransactionImportService _transactionImportService;
 
-    public MessageHandler(ILoggerFactory loggerFactory)
+    public MessageHandler(ITransactionImportService transactionImportService)
     {
-        _logger = loggerFactory.CreateLogger<MessageHandler>();
+        _transactionImportService = transactionImportService;
     }
 
-    public Task Handle(InstitutionAccountTransactionImportJob message)
+    public async Task Handle(InstitutionAccountTransactionImportJob message)
     {
-        _logger.LogInformation("Handled message: {Message}", message);
-
-        return Task.CompletedTask;
+        await _transactionImportService.ImportAsync(message.InstitutionConnectionAccountId);
     }
 }

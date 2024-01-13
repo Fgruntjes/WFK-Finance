@@ -35,10 +35,10 @@ function build {
     if [[ "${TARGET}" == "frontend" ]]; then
         export NODE_ENV=production
         cd frontend
-        pnpm install \
+        npm install \
             --frozen-lockfile \
             --dev
-        pnpm run build
+        npm run build
     else
         docker_build $TARGET
     fi

@@ -50,6 +50,9 @@ namespace App.DataMigrations
                     b.Property<string>("LastImportError")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastImportRequested")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("InstitutionConnectionId");
@@ -57,7 +60,55 @@ namespace App.DataMigrations
                     b.HasIndex("ExternalId", "InstitutionConnectionId")
                         .IsUnique();
 
-                    b.ToTable("InstitutionConnectionAccounts");
+                    b.ToTable("InstitutionAccounts");
+                });
+
+            modelBuilder.Entity("App.Lib.Data.Entity.InstitutionAccountTransactionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<string>("CounterPartyAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CounterPartyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TransactionCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnstructuredInformation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ExternalId", "AccountId")
+                        .IsUnique();
+
+                    b.ToTable("InstitutionAccountTransactions");
                 });
 
             modelBuilder.Entity("App.Lib.Data.Entity.InstitutionConnectionEntity", b =>
@@ -184,6 +235,17 @@ namespace App.DataMigrations
                         .IsRequired();
 
                     b.Navigation("InstitutionConnection");
+                });
+
+            modelBuilder.Entity("App.Lib.Data.Entity.InstitutionAccountTransactionEntity", b =>
+                {
+                    b.HasOne("App.Lib.Data.Entity.InstitutionAccountEntity", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("App.Lib.Data.Entity.InstitutionConnectionEntity", b =>

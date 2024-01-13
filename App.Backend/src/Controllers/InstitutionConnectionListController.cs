@@ -1,15 +1,22 @@
+using App.Backend.Dto;
+using App.Backend.Mvc;
 using App.Lib.Data;
-using App.Backend.GraphQL.Type;
-using GraphQL.AspNet.Attributes;
-using GraphQL.AspNet.Controllers;
+using Gridify;
+using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Backend.Controllers;
 
-[GraphRoute("institutionConnection")]
-public class InstitutionConnectionListController : GraphController
+[ApiController]
+[Authorize]
+[Route(RouteBase)]
+public class InstitutionConnectionListController : ControllerBase
 {
+    public const string RouteBase = "/institutionconnections";
+    public const string RouteName = nameof(InstitutionConnectionListController);
+
     private readonly DatabaseContext _database;
     private readonly IOrganisationIdProvider _organisationIdProvider;
 
@@ -19,26 +26,38 @@ public class InstitutionConnectionListController : GraphController
         _organisationIdProvider = organisationIdProvider;
     }
 
-    [Authorize]
-    [Query("list")]
-    public async Task<ListResult<InstitutionConnection>> List(int offset = 0, int limit = 25, CancellationToken cancellationToken = default)
+    [HttpGet(Name = RouteName)]
+    [ProducesResponseType(typeof(ICollection<InstitutionConnection>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> List(
+        [FromQuery] GridifyQuery query,
+        CancellationToken cancellationToken = default)
     {
         var organisationId = _organisationIdProvider.GetOrganisationId();
-        var query = _database.InstitutionConnections
-            .Where(e => e.OrganisationId == organisationId);
+        var result = await _database.InstitutionConnections
+            .Where(e => e.OrganisationId == organisationId)
+            .GridifyQueryableAsync(query, null, cancellationToken);
 
-        var totalCount = await query.CountAsync();
-        var result = await query
-            .OrderBy(e => e.CreatedAt)
-            .Skip(offset)
-            .Take(limit)
-            .Select(e => e.ToGraphQLType())
+        var items = await result.Query
+            .Include(e => e.Accounts)
+            .Select(e => new InstitutionConnection
+            {
+                Id = e.Id,
+                InstitutionId = e.InstitutionId,
+                ExternalId = e.ExternalId,
+                ConnectUrl = e.ConnectUrl,
+                Accounts = e.Accounts.Select(a => new InstitutionAccount
+                {
+                    Id = a.Id,
+                    ExternalId = a.ExternalId,
+                    Iban = a.Iban,
+                    ImportStatus = a.ImportStatus,
+                    LastImport = a.LastImport.HasValue ? a.LastImport.Value.ToDateTimeUtc() : null,
+                    TransactionCount = a.Transactions.Count
+                }).ToList()
+            })
             .ToListAsync(cancellationToken);
 
-        return new ListResult<InstitutionConnection>
-        {
-            Items = result,
-            TotalCount = totalCount
-        };
+        var start = query.Page * query.PageSize;
+        return ListResult<InstitutionConnection>.Create(items, RouteBase, query, result.Count);
     }
 }

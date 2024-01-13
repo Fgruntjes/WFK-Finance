@@ -31,7 +31,7 @@ jobs:
             - uses: terraform-linters/setup-tflint@v4
             - uses: hashicorp/setup-terraform@v3
               with:
-                  terraform_version: '~1.6.3'
+                  terraform_version: "~1.6.3"
             - run: terraform fmt -check
               working-directory: terraform
             - run: tflint --format compact
@@ -46,20 +46,15 @@ jobs:
             pull-requests: write
         steps:
             - uses: actions/checkout@v3
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8
-                  run_install: false
-                  package_json_file: frontend/package.json
             - uses: actions/setup-node@v4
               with:
                   node-version-file: frontend/package.json
-                  cache: 'pnpm'
-                  cache-dependency-path: frontend/pnpm-lock.yaml
+                  cache: "npm"
+                  cache-dependency-path: frontend/package-lock.json
             - run: ./build.sh frontend
-            - run: pnpm run lint
+            - run: npm run lint
               working-directory: frontend
-            - run: pnpm run check
+            - run: npm run build
               working-directory: frontend
 
     #########################################################
@@ -70,12 +65,12 @@ jobs:
         timeout-minutes: 30
         permissions:
             contents: read
-        strategy: 
+        strategy:
             matrix:
                 project:
-                - App.Backend.Test
-                - App.Lib.InstitutionConnection.Test
-                - App.Lib.ServiceBus.Test
+                    - App.Backend.Test
+                    - App.Lib.InstitutionConnection.Test
+                    - App.Lib.ServiceBus.Test
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-dotnet@v3
@@ -86,7 +81,8 @@ jobs:
                   dotnet test ${{ matrix.project }} \
                       --no-build \
                       --blame \
-                      --blame-hang-timeout 2m
+                      --blame-hang-timeout 2m \
+                      --logger "console;verbosity=normal"
 
     #########################################################
     # PR check

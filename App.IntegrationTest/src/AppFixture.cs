@@ -55,13 +55,22 @@ public class AppFixture : IAsyncDisposable
 
     public async Task<IPage> WithPage()
     {
+        var isCiCd = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
         _playwright ??= await Playwright.CreateAsync();
-        _browser ??= await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        _browser ??= await _playwright.Chromium.LaunchAsync(new()
         {
-            Headless = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true"
+            Headless = isCiCd,
         });
 
-        _browserContext ??= await _browser.NewContextAsync();
+        _browserContext ??= await _browser.NewContextAsync(new()
+        {
+            RecordVideoDir = isCiCd ? GetVideoFolder() : null,
+            ScreenSize = new()
+            {
+                Height = 1080,
+                Width = 1920,
+            },
+        });
 
         var page = await _browserContext.NewPageAsync();
         await page.GotoAsync(Services.GetRequiredService<IOptions<AppOptions>>().Value.FrontendUrl);
@@ -80,7 +89,24 @@ public class AppFixture : IAsyncDisposable
         await new List<LocatorAction> {
             new (authScreen.LoginLocator, async (_) => await authScreen.Login($"test-{appEnvironment}@test.com", "passpass$12$12")),
             new (authScreen.AuthorizeLocator, async (_) => await authScreen.AcceptAuthorization()),
-            new (homeScreen.Locator)}
+            new (homeScreen.Locator, new() { State = WaitForSelectorState.Attached })}
             .GoToLastAsync();
+    }
+
+    private static string GetVideoFolder()
+    {
+        var directory = Directory.GetCurrentDirectory();
+
+        while (directory != null)
+        {
+            var appSettingsPath = Path.Combine(directory, "appsettings.json");
+            if (File.Exists(appSettingsPath))
+            {
+                return Path.Combine(directory, ".test-videos");
+            }
+            directory = Directory.GetParent(directory)?.FullName;
+        }
+
+        return Path.Combine(Directory.GetCurrentDirectory(), ".test-videos");
     }
 }

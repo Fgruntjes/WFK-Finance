@@ -20,7 +20,7 @@ public class HttpContextOrganisationIdProvider : IOrganisationIdProvider
     public Guid GetOrganisationId()
     {
         var identity = _httpContextAccessor.HttpContext?.User.Identity?.Name
-            ?? throw new Exception("No identity found");
+            ?? throw new System.Exception("No identity found");
 
         if (_storedOrganisations.TryGetValue(identity, out var id))
         {
@@ -58,7 +58,7 @@ public class HttpContextOrganisationIdProvider : IOrganisationIdProvider
 
                 return organisationId;
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 transaction.Rollback();
                 throw;

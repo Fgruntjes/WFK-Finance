@@ -1,8 +1,0 @@
-mutation RefreshInstitutionConnection($Id: Guid!){
-	institutionConnection {
-		refreshId(id: $Id) {
-			externalId
-			connectUrl
-		}
-	}
-}

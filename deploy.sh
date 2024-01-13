@@ -145,8 +145,8 @@ if [[ "${ACTION}" == "plan" ]] || [[ "${ACTION}" == "apply" ]]; then
         done
     fi
 elif [[ "${ACTION}" == "destroy" ]]; then
-    if [[ "${APP_ENVIRONMENT}" == "main" ]]; then
-        echo "Main environment can not be destroyed"
+    if [[ "${APP_ENVIRONMENT}" == "main" && "${APP_DESTROY_MAIN}" != "force" ]]; then
+        echo "Main environment can only be destroyed when APP_DESTROY_MAIN is set to 'force'"
         exit 1
     fi
 
