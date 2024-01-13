@@ -12,9 +12,11 @@ export default defineConfig(({ mode }) => {
     console.log("Starting env", process.env);
   }
 
-  function envVal(name: string, defaultValue: string | undefined = undefined) {
+  function envVal(name: string) {
     if (!process.env[name]) {
-      return defaultValue || `__MISSING_ENV_VAR__${name}__`;
+      throw new Error(
+        `Env var missing '${name}', did you run 'deploy.sh' to create dev cloud resources?`,
+      );
     }
 
     return JSON.stringify(process.env[name]);

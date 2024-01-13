@@ -1,23 +1,22 @@
+import { RefineThemes, useNotificationProvider } from "@refinedev/antd";
+import "@refinedev/antd/dist/reset.css";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
-import { useNotificationProvider } from "@refinedev/antd";
-import "@refinedev/antd/dist/reset.css";
-
 import routerBindings, {
   DocumentTitleHandler,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { App as AntdApp } from "antd";
+import { App as AntdApp, ConfigProvider, theme } from "antd";
 import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
-import { ColorModeContextProvider } from "./contexts/color-mode";
 import useAuthProvider from "./hooks/useAuthProvider";
 import useI18nProvider from "./i18n-provider/useI18nProvider";
 import LoadingView from "./pages/LoadingView";
 import { resourceList } from "./resources";
 import dataProvider from "./rest-data-provider";
+
+const { darkAlgorithm } = theme;
 
 function App() {
   const { isLoading, authProvider } = useAuthProvider();
@@ -30,7 +29,12 @@ function App() {
   return (
     <BrowserRouter>
       <RefineKbarProvider>
-        <ColorModeContextProvider>
+        <ConfigProvider
+          theme={{
+            ...RefineThemes.Blue,
+            algorithm: darkAlgorithm,
+          }}
+        >
           <AntdApp>
             <Refine
               notificationProvider={useNotificationProvider}
@@ -53,7 +57,7 @@ function App() {
               <ReactQueryDevtools initialIsOpen={false} />
             </Refine>
           </AntdApp>
-        </ColorModeContextProvider>
+        </ConfigProvider>
       </RefineKbarProvider>
     </BrowserRouter>
   );
