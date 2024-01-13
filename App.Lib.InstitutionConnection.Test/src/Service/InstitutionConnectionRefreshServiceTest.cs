@@ -2,7 +2,7 @@ using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages;
+using App.Lib.ServiceBus.Messages.InstitutionConnection;
 using App.Lib.Test;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -193,7 +193,7 @@ public class InstitutionConnectionRefreshServiceTest
             {
                 mock.Verify(
                     m => m.Send(
-                        It.Is<InstitutionAccountTransactionImportJob>(job => job.InstitutionConnectionAccountId == account.Id),
+                        It.Is<TransactionImportJob>(job => job.InstitutionConnectionAccountId == account.Id),
                         It.IsAny<CancellationToken>()),
                     Times.Exactly(1));
             }
@@ -241,14 +241,14 @@ public class InstitutionConnectionRefreshServiceTest
         {
             mock.Verify(
                 m => m.Send(
-                    It.Is<InstitutionAccountTransactionImportJob>(j =>
+                    It.Is<TransactionImportJob>(j =>
                         j.InstitutionConnectionAccountId == new Guid("31ba4686-d399-46ee-a2c7-f81644b5d61e")),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
 
             mock.Verify(
                 m => m.Send(
-                    It.IsAny<InstitutionAccountTransactionImportJob>(),
+                    It.IsAny<TransactionImportJob>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once());
         });

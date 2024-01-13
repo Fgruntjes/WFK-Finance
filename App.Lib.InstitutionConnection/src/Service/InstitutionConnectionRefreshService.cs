@@ -3,7 +3,7 @@ using App.Lib.Data;
 using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Exception;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages;
+using App.Lib.ServiceBus.Messages.InstitutionConnection;
 using Medallion.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -103,7 +103,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
                     continue;
                 }
 
-                await _serviceBus.Send(new InstitutionAccountTransactionImportJob
+                await _serviceBus.Send(new TransactionImportJob
                 {
                     InstitutionConnectionAccountId = account.Id,
                 }, cancellationToken);

@@ -1,10 +1,10 @@
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages;
+using App.Lib.ServiceBus.Messages.InstitutionConnection;
 
 namespace App.Job.InstitutionAccountTransactionImport;
 
-public class MessageHandler : IMessageHandler<InstitutionAccountTransactionImportJob>
+public class MessageHandler : IMessageHandler<TransactionImportJob>
 {
     private readonly ITransactionImportService _transactionImportService;
 
@@ -13,7 +13,7 @@ public class MessageHandler : IMessageHandler<InstitutionAccountTransactionImpor
         _transactionImportService = transactionImportService;
     }
 
-    public async Task Handle(InstitutionAccountTransactionImportJob message)
+    public async Task Handle(TransactionImportJob message)
     {
         await _transactionImportService.ImportAsync(message.InstitutionConnectionAccountId);
     }

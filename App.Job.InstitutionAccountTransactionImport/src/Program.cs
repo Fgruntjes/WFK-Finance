@@ -3,7 +3,7 @@ using App.Lib.Configuration;
 using App.Lib.Data;
 using App.Lib.InstitutionConnection;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages;
+using App.Lib.ServiceBus.Messages.InstitutionConnection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -12,7 +12,7 @@ var builder = Host.CreateDefaultBuilder(args)
     .UseConfiguration()
     .UseDataProtection()
     .UseInstitutionConnectionClient()
-    .UseServiceBusListener<InstitutionAccountTransactionImportJob, MessageHandler>();
+    .UseServiceBusListener<TransactionImportJob, MessageHandler>();
 
 builder.ConfigureServices(serviceCollection =>
 {

@@ -77,5 +77,6 @@ else
     build App.Backend
     build App.DataMigrations
     build App.Job.InstitutionAccountTransactionImport
+    build App.Cron.InstitutionAccountTransactionImport
     build frontend
 fi
