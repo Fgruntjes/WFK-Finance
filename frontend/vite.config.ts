@@ -14,9 +14,7 @@ export default defineConfig(({ mode }) => {
 
   function envVal(name: string) {
     if (!process.env[name]) {
-      throw new Error(
-        `Env var missing '${name}', did you run 'deploy.sh' to create dev cloud resources?`,
-      );
+      return `__MISSING_ENV_VAR__${name}__`;
     }
 
     return JSON.stringify(process.env[name]);
