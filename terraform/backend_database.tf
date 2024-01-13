@@ -6,6 +6,9 @@ resource "random_password" "backend_database_sa_password" {
   count            = local.environment_data_ephemeral ? 1 : 0
   length           = 16
   special          = true
+  min_lower        = 1
+  min_special      = 1
+  min_numeric      = 1
   override_special = "_%@"
 }
 

@@ -1,4 +1,3 @@
-using App.Lib.Data;
 using App.Lib.InstitutionConnection.Service;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;

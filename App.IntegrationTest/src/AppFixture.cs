@@ -10,7 +10,6 @@ using App.Lib.InstitutionConnection;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.FileProviders;
 
 namespace App.IntegrationTest;
 
@@ -58,14 +57,19 @@ public class AppFixture : IAsyncDisposable
     {
         var isCiCd = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
         _playwright ??= await Playwright.CreateAsync();
-        _browser ??= await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        _browser ??= await _playwright.Chromium.LaunchAsync(new()
         {
-            Headless = isCiCd
+            Headless = isCiCd,
         });
 
-        _browserContext ??= await _browser.NewContextAsync(new BrowserNewContextOptions()
+        _browserContext ??= await _browser.NewContextAsync(new()
         {
             RecordVideoDir = isCiCd ? GetVideoFolder() : null,
+            ScreenSize = new()
+            {
+                Height = 1080,
+                Width = 1920,
+            },
         });
 
         var page = await _browserContext.NewPageAsync();
@@ -85,7 +89,7 @@ public class AppFixture : IAsyncDisposable
         await new List<LocatorAction> {
             new (authScreen.LoginLocator, async (_) => await authScreen.Login($"test-{appEnvironment}@test.com", "passpass$12$12")),
             new (authScreen.AuthorizeLocator, async (_) => await authScreen.AcceptAuthorization()),
-            new (homeScreen.Locator)}
+            new (homeScreen.Locator, new() { State = WaitForSelectorState.Attached })}
             .GoToLastAsync();
     }
 

@@ -1,4 +1,3 @@
-using App.Lib.Configuration;
 using App.Lib.Data;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages;

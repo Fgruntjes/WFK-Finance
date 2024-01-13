@@ -9,13 +9,14 @@ public static class LocatorExtensions
         await actions.ToArray().GoToLastAsync();
     }
 
-    public static async Task GoToLastAsync(this LocatorAction[] actions, LocatorWaitForOptions? locatorWaitOptions = default, int maxTries = 10)
+    public static async Task GoToLastAsync(this LocatorAction[] actions, int maxTries = 10)
     {
         var tries = 0;
+        var currentIndex = 0;
         do
         {
-            var locatorTasks = actions.Select(a => a.Locator.WaitForAsync(locatorWaitOptions)).ToArray();
-            var currentIndex = Task.WaitAny(locatorTasks);
+            var locatorTasks = actions.Select(a => a.Locator.WaitForAsync(a.LocatorWaitOptions)).ToArray();
+            currentIndex = Task.WaitAny(locatorTasks);
             if (locatorTasks[currentIndex].IsFaulted)
             {
                 // None of the locators matched, wait all tasks we get a combined exception.
@@ -31,7 +32,7 @@ public static class LocatorExtensions
                 // If somehow all tasks finished sucesfully throw to not end up in permanent loop
                 throw new Exception("All locator tasks finished successfully");
             }
-        } while (true);
+        } while (currentIndex != actions.Length - 1);
     }
 
     private static async Task<bool> DidFindLocator(ILocator locator)

@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using App.Backend.Dto;
 using App.Backend.Mvc;
 using App.Lib.Data;
-using App.Lib.Data.Entity;
 using App.Lib.InstitutionConnection.Service;
 using Gridify;
 using Gridify.EntityFramework;

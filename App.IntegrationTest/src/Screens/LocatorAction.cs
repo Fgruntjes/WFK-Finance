@@ -8,12 +8,16 @@ public class LocatorAction
 
     public Func<ILocator, Task> Action { get; }
 
-    public LocatorAction(ILocator locator, Func<ILocator, Task> action)
+    public LocatorWaitForOptions LocatorWaitOptions { get; set; }
+
+    public LocatorAction(ILocator locator, Func<ILocator, Task> action, LocatorWaitForOptions? locatorWaitOptions = default)
     {
         Locator = locator;
         Action = action;
+        LocatorWaitOptions = locatorWaitOptions != default ? locatorWaitOptions : new LocatorWaitForOptions();
     }
 
-    public LocatorAction(ILocator locator) : this(locator, _ => Task.CompletedTask)
+    public LocatorAction(ILocator locator, LocatorWaitForOptions? locatorWaitOptions = default)
+        : this(locator, _ => Task.CompletedTask, locatorWaitOptions)
     { }
 }

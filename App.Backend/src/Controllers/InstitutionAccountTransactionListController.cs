@@ -1,7 +1,6 @@
 using App.Backend.Dto;
 using App.Backend.Mvc;
 using App.Lib.Data;
-using App.Lib.Data.Entity;
 using Gridify;
 using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
