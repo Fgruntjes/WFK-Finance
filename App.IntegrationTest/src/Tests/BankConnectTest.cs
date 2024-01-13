@@ -68,7 +68,6 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         await page.GetByRole(AriaRole.Tab, new PageGetByRoleOptions { Name = "Transactions" }).ClickAsync();
 
         // Check if we see the transaction
-        var transactions = await page.GetByText("PAYMENT Alderaan Coffe").AllAsync();
-        await Assertions.Expect(transactions[0]).ToBeVisibleAsync();
+        await Assertions.Expect(page.Locator(":has-text('PAYMENT Alderaan Coffe')").Locator("nth=0")).ToBeVisibleAsync();
     }
 }
