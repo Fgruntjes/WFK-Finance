@@ -1,5 +1,4 @@
 using App.IntegrationTest.Screens;
-using Microsoft.Extensions.Azure;
 using Microsoft.Playwright;
 
 namespace App.IntegrationTest.Tests;

@@ -9,25 +9,29 @@ public static class LocatorExtensions
         await actions.ToArray().GoToLastAsync();
     }
 
-    public static async Task GoToLastAsync(this LocatorAction[] actions)
+    public static async Task GoToLastAsync(this LocatorAction[] actions, LocatorWaitForOptions? locatorWaitOptions = default, int maxTries = 10)
     {
-        int currentIndex;
-        var timeout = DateTime.Now.AddSeconds(30);
+        var tries = 0;
         do
         {
-            var locatorTasks = actions.Select(a => a.Locator.WaitForAsync()).ToArray();
-            currentIndex = Task.WaitAny(locatorTasks);
+            var locatorTasks = actions.Select(a => a.Locator.WaitForAsync(locatorWaitOptions)).ToArray();
+            var currentIndex = Task.WaitAny(locatorTasks);
             if (locatorTasks[currentIndex].IsFaulted)
             {
+                // None of the locators matched, wait all tasks we get a combined exception.
                 Task.WaitAll(locatorTasks);
             }
 
             await actions[currentIndex].Action(actions[currentIndex].Locator);
-            if (timeout < DateTime.Now)
+            if (tries++ >= maxTries)
             {
-                throw new Exception("Tried for 30 seconds, but never reached last screen.");
+                // ended in loop while rerunning same actions, wait all tasks so we get a combined exception
+                Task.WaitAll(locatorTasks);
+
+                // If somehow all tasks finished sucesfully throw to not end up in permanent loop
+                throw new Exception("All locator tasks finished successfully");
             }
-        } while (currentIndex < actions.Length - 1);
+        } while (true);
     }
 
     private static async Task<bool> DidFindLocator(ILocator locator)
