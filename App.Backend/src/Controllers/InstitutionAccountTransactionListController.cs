@@ -29,7 +29,7 @@ public class InstitutionAccountTransactionListController : ControllerBase
     }
 
     [HttpGet(Name = RouteName)]
-    [ProducesResponseType(typeof(ICollection<InstitutionAccountTransaction>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<InstitutionAccountTransactionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
         [FromRoute] Guid id,
@@ -47,7 +47,7 @@ public class InstitutionAccountTransactionListController : ControllerBase
             .Where(e => e.AccountId == id)
             .GridifyAsync(query, cancellationToken);
 
-        return ListResult<InstitutionAccountTransaction>.Create(
+        return ListResult<InstitutionAccountTransactionDto>.Create(
             "institutionaccounttransactions",
             query,
             result,

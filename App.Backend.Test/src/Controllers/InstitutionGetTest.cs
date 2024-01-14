@@ -30,10 +30,10 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
         });
 
         //Act
-        var response = await _fixture.Client.GetWithAuthAsync<Dto.Institution>($"{InstitutionListController.RouteBase}/{institutionEntity.Id}");
+        var response = await _fixture.Client.GetWithAuthAsync<Dto.InstitutionDto>($"{InstitutionListController.RouteBase}/{institutionEntity.Id}");
 
         // Assert
-        response.Should().BeEquivalentTo(new Dto.Institution
+        response.Should().BeEquivalentTo(new Dto.InstitutionDto
         {
             Id = institutionEntity.Id,
             ExternalId = institutionEntity.ExternalId,

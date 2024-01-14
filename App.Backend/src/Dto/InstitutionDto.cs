@@ -1,6 +1,6 @@
 namespace App.Backend.Dto;
 
-public class Institution
+public class InstitutionDto
 {
     public Guid Id { get; init; }
 

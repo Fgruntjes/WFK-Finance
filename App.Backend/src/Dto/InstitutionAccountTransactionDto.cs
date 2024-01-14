@@ -1,6 +1,6 @@
 namespace App.Backend.Dto;
 
-public class InstitutionAccountTransaction
+public class InstitutionAccountTransactionDto
 {
     public Guid Id { get; set; }
 

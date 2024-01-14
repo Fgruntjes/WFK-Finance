@@ -24,10 +24,10 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()));
-        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransaction>>();
+        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
 
         // Assert
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransaction>()
+        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
         {
             new() { ExternalId = $"SomeExternalId-organisation-match-0", Date = _fixture.Now.ToDateTimeUtc() },
             new() { ExternalId = $"SomeExternalId-organisation-match-1", Date = _fixture.Now.Plus(Duration.FromHours(1)).ToDateTimeUtc() },
@@ -65,7 +65,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     public async Task WithSort()
     {
         // Act
-        var body = await _fixture.Client.GetListWithAuthAsync<InstitutionAccountTransaction>(
+        var body = await _fixture.Client.GetListWithAuthAsync<InstitutionAccountTransactionDto>(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
@@ -73,7 +73,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
             });
 
         // Assert
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransaction>()
+        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
         {
             new() { ExternalId = $"SomeExternalId-organisation-match-29", Date = _fixture.Now.Plus(Duration.FromHours(29)).ToDateTimeUtc() },
             new() { ExternalId = $"SomeExternalId-organisation-match-28", Date = _fixture.Now.Plus(Duration.FromHours(28)).ToDateTimeUtc() },
@@ -139,9 +139,9 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
                 Page = 2,
                 PageSize = 1
             });
-        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransaction>>();
+        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
 
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransaction>()
+        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
         {
             new() { ExternalId = $"SomeExternalId-organisation-match-1", Date = _fixture.Now.Plus(Duration.FromHours(1)).ToDateTimeUtc() },
         }, options => options
@@ -161,10 +161,10 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
             {
                 Filter = "ExternalId = SomeExternalId-organisation-match-0"
             });
-        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransaction>>();
+        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
 
         // Assert
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransaction>()
+        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
         {
             new() { ExternalId = $"SomeExternalId-organisation-match-0" },
         }, options => options.Including(e => e.ExternalId));

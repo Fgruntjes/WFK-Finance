@@ -23,7 +23,7 @@ public class InstitutionConnectionGetController : ControllerBase
     }
 
     [HttpGet("{id:guid}", Name = RouteName)]
-    [ProducesResponseType(typeof(InstitutionConnection), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(InstitutionConnectionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken = default)
     {

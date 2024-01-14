@@ -31,7 +31,7 @@ public partial class InstitutionListController : ControllerBase
     }
 
     [HttpGet(Name = RouteName)]
-    [ProducesResponseType(typeof(ICollection<Dto.Institution>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<Dto.InstitutionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
@@ -50,7 +50,7 @@ public partial class InstitutionListController : ControllerBase
             }
         }
 
-        return ListResult<Dto.Institution>.Create(RouteBase, query, result, entity => entity.ToDto());
+        return ListResult<Dto.InstitutionDto>.Create(RouteBase, query, result, entity => entity.ToDto());
     }
 
     private static string? FindCountryFilter(string? filter)

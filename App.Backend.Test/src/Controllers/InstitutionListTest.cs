@@ -48,7 +48,7 @@ public class InstitutionListTest
         });
 
         // Act
-        var result = await fixture.Client.GetListWithAuthAsync<Dto.Institution>(
+        var result = await fixture.Client.GetListWithAuthAsync<Dto.InstitutionDto>(
             InstitutionListController.RouteBase,
             query: new GridifyQuery()
             {
@@ -56,7 +56,7 @@ public class InstitutionListTest
             });
 
         // Assert
-        result.Should().BeEquivalentTo(new List<Dto.Institution>()
+        result.Should().BeEquivalentTo(new List<Dto.InstitutionDto>()
         {
             new ()
             {
@@ -79,7 +79,7 @@ public class InstitutionListTest
     {
         // Act
         var fixture = new AppFixture(_databasePool, _loggerProvider);
-        var result = await fixture.Client.GetListWithAuthAsync<Dto.Institution>(
+        var result = await fixture.Client.GetListWithAuthAsync<Dto.InstitutionDto>(
             InstitutionListController.RouteBase,
             query: new GridifyQuery()
             {
@@ -121,7 +121,7 @@ public class InstitutionListTest
         });
 
         // Act
-        var result = await fixture.Client.GetListWithAuthAsync<Dto.Institution>(
+        var result = await fixture.Client.GetListWithAuthAsync<Dto.InstitutionDto>(
             InstitutionListController.RouteBase,
             query: new GridifyQuery()
             {
@@ -129,7 +129,7 @@ public class InstitutionListTest
             });
 
         // Assert
-        result.Should().BeEquivalentTo(new List<Dto.Institution>()
+        result.Should().BeEquivalentTo(new List<Dto.InstitutionDto>()
         {
             new ()
             {

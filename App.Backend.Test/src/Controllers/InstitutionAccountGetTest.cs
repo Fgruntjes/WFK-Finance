@@ -18,11 +18,11 @@ public class InstitutionAccountGetTest : IClassFixture<InstitutionAccountFixture
     public async Task Success()
     {
         // Act
-        var response = await _fixture.Client.GetWithAuthAsync<InstitutionAccount>(
+        var response = await _fixture.Client.GetWithAuthAsync<InstitutionAccountDto>(
             $"{InstitutionAccountListController.RouteBase}/{_fixture.InstitutionAccountEntity.Id}");
 
         // Assert
-        response.Should().BeEquivalentTo(new InstitutionAccount()
+        response.Should().BeEquivalentTo(new InstitutionAccountDto()
         {
             ExternalId = _fixture.InstitutionAccountEntity.ExternalId,
             InstitutionId = _fixture.InstitutionAccountEntity.InstitutionConnection.InstitutionId,

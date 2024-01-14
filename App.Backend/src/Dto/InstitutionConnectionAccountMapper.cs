@@ -4,9 +4,9 @@ namespace App.Backend.Dto;
 
 public static class InstitutionConnectionAccountMapper
 {
-    public static InstitutionAccount ToDto(this InstitutionAccountEntity entity)
+    public static InstitutionAccountDto ToDto(this InstitutionAccountEntity entity)
     {
-        return new InstitutionAccount
+        return new InstitutionAccountDto
         {
             Id = entity.Id,
             InstitutionId = entity.InstitutionConnection.InstitutionId,

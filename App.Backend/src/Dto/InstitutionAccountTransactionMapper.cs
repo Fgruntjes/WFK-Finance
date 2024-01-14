@@ -4,9 +4,9 @@ namespace App.Backend.Dto;
 
 public static class InstitutionAccountTransactionMapper
 {
-    public static InstitutionAccountTransaction ToDto(this InstitutionAccountTransactionEntity entity)
+    public static InstitutionAccountTransactionDto ToDto(this InstitutionAccountTransactionEntity entity)
     {
-        return new InstitutionAccountTransaction
+        return new InstitutionAccountTransactionDto
         {
             Id = entity.Id,
             CreatedAt = entity.CreatedAt.ToDateTimeUtc(),

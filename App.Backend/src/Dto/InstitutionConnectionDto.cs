@@ -1,6 +1,6 @@
 namespace App.Backend.Dto;
 
-public class InstitutionConnection
+public class InstitutionConnectionDto
 {
     public Guid Id { get; set; }
 
@@ -10,5 +10,5 @@ public class InstitutionConnection
 
     public required Uri ConnectUrl { get; set; }
 
-    public required ICollection<InstitutionAccount> Accounts { get; set; }
+    public required ICollection<InstitutionAccountDto> Accounts { get; set; }
 }

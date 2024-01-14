@@ -4,9 +4,9 @@ namespace App.Backend.Dto;
 
 public static class OrganisationMapper
 {
-    public static Organisation ToDto(this OrganisationEntity entity)
+    public static OrganisationDto ToDto(this OrganisationEntity entity)
     {
-        return new Organisation()
+        return new OrganisationDto()
         {
             Id = entity.Id,
             Slug = entity.Slug,

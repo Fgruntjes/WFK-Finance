@@ -1,6 +1,6 @@
 namespace App.Backend.Dto;
 
-public class Organisation
+public class OrganisationDto
 {
     public required Guid Id { get; set; }
 

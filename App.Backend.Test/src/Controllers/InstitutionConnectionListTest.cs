@@ -20,10 +20,10 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
     {
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(InstitutionConnectionListController.RouteBase);
-        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
+        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnectionDto>>();
 
         // Assert
-        result.Should().BeEquivalentTo(new List<InstitutionConnection>()
+        result.Should().BeEquivalentTo(new List<InstitutionConnectionDto>()
         {
             CreateConnection("SomeExternalId-organisation-match-0"),
             CreateConnection("SomeExternalId-organisation-list-0"),
@@ -58,12 +58,12 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
         response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionconnections 0-25/31");
     }
 
-    private static InstitutionConnection CreateConnection(string externalId)
+    private static InstitutionConnectionDto CreateConnection(string externalId)
     {
-        return new InstitutionConnection
+        return new InstitutionConnectionDto
         {
             ExternalId = externalId,
-            Accounts = new List<InstitutionAccount>(),
+            Accounts = new List<InstitutionAccountDto>(),
             ConnectUrl = new Uri($"https://www.{externalId}.com/"),
         };
     }
@@ -79,10 +79,10 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
                 Page = 2,
                 PageSize = 1,
             });
-        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
+        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnectionDto>>();
 
         // Assert
-        result.Should().BeEquivalentTo(new List<InstitutionConnection>()
+        result.Should().BeEquivalentTo(new List<InstitutionConnectionDto>()
         {
             CreateConnection("SomeExternalId-organisation-list-0"),
         },
@@ -117,7 +117,7 @@ public class InstitutionConnectionListTest : IClassFixture<InstitutionConnection
                 Page = 1,
                 PageSize = 100,
             });
-        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnection>>();
+        var result = await response.Content.ReadFromJsonAsync<ICollection<InstitutionConnectionDto>>();
 
         // Assert
         result.Should().NotContain(c => c.ExternalId == "SomeExternalId-organisation-missmatch-0");

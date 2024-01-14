@@ -34,16 +34,16 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         var externalId = _fixture.InstitutionConnectionEntity.ExternalId;
         var response = await _fixture.Client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/external/{externalId}"));
-        var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
+        var body = await response.Content.ReadFromJsonAsync<InstitutionConnectionDto>();
 
         // Assert
-        body.Should().BeEquivalentTo(new InstitutionConnection
+        body.Should().BeEquivalentTo(new InstitutionConnectionDto
         {
             Id = _fixture.InstitutionConnectionEntity.Id,
             InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
             ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
-            Accounts = new List<InstitutionAccount>(),
+            Accounts = new List<InstitutionAccountDto>(),
         });
     }
 
@@ -90,16 +90,16 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
         var id = _fixture.InstitutionConnectionEntity.Id;
         var response = await _fixture.Client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Patch, $"{InstitutionConnectionListController.RouteBase}/refresh/id/{id}"));
-        var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
+        var body = await response.Content.ReadFromJsonAsync<InstitutionConnectionDto>();
 
         // Assert
-        body.Should().BeEquivalentTo(new InstitutionConnection
+        body.Should().BeEquivalentTo(new InstitutionConnectionDto
         {
             Id = _fixture.InstitutionConnectionEntity.Id,
             InstitutionId = _fixture.InstitutionConnectionEntity.InstitutionId,
             ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
-            Accounts = new List<InstitutionAccount>(),
+            Accounts = new List<InstitutionAccountDto>(),
         });
     }
 

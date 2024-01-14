@@ -27,7 +27,7 @@ public class InstitutionConnectionListController : ControllerBase
     }
 
     [HttpGet(Name = RouteName)]
-    [ProducesResponseType(typeof(ICollection<InstitutionConnection>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<InstitutionConnectionDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> List(
         [FromQuery] GridifyQuery query,
         CancellationToken cancellationToken = default)
@@ -39,13 +39,13 @@ public class InstitutionConnectionListController : ControllerBase
 
         var items = await result.Query
             .Include(e => e.Accounts)
-            .Select(e => new InstitutionConnection
+            .Select(e => new InstitutionConnectionDto
             {
                 Id = e.Id,
                 InstitutionId = e.InstitutionId,
                 ExternalId = e.ExternalId,
                 ConnectUrl = e.ConnectUrl,
-                Accounts = e.Accounts.Select(a => new InstitutionAccount
+                Accounts = e.Accounts.Select(a => new InstitutionAccountDto
                 {
                     Id = a.Id,
                     ExternalId = a.ExternalId,
@@ -58,6 +58,6 @@ public class InstitutionConnectionListController : ControllerBase
             .ToListAsync(cancellationToken);
 
         var start = query.Page * query.PageSize;
-        return ListResult<InstitutionConnection>.Create(items, RouteBase, query, result.Count);
+        return ListResult<InstitutionConnectionDto>.Create(items, RouteBase, query, result.Count);
     }
 }
