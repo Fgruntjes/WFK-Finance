@@ -4,4 +4,7 @@ resource "azurerm_storage_account" "backend" {
   location                 = var.arm_location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  tags = {
+    environment = var.app_environment
+  }
 }

@@ -35,7 +35,7 @@
       ]
     },
     {
-      "label": "watch Job.InstitutionAccountTransactionImport",
+      "label": "watch App.Institution.Job.TransactionImport",
       "type": "shell",
       "command": "dotnet watch --project App.Institution.Job.TransactionImport",
       "isBackground": true,
@@ -102,7 +102,7 @@
       ],
       "dependsOn": [
         "watch App.Backend",
-        "watch Job.InstitutionAccountTransactionImport"
+        "watch App.Institution.Job.TransactionImport"
       ]
     },
     {

@@ -1,6 +1,6 @@
 locals {
   service_bus_queues = {
-    transactionimport : "InstitutionAccountTransactionImport"
+    transactionimport : "App.Institution.Job.TransactionImport"
   }
 }
 

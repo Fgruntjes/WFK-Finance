@@ -61,24 +61,14 @@ resource "azurerm_container_app" "backend_workers" {
         trigger_parameter = "connection"
       }
     }
-    #    
-    #    azure_queue_scale_rule {
-    #      name         = "queue"
-    #      queue_name   = lower(each.value)
-    #      queue_length = 5
-    #      authentication {
-    #        secret_name       = "scale-rule-auth"
-    #        trigger_parameter = "connection"
-    #      }
-    #    }
 
     container {
       name  = "app"
-      image = "${data.azurerm_container_registry.app.login_server}/app.job.${lower(each.value)}:${var.app_version}"
+      image = "${data.azurerm_container_registry.app.login_server}/${lower(each.value)}:${var.app_version}"
       command = [
         "bash",
         "-c",
-        "echo \"$${AppSettings}\" > appsettings.local.json && dotnet App.Job.${each.value}.dll",
+        "echo \"$${AppSettings}\" > appsettings.local.json && dotnet ${each.value}.dll",
       ]
       cpu    = 0.5
       memory = "1Gi"

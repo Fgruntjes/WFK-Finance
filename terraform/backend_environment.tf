@@ -16,11 +16,10 @@ resource "azurerm_container_app_environment" "backend" {
   }
 }
 
-#resource "azurerm_service_plan" "backend" {
-#  name                       = "v${var.app_environment}-backend"
-#  resource_group_name        = var.app_project_slug
-#  location                   = var.arm_location
-#  app_service_environment_id = azurerm_container_app_environment.backend.id
-#  os_type                    = "Linux"
-#  sku_name                   = "Y1"
-#}
+resource "azurerm_service_plan" "backend" {
+  name                = "v${var.app_environment}-backend"
+  resource_group_name = var.app_project_slug
+  location            = var.arm_location
+  os_type             = "Linux"
+  sku_name            = "Y1"
+}
