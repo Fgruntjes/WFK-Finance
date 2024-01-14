@@ -1,5 +1,11 @@
 locals {
-  app_frontend_url = var.app_environment == "dev" ? "http://localhost:3000" : "https://${var.app_environment}.${var.app_project_slug}.pages.dev"
+  app_frontend_urls = {
+    "main"    = "https://${var.app_project_slug}.pages.dev",
+    "dev"     = "http://localhost:3000",
+    "default" = "https://${var.app_environment}.${var.app_project_slug}.pages.dev"
+  }
+
+  app_frontend_url = lookup(local.app_frontend_urls, var.app_environment, local.app_frontend_urls["default"])
 }
 
 resource "auth0_client" "frontend" {
