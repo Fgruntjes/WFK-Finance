@@ -39,6 +39,7 @@ public partial class Startup
             config.ParameterFilter<GridifyFilterParameterFilter>();
             config.OperationFilter<RangeOperationFilter>();
             config.SchemaFilter<NonNullableFilter>();
+            config.SchemaFilter<DtoSuffixFilterFilter>();
             config.TagActionsBy(ApiGroupTagger.GetTags);
         });
         services.AddProblemDetails();
