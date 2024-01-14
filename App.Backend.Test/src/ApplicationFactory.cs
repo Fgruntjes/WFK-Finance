@@ -1,6 +1,6 @@
 using App.Backend.Test.Auth;
+using App.Institution.Service;
 using App.Lib.Test.Database;
-using App.Lib.InstitutionConnection.Service;
 using App.Lib.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;

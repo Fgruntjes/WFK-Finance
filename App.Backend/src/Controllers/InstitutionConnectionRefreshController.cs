@@ -1,6 +1,6 @@
 using App.Backend.Dto;
-using App.Lib.InstitutionConnection.Exception;
-using App.Lib.InstitutionConnection.Service;
+using App.Institution.Exception;
+using App.Institution.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

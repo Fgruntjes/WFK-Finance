@@ -37,7 +37,7 @@
     {
       "label": "watch Job.InstitutionAccountTransactionImport",
       "type": "shell",
-      "command": "dotnet watch --project App.Job.InstitutionAccountTransactionImport",
+      "command": "dotnet watch --project App.Institution.Job.TransactionImport",
       "isBackground": true,
       "options": {
         "cwd": "${workspaceFolder}",

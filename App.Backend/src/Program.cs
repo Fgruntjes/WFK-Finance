@@ -1,7 +1,7 @@
 using App.Backend;
 using App.Lib.Configuration;
 using App.Lib.Data;
-using App.Lib.InstitutionConnection;
+using App.Institution;
 using App.Lib.ServiceBus;
 
 var builder = Host.CreateDefaultBuilder(args);

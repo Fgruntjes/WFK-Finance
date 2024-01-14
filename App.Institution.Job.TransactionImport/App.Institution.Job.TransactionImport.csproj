@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\App.Lib.Configuration\App.Lib.Configuration.csproj" />
+    <ProjectReference Include="..\App.Institution\App.Institution.csproj" />
+    <ProjectReference Include="..\App.Lib.ServiceBus\App.Lib.ServiceBus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+      <DependentUpon>Dockerfile</DependentUpon>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="VMelnalksnis.NordigenDotNet">
+      <HintPath>..\..\..\..\.nuget\packages\vmelnalksnis.nordigendotnet\1.1.3\lib\net6.0\VMelnalksnis.NordigenDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

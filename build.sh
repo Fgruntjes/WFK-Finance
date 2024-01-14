@@ -76,7 +76,7 @@ if [ "$#" -ne 0 ]; then
 else
     build App.Backend
     build App.DataMigrations
-    build App.Job.InstitutionAccountTransactionImport
-    build App.Cron.InstitutionAccountTransactionImport
+    build App.Institution.Job.TransactionImport
+    build App.Institution.Cron.TransactionImport
     build frontend
 fi

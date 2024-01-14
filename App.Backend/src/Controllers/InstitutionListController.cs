@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using App.Backend.Dto;
 using App.Backend.Mvc;
 using App.Lib.Data;
-using App.Lib.InstitutionConnection.Service;
+using App.Institution.Service;
 using Gridify;
 using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +31,7 @@ public partial class InstitutionListController : ControllerBase
     }
 
     [HttpGet(Name = RouteName)]
-    [ProducesResponseType(typeof(ICollection<Institution>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<Dto.Institution>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
@@ -50,7 +50,7 @@ public partial class InstitutionListController : ControllerBase
             }
         }
 
-        return ListResult<Institution>.Create(RouteBase, query, result, entity => entity.ToDto());
+        return ListResult<Dto.Institution>.Create(RouteBase, query, result, entity => entity.ToDto());
     }
 
     private static string? FindCountryFilter(string? filter)

@@ -1,6 +1,5 @@
 using System.Net;
 using App.Backend.Controllers;
-using App.Backend.Dto;
 using App.Lib.Data.Entity;
 
 namespace App.Backend.Test.Controllers;
@@ -31,10 +30,10 @@ public class InstitutionGetTest : IClassFixture<AppFixture>
         });
 
         //Act
-        var response = await _fixture.Client.GetWithAuthAsync<Institution>($"{InstitutionListController.RouteBase}/{institutionEntity.Id}");
+        var response = await _fixture.Client.GetWithAuthAsync<Dto.Institution>($"{InstitutionListController.RouteBase}/{institutionEntity.Id}");
 
         // Assert
-        response.Should().BeEquivalentTo(new Institution
+        response.Should().BeEquivalentTo(new Dto.Institution
         {
             Id = institutionEntity.Id,
             ExternalId = institutionEntity.ExternalId,
