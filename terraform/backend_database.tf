@@ -57,15 +57,6 @@ resource "azurerm_mssql_database" "backend_database" {
     }
   }
 
-  dynamic "long_term_retention_policy" {
-    for_each = local.backend_database_backups_enabled ? [1] : []
-    content {
-      weekly_retention  = "P4W"
-      monthly_retention = "P0M"
-      yearly_retention  = "P0Y"
-    }
-  }
-
   tags = {
     environment = var.app_environment
   }
