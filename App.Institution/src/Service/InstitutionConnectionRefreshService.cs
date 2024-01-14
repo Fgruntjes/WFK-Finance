@@ -3,7 +3,7 @@ using App.Institution.Exception;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages.InstitutionConnection;
+using App.Lib.ServiceBus.Messages.Institution;
 using Medallion.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

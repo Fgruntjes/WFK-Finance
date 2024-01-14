@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-  <ProjectReference Include="..\App.Lib.Data\App.Lib.Data.csproj" />
+    <ProjectReference Include="..\App.Institution\App.Institution.csproj" />
     <ProjectReference Include="..\App.Lib.Configuration\App.Lib.Configuration.csproj" />
     <ProjectReference Include="..\App.Lib.ServiceBus\App.Lib.ServiceBus.csproj" />
   </ItemGroup>
@@ -18,12 +18,6 @@
       <Link>.dockerignore</Link>
       <DependentUpon>Dockerfile</DependentUpon>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.20.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

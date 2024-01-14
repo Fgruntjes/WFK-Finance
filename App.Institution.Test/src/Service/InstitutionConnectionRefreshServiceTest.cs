@@ -2,7 +2,7 @@ using App.Lib.Data.Entity;
 using App.Institution.Exception;
 using App.Institution.Service;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages.InstitutionConnection;
+using App.Lib.ServiceBus.Messages.Institution;
 using App.Lib.Test;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.DependencyInjection;

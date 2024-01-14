@@ -15,11 +15,3 @@ resource "azurerm_container_app_environment" "backend" {
     environment = var.app_environment
   }
 }
-
-resource "azurerm_service_plan" "backend" {
-  name                = "v${var.app_environment}-backend"
-  resource_group_name = var.app_project_slug
-  location            = var.arm_location
-  os_type             = "Linux"
-  sku_name            = "Y1"
-}

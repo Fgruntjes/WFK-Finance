@@ -1,6 +1,6 @@
 using App.Lib.Data;
 using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages.InstitutionConnection;
+using App.Lib.ServiceBus.Messages.Institution;
 using App.Lib.Test;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.DependencyInjection;

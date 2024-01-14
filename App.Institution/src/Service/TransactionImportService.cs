@@ -1,9 +1,11 @@
 using App.Institution.Exception;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
+using App.Lib.ServiceBus.Messages.Institution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NodaTime;
+using Rebus.Bus;
 using VMelnalksnis.NordigenDotNet.Accounts;
 
 namespace App.Institution.Service;
@@ -13,18 +15,52 @@ internal class TransactionImportService : ITransactionImportService
     private readonly IAccountClient _accountClient;
     private readonly DatabaseContext _database;
     private readonly IClock _clock;
+    private readonly IBus _bus;
     private readonly ILogger<TransactionImportService> _logger;
 
     public TransactionImportService(
         ILoggerFactory loggerFactory,
         IAccountClient accountClient,
         DatabaseContext databaseContext,
-        IClock clock)
+        IClock clock,
+        IBus bus)
     {
         _accountClient = accountClient;
         _database = databaseContext;
         _clock = clock;
+        _bus = bus;
         _logger = loggerFactory.CreateLogger<TransactionImportService>();
+    }
+
+    public async Task QueueAllAccountsAsync(CancellationToken cancellationToken)
+    {
+        var pageNumber = 0;
+        var pageSize = 1000;
+
+        while (true)
+        {
+            var institutionAccounts = await _database.InstitutionAccounts
+                .AsNoTracking()
+                .Where(x => x.ImportStatus != ImportStatus.Queued)
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            if (!institutionAccounts.Any())
+            {
+                break;
+            }
+
+            foreach (var institutionAccount in institutionAccounts)
+            {
+                await _bus.Publish(new TransactionImportJob
+                {
+                    InstitutionConnectionAccountId = institutionAccount.Id
+                });
+            }
+
+            pageNumber++;
+        }
     }
 
     public async Task ImportAsync(Guid institutionAccountId, CancellationToken cancellationToken = default)

@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.Test", "App.Lib.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.ServiceBus.Test", "App.Lib.ServiceBus.Test\App.Lib.ServiceBus.Test.csproj", "{37386040-6F9B-4A4D-9C68-41B021F0D777}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Institution.Cron.TransactionImport", "App.Institution.Cron.TransactionImport\App.Institution.Cron.TransactionImport.csproj", "{9A2A3FFB-4191-4A50-AA82-FD6A0F25BF67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Institution.Job.TransactionImportEachAccount", "App.Institution.Job.TransactionImportEachAccount\App.Institution.Job.TransactionImportEachAccount.csproj", "{9A2A3FFB-4191-4A50-AA82-FD6A0F25BF67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

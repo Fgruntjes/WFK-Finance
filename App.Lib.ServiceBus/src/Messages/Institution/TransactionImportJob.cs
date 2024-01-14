@@ -1,4 +1,4 @@
-namespace App.Lib.ServiceBus.Messages.InstitutionConnection;
+namespace App.Lib.ServiceBus.Messages.Institution;
 
 public class TransactionImportJob : IMessage
 {

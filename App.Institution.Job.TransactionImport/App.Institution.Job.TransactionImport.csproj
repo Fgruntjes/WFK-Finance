@@ -20,10 +20,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="VMelnalksnis.NordigenDotNet">
-      <HintPath>..\..\..\..\.nuget\packages\vmelnalksnis.nordigendotnet\1.1.3\lib\net6.0\VMelnalksnis.NordigenDotNet.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
