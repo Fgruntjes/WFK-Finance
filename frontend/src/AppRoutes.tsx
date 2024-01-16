@@ -1,8 +1,8 @@
 import {
+  InstitutionAccountsCreateReturnView,
+  InstitutionAccountsCreateView,
+  InstitutionAccountsListView,
   InstitutionAccountsShowView,
-  InstitutionConnectionsCreateReturnView,
-  InstitutionConnectionsCreateView,
-  InstitutionConnectionsListView,
 } from "@pages";
 import { ThemedLayoutV2 } from "@refinedev/antd";
 import { Authenticated, ErrorComponent } from "@refinedev/core";
@@ -24,13 +24,14 @@ function AppRoutes() {
         <Route index element={<div>Homepage</div>} />
 
         <Route path="/bank-accounts">
-          <Route index element={<InstitutionConnectionsListView />} />
+          <Route index element={<InstitutionAccountsListView />} />
           <Route path=":id" element={<InstitutionAccountsShowView />} />
-          <Route path="create" element={<InstitutionConnectionsCreateView />} />
+          <Route path="create" element={<InstitutionAccountsCreateView />} />
           <Route
             path="create-return"
-            element={<InstitutionConnectionsCreateReturnView />}
+            element={<InstitutionAccountsCreateReturnView />}
           />
+          <Route path="transactions" element={<div>transactions</div>} />
         </Route>
       </Route>
 

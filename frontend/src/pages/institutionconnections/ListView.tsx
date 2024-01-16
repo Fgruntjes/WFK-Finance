@@ -13,6 +13,7 @@ function ListView() {
     tableProps: { loading, ...tableProps },
   } = useTable<InstitutionConnection, HttpError>({
     syncWithLocation: true,
+    resource: "institutionconnections",
   });
 
   const { data: institutionData, isLoading: institutionIsLoading } =
@@ -59,7 +60,12 @@ function ListView() {
           dataIndex="actions"
           render={(_, record: InstitutionConnection) => (
             <Space>
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                resource="institutionconnections"
+              />
             </Space>
           )}
         />

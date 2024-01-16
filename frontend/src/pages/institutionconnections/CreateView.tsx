@@ -14,6 +14,7 @@ function CreateView() {
     HttpError,
     InstitutionConnectionCreate
   >({
+    resource: "institutionconnections",
     onMutationSuccess: (result) => {
       window.location.href = result.data.connectUrl;
     },
