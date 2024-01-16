@@ -29,7 +29,7 @@ public class InstitutionTransactionImportCronController : ControllerBase
         _log = log;
     }
 
-    [HttpGet(Name = RouteName)]
+    [HttpPost(Name = RouteName)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> Queue([FromQuery] string cronToken, CancellationToken cancellationToken = default)
     {

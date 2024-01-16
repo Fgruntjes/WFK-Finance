@@ -38,6 +38,7 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
             services.MockScoped<IInstitutionConnectionCreateService>();
             services.MockScoped<IInstitutionConnectionRefreshService>();
             services.MockScoped<IInstitutionSearchService>();
+            services.MockScoped<ITransactionImportQueueService>();
         });
 
         return base.CreateHost(builder);
