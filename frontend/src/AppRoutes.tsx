@@ -2,6 +2,7 @@ import InstitutionAccountsCreateReturnView from "@pages/institutionconnections/C
 import InstitutionAccountsCreateView from "@pages/institutionconnections/CreateView";
 import InstitutionAccountsListView from "@pages/institutionconnections/ListView";
 import InstitutionAccountsShowView from "@pages/institutionconnections/ShowView";
+import InstitutionTransactionsListView from "@pages/institutiontransactions/ListView";
 import { ThemedLayoutV2 } from "@refinedev/antd";
 import { Authenticated, ErrorComponent } from "@refinedev/core";
 import { Outlet, Route, Routes } from "react-router-dom";
@@ -29,7 +30,10 @@ function AppRoutes() {
             path="create-return"
             element={<InstitutionAccountsCreateReturnView />}
           />
-          <Route path="transactions" element={<div>transactions</div>} />
+          <Route
+            path="transactions"
+            element={<InstitutionTransactionsListView />}
+          />
         </Route>
       </Route>
 

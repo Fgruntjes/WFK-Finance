@@ -43,8 +43,6 @@ export interface InstitutionAccountTransaction {
   createdAt: string;
   /** @format uuid */
   accountId: string;
-  /** @format uuid */
-  institutionId: string;
   externalId: string;
   unstructuredInformation: string;
   transactionCode?: string;
@@ -75,6 +73,23 @@ export interface InstitutionConnectionCreate {
   institutionId: string;
   /** @format uri */
   returnUrl: string;
+}
+
+/** InstitutionTransaction */
+export interface InstitutionTransaction {
+  /** @format uuid */
+  id: string;
+  accountIban: string;
+  /** @format uuid */
+  institutionId: string;
+  unstructuredInformation: string;
+  counterPartyName?: string;
+  counterPartyAccount?: string;
+  /** @format double */
+  amount: number;
+  currency: string;
+  /** @format date-time */
+  date: string;
 }
 
 export interface ProblemDetails {

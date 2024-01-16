@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace App.Backend.Test;
 
@@ -27,6 +28,13 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureLogging(_loggerProvider);
         builder.ConfigureDatabase(_database.ConnectionString);
         builder.ConfigureServiceBus();
+        builder.ConfigureAppConfiguration(config =>
+        {
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                {"App:CronToken", "somerandomtoken"},
+            });
+        });
 
         builder.ConfigureServices(services =>
         {

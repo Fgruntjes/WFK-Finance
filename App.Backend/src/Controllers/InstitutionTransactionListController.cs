@@ -1,4 +1,5 @@
 using App.Backend.Dto;
+using App.Backend.Gridify;
 using App.Backend.Mvc;
 using App.Lib.Data;
 using Gridify;
@@ -10,12 +11,11 @@ using Microsoft.EntityFrameworkCore;
 namespace App.Backend.Controllers;
 
 [ApiController]
-[ApiGroup(typeof(InstitutionAccountListController))]
 [Authorize]
 [Route(RouteBase)]
 public class InstitutionTransactionListController : ControllerBase
 {
-    public const string RouteBase = "/institutionaccounts/{id:guid}/transactions";
+    public const string RouteBase = "/institutiontransactions";
 
     public const string RouteName = nameof(InstitutionTransactionListController);
 
@@ -29,28 +29,37 @@ public class InstitutionTransactionListController : ControllerBase
     }
 
     [HttpGet(Name = RouteName)]
-    [ProducesResponseType(typeof(ICollection<InstitutionAccountTransactionDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ICollection<InstitutionTransactionDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> List(
-        [FromRoute] Guid id,
         [FromQuery] GridifyQuery query,
         CancellationToken cancellationToken = default)
     {
-        var accountEntity = await _database.InstitutionAccounts
-            .Where(e => e.Id == id)
+        var accountQuery = _database.InstitutionAccounts
             .Where(e => e.InstitutionConnection.OrganisationId == _organisationIdProvider.GetOrganisationId())
-            .SingleOrDefaultAsync(cancellationToken);
-        if (accountEntity == null)
-            return NotFound();
+            .Select(a => a.Id);
 
         var result = await _database.InstitutionAccountTransactions
-            .Where(e => e.AccountId == id)
-            .GridifyAsync(query, cancellationToken);
+            .Where(e => accountQuery.Contains(e.AccountId))
+            .GridifyQueryableAsync(query, new InstitutionTransactionQueryMapper(), cancellationToken);
 
-        return ListResult<InstitutionAccountTransactionDto>.Create(
-            "institutionaccounttransactions",
-            query,
-            result,
-            entity => entity.ToDto());
+        var items = await result.Query
+            .Include(e => e.Account)
+            .Include(e => e.Account.InstitutionConnection)
+            .Select(e => new InstitutionTransactionDto
+            {
+                Id = e.Id,
+                InstitutionId = e.Account.InstitutionConnection.InstitutionId,
+                AccountIban = e.Account.Iban,
+                Amount = e.Amount,
+                CounterPartyAccount = e.CounterPartyAccount,
+                CounterPartyName = e.CounterPartyName,
+                Currency = e.Currency,
+                Date = e.Date.ToDateTimeUtc(),
+                UnstructuredInformation = e.UnstructuredInformation,
+            })
+            .ToListAsync(cancellationToken);
+
+        var start = query.Page * query.PageSize;
+        return ListResult<InstitutionTransactionDto>.Create(items, RouteBase, query, result.Count);
     }
 }

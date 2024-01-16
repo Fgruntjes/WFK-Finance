@@ -1,18 +1,14 @@
 namespace App.Backend.Dto;
 
-public class InstitutionAccountTransactionDto
+public class InstitutionTransactionDto
 {
     public Guid Id { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public string AccountIban { get; set; } = null!;
 
-    public Guid AccountId { get; set; }
-
-    public string ExternalId { get; set; } = null!;
+    public Guid InstitutionId { get; set; }
 
     public string UnstructuredInformation { get; set; } = null!;
-
-    public string? TransactionCode { get; set; }
 
     public string? CounterPartyName { get; set; }
 

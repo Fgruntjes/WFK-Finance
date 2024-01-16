@@ -75,6 +75,14 @@ const en: ResourceLanguage = {
       titles: {
         list: "Bank transactions",
       },
+      fields: {
+        institutionId: "Bank",
+        accountIban: "Iban",
+        date: "Date",
+        amount: "Amount",
+        transactionCode: "Transaction code",
+        unstructuredInformation: "Description",
+      },
     },
     institutionconnections: {
       institutionconnections: "Accounts",
@@ -103,6 +111,9 @@ const en: ResourceLanguage = {
         show: "Bank accounts | WFK Finance",
         list: "Bank accounts | WFK Finance",
         create: "Create bank account | WFK Finance",
+      },
+      institutiontransactions: {
+        list: "Bank transactions | WFK Finance",
       },
     },
   },
