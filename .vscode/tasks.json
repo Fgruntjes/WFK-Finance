@@ -8,6 +8,7 @@
       "problemMatcher": [],
       "dependsOn": [
         "dev frontend",
+        "database update"
       ]
     },
     {
@@ -30,8 +31,7 @@
         }
       },
       "dependsOn": [
-        "docker compose up",
-        "database update"
+        "docker compose up"
       ]
     },
     {
@@ -54,8 +54,7 @@
         }
       },
       "dependsOn": [
-        "docker compose up",
-        "database update"
+        "docker compose up"
       ]
     },
     {

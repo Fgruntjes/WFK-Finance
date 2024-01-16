@@ -1,3 +1,10 @@
+resource "random_password" "backend_cron_token" {
+  length  = 32
+  special = false
+  lower   = true
+  upper   = false
+}
+
 locals {
   environment_data_ephemeral = var.app_environment != "main" && var.app_environment != "test"
   connection_strings = {
@@ -43,6 +50,7 @@ locals {
       Environment = var.app_environment,
       Version     = var.app_version,
       FrontendUrl = "${local.app_frontend_url}/",
+      CronToken   = random_password.backend_cron_token.result,
     }
     DataProtection = {
       Enabled           = "true",

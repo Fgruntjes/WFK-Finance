@@ -1,4 +1,4 @@
-using App.Institution.Service;
+using App.Institution.Interface;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages.Institution;
 

@@ -1,4 +1,5 @@
 using App.Institution.Exception;
+using App.Institution.Interface;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
 using Microsoft.EntityFrameworkCore;

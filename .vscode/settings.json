@@ -18,6 +18,5 @@
   },
   "[csharp]": {
     "editor.defaultFormatter": "ms-dotnettools.csharp"
-  },
-  "dotnet.server.useOmnisharp": true
+  }
 }

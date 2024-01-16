@@ -13,16 +13,16 @@ namespace App.Backend.Controllers;
 [ApiGroup(typeof(InstitutionAccountListController))]
 [Authorize]
 [Route(RouteBase)]
-public class InstitutionAccountTransactionListController : ControllerBase
+public class InstitutionTransactionListController : ControllerBase
 {
-    public const string RouteBase = "/institutionaccount/{id:guid}/transactions";
+    public const string RouteBase = "/institutionaccounts/{id:guid}/transactions";
 
-    public const string RouteName = nameof(InstitutionAccountTransactionListController);
+    public const string RouteName = nameof(InstitutionTransactionListController);
 
     private readonly DatabaseContext _database;
     private readonly IOrganisationIdProvider _organisationIdProvider;
 
-    public InstitutionAccountTransactionListController(DatabaseContext database, IOrganisationIdProvider organisationIdProvider)
+    public InstitutionTransactionListController(DatabaseContext database, IOrganisationIdProvider organisationIdProvider)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;

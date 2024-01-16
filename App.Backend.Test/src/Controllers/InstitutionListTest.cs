@@ -1,5 +1,5 @@
 using App.Backend.Controllers;
-using App.Institution.Service;
+using App.Institution.Interface;
 using App.Lib.Data.Entity;
 using App.Lib.Test;
 using App.Lib.Test.Database;

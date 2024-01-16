@@ -22,7 +22,7 @@ public class AppFixture : FunctionalTestFixture
     {
         var hostBuilder = Host.CreateDefaultBuilder()
             .UseDatabase()
-            .UseInstitutionConnectionClient()
+            .UseInstitution()
             .ConfigureLogging(loggerProvider)
             .ConfigureDatabase(Database.ConnectionString)
             .ConfigureServices(services =>

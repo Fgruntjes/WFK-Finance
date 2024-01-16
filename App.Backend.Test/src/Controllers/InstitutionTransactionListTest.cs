@@ -9,11 +9,11 @@ using NodaTime;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAccountTransactionListFixture>
+public class InstitutionTransactionListTest : IClassFixture<InstitutionAccountTransactionListFixture>
 {
     private readonly InstitutionAccountTransactionListFixture _fixture;
 
-    public InstitutionAccountTransactionListTest(InstitutionAccountTransactionListFixture fixture)
+    public InstitutionTransactionListTest(InstitutionAccountTransactionListFixture fixture)
     {
         _fixture = fixture;
     }
@@ -23,7 +23,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()));
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()));
         var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
 
         // Assert
@@ -66,7 +66,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         // Act
         var body = await _fixture.Client.GetListWithAuthAsync<InstitutionAccountTransactionDto>(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
                 OrderBy = "date desc"
@@ -110,7 +110,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
                 OrderBy = "InvalidProperty desc"
@@ -133,7 +133,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     public async Task WithRange()
     {
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
                 Page = 2,
@@ -156,7 +156,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
                 Filter = "ExternalId = SomeExternalId-organisation-match-0"
@@ -177,7 +177,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
                 Filter = "InvalidProperty = SomeValue"
@@ -201,7 +201,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     {
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", "b19abe01-6fbe-485d-9ff6-c032c1cdca6a"));
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", "b19abe01-6fbe-485d-9ff6-c032c1cdca6a"));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -232,7 +232,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
 
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
-            InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", accountEntity.Id.ToString()));
+            InstitutionTransactionListController.RouteBase.Replace("{id:guid}", accountEntity.Id.ToString()));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

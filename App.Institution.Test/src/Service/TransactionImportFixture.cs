@@ -6,6 +6,7 @@ namespace App.Institution.Test.Service;
 
 public class TransactionImportFixture : AppFixture
 {
+    public InstitutionConnectionEntity InstitutionConnectionEntity { get; }
     public InstitutionAccountEntity InstitutionAccountEntity { get; }
 
     public TransactionImportFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
@@ -18,7 +19,7 @@ public class TransactionImportFixture : AppFixture
             CountryIso2 = "NL",
         };
 
-        var institutionConnection = new InstitutionConnectionEntity()
+        InstitutionConnectionEntity = new InstitutionConnectionEntity()
         {
             OrganisationId = OrganisationId,
             InstitutionId = institutionEntity.Id,
@@ -29,14 +30,14 @@ public class TransactionImportFixture : AppFixture
         {
             ExternalId = "44eb1c40-17c5-4412-98a0-f26368ad3366",
             Iban = "NL48INGB0001234128",
-            InstitutionConnectionId = institutionConnection.Id,
+            InstitutionConnectionId = InstitutionConnectionEntity.Id,
             ImportStatus = ImportStatus.Queued,
         };
 
         Database.SeedData(context =>
         {
             context.Institutions.Add(institutionEntity);
-            context.InstitutionConnections.Add(institutionConnection);
+            context.InstitutionConnections.Add(InstitutionConnectionEntity);
             context.InstitutionAccounts.Add(InstitutionAccountEntity);
         });
     }

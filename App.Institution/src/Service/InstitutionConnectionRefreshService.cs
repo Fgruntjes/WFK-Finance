@@ -1,13 +1,11 @@
 using System.Linq.Expressions;
 using App.Institution.Exception;
+using App.Institution.Interface;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
-using App.Lib.ServiceBus;
-using App.Lib.ServiceBus.Messages.Institution;
 using Medallion.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using VMelnalksnis.NordigenDotNet;
 
 namespace App.Institution.Service;
@@ -17,27 +15,24 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
     private readonly DatabaseContext _database;
     private readonly IOrganisationIdProvider _organisationIdProvider;
     private readonly INordigenClient _nordigenClient;
-    private readonly IServiceBus _serviceBus;
-    private readonly IClock _clock;
     private readonly ILogger<InstitutionConnectionRefreshService> _log;
     private readonly IDistributedLockProvider _lockProvider;
+    private readonly ITransactionImportQueueService _transactionImportQueueService;
 
     public InstitutionConnectionRefreshService(
         DatabaseContext database,
         IOrganisationIdProvider organisationIdProvider,
         INordigenClient nordigenClient,
-        IServiceBus serviceBus,
-        IClock clock,
         ILogger<InstitutionConnectionRefreshService> logger,
-        IDistributedLockProvider distributedLockProvider)
+        IDistributedLockProvider distributedLockProvider,
+        ITransactionImportQueueService transactionImportQueueService)
     {
         _database = database;
         _organisationIdProvider = organisationIdProvider;
         _nordigenClient = nordigenClient;
-        _serviceBus = serviceBus;
-        _clock = clock;
         _log = logger;
         _lockProvider = distributedLockProvider;
+        _transactionImportQueueService = transactionImportQueueService;
     }
 
     public async Task<InstitutionConnectionEntity> Refresh(
@@ -90,29 +85,11 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
             await UpdateAccounts(entity, cancellationToken);
 
             // Publish 
-            var now = _clock.GetCurrentInstant();
-            var importDelay = Duration.FromHours(12);
             foreach (var account in entity.Accounts)
             {
-                if (account.LastImportRequested != null && account.LastImportRequested + importDelay > now)
-                {
-                    _log.LogInformation(
-                        "Skipping refresh for {InstitutionAccountId} as it was refreshed at {LastImport}",
-                        account.Id,
-                        account.LastImport);
-                    continue;
-                }
-
-                await _serviceBus.Send(new TransactionImportJob
-                {
-                    InstitutionConnectionAccountId = account.Id,
-                }, cancellationToken);
-
-                account.LastImportRequested = _clock.GetCurrentInstant();
-                account.ImportStatus = ImportStatus.Queued;
+                await _transactionImportQueueService.QueueAccountAsync(account.Id, cancellationToken);
             }
 
-            await _database.SaveChangesAsync(cancellationToken);
             return entity;
         }
     }
@@ -138,5 +115,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
                 InstitutionConnectionId = entity.Id,
             });
         }
+
+        await _database.SaveChangesAsync(cancellationToken);
     }
 }

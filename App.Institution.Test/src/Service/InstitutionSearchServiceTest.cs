@@ -1,3 +1,4 @@
+using App.Institution.Interface;
 using App.Lib.Data.Entity;
 using App.Institution.Service;
 using App.Lib.Test;

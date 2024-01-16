@@ -1,6 +1,6 @@
 using App.Lib.Data.Entity;
 
-namespace App.Institution.Service;
+namespace App.Institution.Interface;
 
 public interface IInstitutionSearchService
 {

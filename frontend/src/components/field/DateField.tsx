@@ -12,6 +12,7 @@ function DateField({
   showDate = true,
   showTime = false,
   format,
+  value,
   ...props
 }: DateFieldProps) {
   if (!format) {
@@ -28,7 +29,11 @@ function DateField({
     }
   }
 
-  return <RefineDateField format={format} {...props} />;
+  if (!value) {
+    return null;
+  }
+
+  return <RefineDateField format={format} value={value} {...props} />;
 }
 
 export default DateField;

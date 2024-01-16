@@ -27,7 +27,7 @@ public class AppFixture : IAsyncDisposable
         var hostBuilder = Host.CreateDefaultBuilder()
             .UseConfiguration()
             .UseDatabase()
-            .UseInstitutionConnectionClient()
+            .UseInstitution()
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();

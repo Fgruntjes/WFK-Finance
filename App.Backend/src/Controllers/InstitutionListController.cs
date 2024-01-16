@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using App.Backend.Dto;
 using App.Backend.Mvc;
+using App.Institution.Interface;
 using App.Lib.Data;
-using App.Institution.Service;
 using Gridify;
 using Gridify.EntityFramework;
 using Microsoft.AspNetCore.Authorization;

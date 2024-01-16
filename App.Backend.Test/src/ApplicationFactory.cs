@@ -1,5 +1,5 @@
 using App.Backend.Test.Auth;
-using App.Institution.Service;
+using App.Institution.Interface;
 using App.Lib.Test.Database;
 using App.Lib.Test;
 using Microsoft.AspNetCore.Authentication;

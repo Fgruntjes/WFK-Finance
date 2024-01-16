@@ -83,6 +83,5 @@ public class InstitutionConnectionRefreshFixture : AppFixture
                     .ReturnsAsync(account);
             }
         });
-
     }
 }

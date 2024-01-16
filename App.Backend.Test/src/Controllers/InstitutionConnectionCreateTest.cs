@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Institution.Exception;
-using App.Institution.Service;
+using App.Institution.Interface;
 using App.Lib.Test;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

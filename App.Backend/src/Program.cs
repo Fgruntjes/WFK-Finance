@@ -7,7 +7,7 @@ using App.Lib.ServiceBus;
 var builder = Host.CreateDefaultBuilder(args);
 builder.UseConfiguration();
 builder.UseDataProtection();
-builder.UseInstitutionConnectionClient();
+builder.UseInstitution();
 builder.UseAuth();
 builder.UseDatabase();
 builder.UseServiceBusPublisher();

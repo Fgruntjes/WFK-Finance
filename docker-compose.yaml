@@ -1,34 +1,34 @@
 ---
 version: "3.2"
 services:
-  database:
-    image: mcr.microsoft.com/mssql/rhel/server:2022-latest
-    ports:
-      - 1433:1433
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: myLeet123Password!
-    volumes:
-      - database:/var/lib/postgresql/data
-  database-init:
-    image: mcr.microsoft.com/mssql/rhel/server:2022-latest
-    network_mode: service:database
-    command: bash -c 'until /opt/mssql-tools/bin/sqlcmd -U sa -P myLeet123Password! -Q "CREATE DATABASE development"; do echo retry && sleep 1; done'
-    depends_on:
-      - database
-  
-  rabbitmq:
-    image: rabbitmq:3.12-management-alpine
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      RABBITMQ_DEFAULT_USER: username
-      RABBITMQ_DEFAULT_PASS: password
-      RABBITMQ_DEFAULT_VHOST: /
-    volumes:
-      - rabbitmq:/var/lib/rabbitmq
+    database:
+        image: mcr.microsoft.com/mssql/rhel/server:2022-latest
+        ports:
+            - 1433:1433
+        environment:
+            ACCEPT_EULA: Y
+            MSSQL_SA_PASSWORD: myLeet123Password!
+        volumes:
+            - database:/var/lib/postgresql/data
+    database-init:
+        image: mcr.microsoft.com/mssql/rhel/server:2022-latest
+        network_mode: service:database
+        command: bash -c 'until /opt/mssql-tools/bin/sqlcmd -U sa -P myLeet123Password! -Q "CREATE DATABASE development"; do echo retry && sleep 1; done'
+        depends_on:
+            - database
+
+    rabbitmq:
+        image: rabbitmq:3.12-management-alpine
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            RABBITMQ_DEFAULT_USER: username
+            RABBITMQ_DEFAULT_PASS: password
+            RABBITMQ_DEFAULT_VHOST: /
+        volumes:
+            - rabbitmq:/var/lib/rabbitmq
 
 volumes:
-  database: {}
-  rabbitmq: {}
+    database: {}
+    rabbitmq: {}

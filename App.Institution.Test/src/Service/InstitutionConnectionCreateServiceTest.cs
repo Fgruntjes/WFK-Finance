@@ -1,5 +1,6 @@
 ﻿using App.Lib.Data;
 using App.Institution.Exception;
+using App.Institution.Interface;
 using App.Institution.Service;
 using App.Lib.Test;
 using App.Lib.Test.Database;
