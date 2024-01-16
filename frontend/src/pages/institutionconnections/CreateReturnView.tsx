@@ -1,10 +1,8 @@
 import { Institution, InstitutionConnection } from "@api";
 import LocalError from "@components/LocalError";
 import LocalHttpError from "@components/LocalHttpError";
-import {
-  InstitutionAccountsTable,
-  InstitutionsRecordRepresentation,
-} from "@pages";
+import InstitutionAccountsTable from "@pages/institutionconnections/AccountTable";
+import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import { ListButton, Show } from "@refinedev/antd";
 import { useCustom, useOne, useTranslate } from "@refinedev/core";
 import { Typography } from "antd";

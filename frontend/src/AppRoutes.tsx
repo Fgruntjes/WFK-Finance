@@ -1,9 +1,7 @@
-import {
-  InstitutionAccountsCreateReturnView,
-  InstitutionAccountsCreateView,
-  InstitutionAccountsListView,
-  InstitutionAccountsShowView,
-} from "@pages";
+import InstitutionAccountsCreateReturnView from "@pages/institutionconnections/CreateReturnView";
+import InstitutionAccountsCreateView from "@pages/institutionconnections/CreateView";
+import InstitutionAccountsListView from "@pages/institutionconnections/ListView";
+import InstitutionAccountsShowView from "@pages/institutionconnections/ShowView";
 import { ThemedLayoutV2 } from "@refinedev/antd";
 import { Authenticated, ErrorComponent } from "@refinedev/core";
 import { Outlet, Route, Routes } from "react-router-dom";

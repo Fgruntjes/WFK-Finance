@@ -11,7 +11,6 @@ public static class InstitutionAccountTransactionMapper
             Id = entity.Id,
             CreatedAt = entity.CreatedAt.ToDateTimeUtc(),
             AccountId = entity.AccountId,
-            ExternalId = entity.ExternalId,
             UnstructuredInformation = entity.UnstructuredInformation,
             TransactionCode = entity.TransactionCode,
             CounterPartyName = entity.CounterPartyName,

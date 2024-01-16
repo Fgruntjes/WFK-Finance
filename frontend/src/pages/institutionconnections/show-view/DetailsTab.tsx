@@ -2,7 +2,7 @@ import { Institution, InstitutionAccount } from "@api";
 import Loader from "@components/Loader";
 import LocalHttpError from "@components/LocalHttpError";
 import DateField from "@components/field/DateField";
-import { InstitutionsRecordRepresentation } from "@pages";
+import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import { NumberField, TextField } from "@refinedev/antd";
 import { useOne, useTranslate } from "@refinedev/core";
 import { Space, Typography } from "antd";

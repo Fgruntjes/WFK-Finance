@@ -2,8 +2,8 @@ import { InstitutionAccount } from "@api";
 import Tabs from "@components/Tabs";
 import { RefreshButton, Show } from "@refinedev/antd";
 import { useInvalidate, useShow, useTranslate } from "@refinedev/core";
-import { DetailsTab } from "../institutionaccounts/show-view/DetailsTab";
-import { TransactionsTab } from "../institutionaccounts/show-view/TransactionsTab";
+import { DetailsTab } from "./show-view/DetailsTab";
+import { TransactionsTab } from "./show-view/TransactionsTab";
 
 function ShowView() {
   const translate = useTranslate();

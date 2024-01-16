@@ -1,10 +1,9 @@
-import { Institution, InstitutionAccount, InstitutionConnection } from "@api";
-import {
-  InstitutionAccountsTable,
-  InstitutionsRecordRepresentation,
-} from "@pages";
+import { InstitutionAccount, InstitutionConnection } from "@api";
+import useInstiutionNameList from "@hooks/useInstitutionNameList";
+import InstitutionAccountsTable from "@pages/institutionconnections/AccountTable";
+import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import { DeleteButton, List, useTable } from "@refinedev/antd";
-import { HttpError, useMany, useTranslate } from "@refinedev/core";
+import { HttpError, useTranslate } from "@refinedev/core";
 import { Space, Table } from "antd";
 
 function ListView() {
@@ -16,14 +15,9 @@ function ListView() {
     resource: "institutionconnections",
   });
 
-  const { data: institutionData, isLoading: institutionIsLoading } =
-    useMany<Institution>({
-      resource: "institutions",
-      ids: tableProps?.dataSource?.map((item) => item?.institutionId) ?? [],
-      queryOptions: {
-        enabled: !!tableProps?.dataSource,
-      },
-    });
+  const { institutionData, institutionIsLoading } = useInstiutionNameList(
+    tableProps?.dataSource?.map((item) => item?.institutionId),
+  );
 
   return (
     <List>

@@ -7,6 +7,7 @@ public class InstitutionAccountTransactionDto
     public DateTime CreatedAt { get; set; }
 
     public Guid AccountId { get; set; }
+    public Guid InstitutionId { get; set; }
 
     public string ExternalId { get; set; } = null!;
 
