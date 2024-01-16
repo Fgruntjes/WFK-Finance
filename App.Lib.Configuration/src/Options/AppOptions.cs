@@ -11,4 +11,6 @@ public class AppOptions
     public string Environment { get; set; } = null!;
     [Required]
     public string Version { get; set; } = null!;
+    [Required]
+    public string CronToken { get; set; } = null!;
 }

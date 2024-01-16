@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 using Sentry;
 
@@ -26,7 +27,10 @@ public static class ConfigurationExtension
                     config.AddJsonFileTraverse($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", true, true);
                 }
             })
-            .ConfigureLogging(_ => { })
+            .ConfigureLogging(logger =>
+            {
+                logger.AddSentry(o => o.InitializeSdk = false);
+            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton<IClock>(SystemClock.Instance);
