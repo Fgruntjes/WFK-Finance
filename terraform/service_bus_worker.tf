@@ -1,6 +1,6 @@
-resource "azurerm_container_app" "backend_workers" {
+resource "azurerm_container_app" "service_bus_worker" {
   for_each                     = local.service_bus_queues
-  name                         = "v${var.app_environment}-${lower(each.key)}"
+  name                         = substr("v${var.app_environment}-${lower(each.key)}", 0, 32)
   container_app_environment_id = azurerm_container_app_environment.backend.id
   resource_group_name          = var.app_project_slug
   revision_mode                = "Single"
@@ -52,7 +52,7 @@ resource "azurerm_container_app" "backend_workers" {
       name             = "azure-servicebus"
       custom_rule_type = "azure-servicebus"
       metadata = {
-        queueName              = lower(each.value)
+        queueName              = lower(each.key)
         messageCount           = 20
         activationMessageCount = 1
       }
