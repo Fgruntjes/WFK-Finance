@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        "@api": `${path.resolve(__dirname, "./src")}/Api.ts`,
+        "@api": `./Api.ts`,
         "@components": path.resolve(__dirname, "./src/components"),
         "@pages": path.resolve(__dirname, "./src/pages"),
         "@hooks": path.resolve(__dirname, "./src/hooks"),

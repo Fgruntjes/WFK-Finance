@@ -20,8 +20,8 @@
     "paths": {
       "@api": ["./src/Api"],
       "@components/*": ["./src/components/*"],
-      "@pages": ["./src/pages"],
-      "@hooks": ["./src/hooks/*"]
+      "@pages/*": ["./src/pages/*"],
+      "@hooks/*": ["./src/hooks/*"]
     }
   },
   "include": ["src", "vite.config.ts"],

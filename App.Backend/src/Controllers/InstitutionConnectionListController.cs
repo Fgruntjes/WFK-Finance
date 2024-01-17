@@ -57,7 +57,6 @@ public class InstitutionConnectionListController : ControllerBase
             })
             .ToListAsync(cancellationToken);
 
-        var start = query.Page * query.PageSize;
         return ListResult<InstitutionConnectionDto>.Create(items, RouteBase, query, result.Count);
     }
 }

@@ -22,34 +22,39 @@ public static class HttpClientExtensions
     public static async Task<HttpResponseMessage> GetWithAuthAsync(
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
-        return await client.GetWithAuthAsync(new Uri(requestUri), cancellationToken);
+        return await client.GetWithAuthAsync(new Uri(requestUri), userId, cancellationToken);
     }
     public static async Task<HttpResponseMessage> GetWithAuthAsync(
         this HttpClient client,
         Uri requestUri,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
         return await client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Get, requestUri),
+            userId,
             cancellationToken);
     }
 
     public static async Task<TResponse> GetWithAuthAsync<TResponse>(
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
-        return await client.GetWithAuthAsync<TResponse>(new Uri(requestUri), cancellationToken);
+        return await client.GetWithAuthAsync<TResponse>(new Uri(requestUri), userId, cancellationToken);
     }
 
     public static async Task<TResponse> GetWithAuthAsync<TResponse>(
         this HttpClient client,
         Uri requestUri,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
-        var response = await client.GetWithAuthAsync(requestUri, cancellationToken);
+        var response = await client.GetWithAuthAsync(requestUri, userId, cancellationToken);
 
         return await response.Content.ReadFromJsonAsync<TResponse>(_jsonOptions, cancellationToken: cancellationToken)
             ?? throw FailException.ForFailure("Could not deserialize response value");
@@ -59,6 +64,7 @@ public static class HttpClientExtensions
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
         GridifyQuery? query = null,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
         var uri = new Uri(requestUri);
@@ -94,16 +100,17 @@ public static class HttpClientExtensions
 
 
         uri = new UriBuilder(uri) { Query = httpQuery.ToString() }.Uri;
-        return await client.GetWithAuthAsync(uri, cancellationToken);
+        return await client.GetWithAuthAsync(uri, userId, cancellationToken);
     }
 
     public static async Task<ICollection<TResponse>> GetListWithAuthAsync<TResponse>(
         this HttpClient client,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
         GridifyQuery? query = null,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
-        var response = await client.GetListWithAuthAsync(requestUri, query, cancellationToken);
+        var response = await client.GetListWithAuthAsync(requestUri, query, userId, cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<ICollection<TResponse>>(
             _jsonOptions,
@@ -115,10 +122,11 @@ public static class HttpClientExtensions
     public static Task<HttpResponseMessage> SendWithAuthAsync(
         this HttpClient client,
         HttpRequestMessage message,
+        string userId = FunctionalTestFixture.TestUserId,
         CancellationToken cancellationToken = default)
     {
         message.Content ??= JsonContent.Create<object?>(null);
-        message.Content.Headers.Add(TestAuthHandler.TestUserHeader, FunctionalTestFixture.TestUserId);
+        message.Content.Headers.Add(TestAuthHandler.TestUserHeader, userId);
         return client.SendAsync(message, cancellationToken);
     }
 }

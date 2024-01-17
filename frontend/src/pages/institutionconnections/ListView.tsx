@@ -1,10 +1,9 @@
-import { Institution, InstitutionAccount, InstitutionConnection } from "@api";
-import {
-  InstitutionAccountsTable,
-  InstitutionsRecordRepresentation,
-} from "@pages";
+import { InstitutionAccount, InstitutionConnection } from "@api";
+import useInstiutionNameMap from "@hooks/useInstiutionNameMap";
+import InstitutionAccountsTable from "@pages/institutionconnections/AccountTable";
+import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import { DeleteButton, List, useTable } from "@refinedev/antd";
-import { HttpError, useMany, useTranslate } from "@refinedev/core";
+import { HttpError, useTranslate } from "@refinedev/core";
 import { Space, Table } from "antd";
 
 function ListView() {
@@ -13,16 +12,12 @@ function ListView() {
     tableProps: { loading, ...tableProps },
   } = useTable<InstitutionConnection, HttpError>({
     syncWithLocation: true,
+    resource: "institutionconnections",
   });
 
-  const { data: institutionData, isLoading: institutionIsLoading } =
-    useMany<Institution>({
-      resource: "institutions",
-      ids: tableProps?.dataSource?.map((item) => item?.institutionId) ?? [],
-      queryOptions: {
-        enabled: !!tableProps?.dataSource,
-      },
-    });
+  const { institutionMap, institutionIsLoading } = useInstiutionNameMap(
+    tableProps?.dataSource?.map((item) => item?.institutionId),
+  );
 
   return (
     <List>
@@ -36,9 +31,7 @@ function ListView() {
           title={translate("institutionconnections.fields.institutionId")}
           render={(value) => (
             <InstitutionsRecordRepresentation
-              recordItem={institutionData?.data?.find(
-                (item) => item.id === value,
-              )}
+              recordItem={institutionMap[value]}
             />
           )}
         />
@@ -59,7 +52,12 @@ function ListView() {
           dataIndex="actions"
           render={(_, record: InstitutionConnection) => (
             <Space>
-              <DeleteButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                resource="institutionconnections"
+              />
             </Space>
           )}
         />

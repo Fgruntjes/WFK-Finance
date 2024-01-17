@@ -4,9 +4,20 @@ namespace App.IntegrationTest;
 
 internal static class IPageExtension
 {
-    public static async Task ClickMenuAsync(this IPage page, string route)
+    public static async Task ClickMenuAsync(this IPage page, string route, string? subMenuOf = null)
     {
-        await page.Locator($"[role='menuitem'] >> [href='{route}']").ClickAsync();
+        var menuItemLocator = page.Locator($"[role='menuitem'] >> [href='{route}']");
+        if (subMenuOf == null)
+        {
+            await menuItemLocator.ClickAsync();
+            return;
+        }
+
+        if (!await menuItemLocator.IsVisibleAsync())
+        {
+            await page.Locator($"[role='menuitem']:has-text('{subMenuOf}')").ClickAsync();
+        }
+        await menuItemLocator.ClickAsync();
     }
 
     public static async Task SearchSelectOptionAsync(this IPage page, string fieldId, string value)

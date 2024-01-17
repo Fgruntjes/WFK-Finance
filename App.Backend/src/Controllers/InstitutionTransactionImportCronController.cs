@@ -7,11 +7,11 @@ using Microsoft.Extensions.Options;
 namespace App.Backend.Controllers;
 
 [ApiController]
-[ApiGroup(typeof(InstitutionAccountListController))]
+[ApiGroup(typeof(InstitutionTransactionListController))]
 [Route(RouteBase)]
 public class InstitutionTransactionImportCronController : ControllerBase
 {
-    public const string RouteBase = "/institutionaccounts/all/cron/import";
+    public const string RouteBase = $"{InstitutionTransactionListController.RouteBase}/cron/import";
 
     public const string RouteName = nameof(InstitutionTransactionImportCronController);
 

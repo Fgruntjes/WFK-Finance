@@ -9,6 +9,7 @@
  * ---------------------------------------------------------------
  */
 
+/** Institution */
 export interface Institution {
   /** @format uuid */
   id: string;
@@ -19,9 +20,12 @@ export interface Institution {
   countryIso2: string;
 }
 
+/** InstitutionAccount */
 export interface InstitutionAccount {
   /** @format uuid */
   id: string;
+  /** @format uuid */
+  institutionId: string;
   externalId: string;
   iban: string;
   importStatus: InstitutionAccountImportStatusEnum;
@@ -29,10 +33,9 @@ export interface InstitutionAccount {
   lastImport?: string | null;
   /** @format int32 */
   transactionCount: number;
-  /** @format uuid */
-  institutionId: string;
 }
 
+/** InstitutionAccountTransaction */
 export interface InstitutionAccountTransaction {
   /** @format uuid */
   id: string;
@@ -52,6 +55,7 @@ export interface InstitutionAccountTransaction {
   date: string;
 }
 
+/** InstitutionConnection */
 export interface InstitutionConnection {
   /** @format uuid */
   id: string;
@@ -63,11 +67,29 @@ export interface InstitutionConnection {
   accounts: InstitutionAccount[];
 }
 
+/** InstitutionConnectionCreate */
 export interface InstitutionConnectionCreate {
   /** @format uuid */
   institutionId: string;
   /** @format uri */
   returnUrl: string;
+}
+
+/** InstitutionTransaction */
+export interface InstitutionTransaction {
+  /** @format uuid */
+  id: string;
+  accountIban: string;
+  /** @format uuid */
+  institutionId: string;
+  unstructuredInformation: string;
+  counterPartyName?: string;
+  counterPartyAccount?: string;
+  /** @format double */
+  amount: number;
+  currency: string;
+  /** @format date-time */
+  date: string;
 }
 
 export interface ProblemDetails {

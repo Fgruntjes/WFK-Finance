@@ -121,7 +121,8 @@ function dataProvider(
       meta,
     );
 
-    const total = +headers["x-total-count"];
+    const dataRangeHeader = headers["content-range"] ?? "";
+    const total = parseInt(dataRangeHeader.split("/")[1], 10);
 
     return {
       data,

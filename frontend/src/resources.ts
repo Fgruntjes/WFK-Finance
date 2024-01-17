@@ -1,19 +1,25 @@
 import { ResourceProps } from "@refinedev/core";
 
-export const instititutionconnections: ResourceProps = {
-  name: "institutionconnections",
-  list: "/bank-accounts",
-  create: "/bank-accounts/create",
+export const institutions: ResourceProps = {
+  name: "institutions",
 };
 
 export const institutionaccounts: ResourceProps = {
   name: "institutionaccounts",
   show: "/bank-accounts/:id",
+  create: "/bank-accounts/create",
+  list: "/bank-accounts",
+  meta: {
+    parent: "institutions",
+  },
 };
 
-export const institutionaccounttransactions: ResourceProps = {
-  name: "institutionaccounttransactions",
-  list: "/bank-accounts/:accountId/transactions",
+export const institutiontransactions: ResourceProps = {
+  name: "institutiontransactions",
+  list: "/bank-accounts/transactions",
+  meta: {
+    parent: "institutions",
+  },
 };
 
-export const resourceList = [instititutionconnections, institutionaccounts];
+export const resourceList = [institutionaccounts, institutiontransactions];

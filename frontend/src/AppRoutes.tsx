@@ -1,9 +1,8 @@
-import {
-  InstitutionAccountsShowView,
-  InstitutionConnectionsCreateReturnView,
-  InstitutionConnectionsCreateView,
-  InstitutionConnectionsListView,
-} from "@pages";
+import InstitutionAccountsCreateReturnView from "@pages/institutionconnections/CreateReturnView";
+import InstitutionAccountsCreateView from "@pages/institutionconnections/CreateView";
+import InstitutionAccountsListView from "@pages/institutionconnections/ListView";
+import InstitutionAccountsShowView from "@pages/institutionconnections/ShowView";
+import InstitutionTransactionsListView from "@pages/institutiontransactions/ListView";
 import { ThemedLayoutV2 } from "@refinedev/antd";
 import { Authenticated, ErrorComponent } from "@refinedev/core";
 import { Outlet, Route, Routes } from "react-router-dom";
@@ -24,12 +23,16 @@ function AppRoutes() {
         <Route index element={<div>Homepage</div>} />
 
         <Route path="/bank-accounts">
-          <Route index element={<InstitutionConnectionsListView />} />
+          <Route index element={<InstitutionAccountsListView />} />
           <Route path=":id" element={<InstitutionAccountsShowView />} />
-          <Route path="create" element={<InstitutionConnectionsCreateView />} />
+          <Route path="create" element={<InstitutionAccountsCreateView />} />
           <Route
             path="create-return"
-            element={<InstitutionConnectionsCreateReturnView />}
+            element={<InstitutionAccountsCreateReturnView />}
+          />
+          <Route
+            path="transactions"
+            element={<InstitutionTransactionsListView />}
           />
         </Route>
       </Route>

@@ -40,6 +40,7 @@ public partial class Startup
             config.OperationFilter<RangeOperationFilter>();
             config.SchemaFilter<NonNullableFilter>();
             config.SchemaFilter<DtoSuffixFilterFilter>();
+            config.CustomSchemaIds(type => type.Name.EndsWith("Dto") ? type.Name[..^3] : type.Name);
             config.TagActionsBy(ApiGroupTagger.GetTags);
         });
         services.AddProblemDetails();

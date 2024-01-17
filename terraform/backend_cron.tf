@@ -1,7 +1,7 @@
 locals {
   cronjobs = {
     "institutionaccountimport" = {
-      endpoint  = "/institutionaccounts/all/cron/import"
+      endpoint  = "/institutiontransactions/cron/import"
       frequency = "Hour"
       interval  = 12
     },

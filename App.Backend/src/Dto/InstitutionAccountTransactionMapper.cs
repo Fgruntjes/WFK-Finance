@@ -9,9 +9,9 @@ public static class InstitutionAccountTransactionMapper
         return new InstitutionAccountTransactionDto
         {
             Id = entity.Id,
+            ExternalId = entity.ExternalId,
             CreatedAt = entity.CreatedAt.ToDateTimeUtc(),
             AccountId = entity.AccountId,
-            ExternalId = entity.ExternalId,
             UnstructuredInformation = entity.UnstructuredInformation,
             TransactionCode = entity.TransactionCode,
             CounterPartyName = entity.CounterPartyName,
