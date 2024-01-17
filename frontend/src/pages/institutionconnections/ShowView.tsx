@@ -38,7 +38,7 @@ function ShowView() {
         // Only refresh transactions on this page
         predicate: (query) =>
           (query.queryKey as { operation: string }[])[4].operation ==
-          `institutionaccount/${data?.data.id}/transactions`,
+          `institutionaccounts/${data?.data.id}/transactions`,
       },
     });
   }

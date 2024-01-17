@@ -55,7 +55,7 @@ function CreateReturnView() {
       headerButtons={({ listButtonProps }) => (
         <ListButton
           {...listButtonProps}
-          resource="institutionconnections"
+          resource="institutionaccounts"
           title={translate("buttons.returnToList")}
         >
           {translate("buttons.returnToList")}
