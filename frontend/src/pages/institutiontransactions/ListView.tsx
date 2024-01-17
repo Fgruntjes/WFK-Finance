@@ -1,6 +1,6 @@
 import { InstitutionTransaction } from "@api";
 import CurrencyField from "@components/field/CurrencyField";
-import useInstiutionNameList from "@hooks/useInstitutionNameList";
+import useInstiutionNameMap from "@hooks/useInstiutionNameMap";
 import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import { DateField, List, TextField, useTable } from "@refinedev/antd";
 import { HttpError, useTranslate } from "@refinedev/core";
@@ -18,7 +18,7 @@ function ListView() {
     },
   });
 
-  const { institutionData, institutionIsLoading } = useInstiutionNameList(
+  const { institutionMap, institutionIsLoading } = useInstiutionNameMap(
     tableProps?.dataSource?.map((item) => item?.institutionId),
   );
 
@@ -35,9 +35,7 @@ function ListView() {
           title={translate("institutiontransactions.fields.institutionId")}
           render={(value) => (
             <InstitutionsRecordRepresentation
-              recordItem={institutionData?.data?.find(
-                (item) => item.id === value,
-              )}
+              recordItem={institutionMap[value]}
             />
           )}
         />

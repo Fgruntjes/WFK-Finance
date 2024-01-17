@@ -1,5 +1,5 @@
 import { InstitutionAccount, InstitutionConnection } from "@api";
-import useInstiutionNameList from "@hooks/useInstitutionNameList";
+import useInstiutionNameMap from "@hooks/useInstiutionNameMap";
 import InstitutionAccountsTable from "@pages/institutionconnections/AccountTable";
 import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import { DeleteButton, List, useTable } from "@refinedev/antd";
@@ -15,7 +15,7 @@ function ListView() {
     resource: "institutionconnections",
   });
 
-  const { institutionData, institutionIsLoading } = useInstiutionNameList(
+  const { institutionMap, institutionIsLoading } = useInstiutionNameMap(
     tableProps?.dataSource?.map((item) => item?.institutionId),
   );
 
@@ -31,9 +31,7 @@ function ListView() {
           title={translate("institutionconnections.fields.institutionId")}
           render={(value) => (
             <InstitutionsRecordRepresentation
-              recordItem={institutionData?.data?.find(
-                (item) => item.id === value,
-              )}
+              recordItem={institutionMap[value]}
             />
           )}
         />
