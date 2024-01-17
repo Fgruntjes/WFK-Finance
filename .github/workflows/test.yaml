@@ -69,7 +69,7 @@ jobs:
             matrix:
                 project:
                     - App.Backend.Test
-                    - App.Lib.InstitutionConnection.Test
+                    - App.Institution.Test
                     - App.Lib.ServiceBus.Test
         steps:
             - uses: actions/checkout@v3

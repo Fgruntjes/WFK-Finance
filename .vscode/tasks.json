@@ -8,6 +8,7 @@
       "problemMatcher": [],
       "dependsOn": [
         "dev frontend",
+        "database update"
       ]
     },
     {
@@ -30,14 +31,13 @@
         }
       },
       "dependsOn": [
-        "docker compose up",
-        "database update"
+        "docker compose up"
       ]
     },
     {
-      "label": "watch Job.InstitutionAccountTransactionImport",
+      "label": "watch App.Institution.Job.TransactionImport",
       "type": "shell",
-      "command": "dotnet watch --project App.Job.InstitutionAccountTransactionImport",
+      "command": "dotnet watch --project App.Institution.Job.TransactionImport",
       "isBackground": true,
       "options": {
         "cwd": "${workspaceFolder}",
@@ -54,8 +54,7 @@
         }
       },
       "dependsOn": [
-        "docker compose up",
-        "database update"
+        "docker compose up"
       ]
     },
     {
@@ -102,7 +101,7 @@
       ],
       "dependsOn": [
         "watch App.Backend",
-        "watch Job.InstitutionAccountTransactionImport"
+        "watch App.Institution.Job.TransactionImport"
       ]
     },
     {

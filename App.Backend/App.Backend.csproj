@@ -25,7 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\App.Lib.Data\App.Lib.Data.csproj" />
     <ProjectReference Include="..\App.Lib.Configuration\App.Lib.Configuration.csproj" />
-    <ProjectReference Include="..\App.Lib.InstitutionConnection\App.Lib.InstitutionConnection.csproj" />
+    <ProjectReference Include="..\App.Institution\App.Institution.csproj" />
   </ItemGroup>
 
 </Project>

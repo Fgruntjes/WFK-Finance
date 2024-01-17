@@ -13,10 +13,10 @@
       }
     },
     {
-      "name": "Attach Job.InstitutionAccountTransactionImport",
+      "name": "Attach App.Institution.Job.TransactionImport",
       "type": "coreclr",
       "request": "attach",
-      "processName": "App.Job.InstitutionAccountTransactionImport"
+      "processName": "App.Institution.Job.TransactionImport"
     }
   ]
 }

@@ -18,6 +18,15 @@ internal static partial class ApiGroupTagger
             .FirstOrDefault();
         if (groupAttribute != null)
         {
+            if (groupAttribute.Tag != null)
+            {
+                return new[] { groupAttribute.Tag };
+            }
+
+            if (groupAttribute.Type == null)
+            {
+                throw new System.Exception("ApiGroupAttribute must have either Tag or Type property set");
+            }
             return new[] { GetControllerTag(groupAttribute.Type) };
         }
 

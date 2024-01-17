@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
 
   function envVal(name: string) {
     if (!process.env[name]) {
+      // We replace these vars in the deploy step with the actual values.
       return `__MISSING_ENV_VAR__${name}__`;
     }
 

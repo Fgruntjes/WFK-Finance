@@ -18,7 +18,7 @@ export function TransactionsTab({ record }: TransactionTabTabProps) {
       initial: [{ field: "date", order: "desc" }],
     },
     meta: {
-      operation: `institutionaccount/${record.id}/transactions`,
+      operation: `institutionaccounts/${record.id}/transactions`,
     },
     syncWithLocation: true,
   });

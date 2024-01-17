@@ -1,6 +1,6 @@
 using App.Backend.Dto;
-using App.Lib.InstitutionConnection.Exception;
-using App.Lib.InstitutionConnection.Service;
+using App.Institution.Exception;
+using App.Institution.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +20,11 @@ public class InstitutionConnectionCreateController : ControllerBase
         _createService = createService;
     }
 
-    [ProducesResponseType(typeof(InstitutionConnection), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(InstitutionConnectionDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [HttpPost(Name = RouteName)]
     public async Task<IActionResult> Create(
-        [FromBody] InstitutionConnectionCreate request,
+        [FromBody] InstitutionConnectionCreateDto request,
         CancellationToken cancellationToken = default)
     {
         try

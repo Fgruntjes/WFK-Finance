@@ -4,9 +4,9 @@ namespace App.Backend.Dto;
 
 public static class InstitutionMapper
 {
-    public static Institution ToDto(this InstitutionEntity entity)
+    public static InstitutionDto ToDto(this InstitutionEntity entity)
     {
-        return new Institution
+        return new InstitutionDto
         {
             Id = entity.Id,
             ExternalId = entity.ExternalId,

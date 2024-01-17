@@ -15,13 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.IntegrationTest", "App.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.ServiceBus", "App.Lib.ServiceBus\App.Lib.ServiceBus.csproj", "{2C99A1BF-9243-41CD-ACEB-3C6C1304BCBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Job.InstitutionAccountTransactionImport", "App.Job.InstitutionAccountTransactionImport\App.Job.InstitutionAccountTransactionImport.csproj", "{2A8D147D-6F46-48A9-B3EE-5AF4B38FF4A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Institution.Job.TransactionImport", "App.Institution.Job.TransactionImport\App.Institution.Job.TransactionImport.csproj", "{2A8D147D-6F46-48A9-B3EE-5AF4B38FF4A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Configuration", "App.Lib.Configuration\App.Lib.Configuration.csproj", "{2EB565AA-9B78-4A17-A0D0-4844FF43E988}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.InstitutionConnection", "App.Lib.InstitutionConnection\App.Lib.InstitutionConnection.csproj", "{4B323029-09BC-4973-BC48-F7BB102828B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Institution", "App.Institution\App.Institution.csproj", "{4B323029-09BC-4973-BC48-F7BB102828B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.InstitutionConnection.Test", "App.Lib.InstitutionConnection.Test\App.Lib.InstitutionConnection.Test.csproj", "{E9F0AB98-8941-48F2-898B-25A46C7D114E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Institution.Test", "App.Institution.Test\App.Institution.Test.csproj", "{E9F0AB98-8941-48F2-898B-25A46C7D114E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Lib.Test", "App.Lib.Test\App.Lib.Test.csproj", "{3121A043-DD4E-46B4-A074-C69BDC0DB73B}"
 EndProject
@@ -88,5 +88,9 @@ Global
 		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37386040-6F9B-4A4D-9C68-41B021F0D777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A2A3FFB-4191-4A50-AA82-FD6A0F25BF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A2A3FFB-4191-4A50-AA82-FD6A0F25BF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A2A3FFB-4191-4A50-AA82-FD6A0F25BF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A2A3FFB-4191-4A50-AA82-FD6A0F25BF67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

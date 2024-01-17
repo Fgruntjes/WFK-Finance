@@ -2,8 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
-using App.Lib.InstitutionConnection.Exception;
-using App.Lib.InstitutionConnection.Service;
+using App.Institution.Exception;
+using App.Institution.Interface;
 using App.Lib.Test;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -37,22 +37,22 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
         var response = await _fixture.Client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Post, InstitutionConnectionListController.RouteBase)
             {
-                Content = JsonContent.Create(new InstitutionConnectionCreate
+                Content = JsonContent.Create(new InstitutionConnectionCreateDto
                 {
                     InstitutionId = _fixture.InstitutionEntity.Id,
                     ReturnUrl = returnUri
                 })
             });
-        var body = await response.Content.ReadFromJsonAsync<InstitutionConnection>();
+        var body = await response.Content.ReadFromJsonAsync<InstitutionConnectionDto>();
 
         // Assert
-        body.Should().BeEquivalentTo(new InstitutionConnection
+        body.Should().BeEquivalentTo(new InstitutionConnectionDto
         {
             Id = _fixture.InstitutionConnectionEntity.Id,
             ExternalId = _fixture.InstitutionConnectionEntity.ExternalId,
             InstitutionId = _fixture.InstitutionEntity.Id,
             ConnectUrl = _fixture.InstitutionConnectionEntity.ConnectUrl,
-            Accounts = new List<InstitutionAccount>(),
+            Accounts = new List<InstitutionAccountDto>(),
         });
     }
 
@@ -74,7 +74,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
         var response = await _fixture.Client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Post, InstitutionConnectionListController.RouteBase)
             {
-                Content = JsonContent.Create(new InstitutionConnectionCreate
+                Content = JsonContent.Create(new InstitutionConnectionCreateDto
                 {
                     InstitutionId = institutionId,
                     ReturnUrl = new Uri("http://www.example.com/return")

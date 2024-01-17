@@ -1,3 +1,4 @@
+using App.Institution;
 using App.IntegrationTest.Screens;
 using App.Lib.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using App.Lib.Configuration.Options;
 using App.Lib.Data;
-using App.Lib.InstitutionConnection;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,7 +27,7 @@ public class AppFixture : IAsyncDisposable
         var hostBuilder = Host.CreateDefaultBuilder()
             .UseConfiguration()
             .UseDatabase()
-            .UseInstitutionConnectionClient()
+            .UseInstitution()
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();

@@ -23,7 +23,7 @@ public class InstitutionAccountGetController : ControllerBase
     }
 
     [HttpGet("{id:guid}", Name = RouteName)]
-    [ProducesResponseType(typeof(InstitutionAccount), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(InstitutionAccountDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken = default)
     {
@@ -31,7 +31,7 @@ public class InstitutionAccountGetController : ControllerBase
         var account = await _database.InstitutionAccounts
             .Where(e => e.InstitutionConnection.OrganisationId == organisationId)
             .Where(e => e.Id == id)
-            .Select(e => new InstitutionAccount
+            .Select(e => new InstitutionAccountDto
             {
                 Id = e.Id,
                 InstitutionId = e.InstitutionConnection.InstitutionId,

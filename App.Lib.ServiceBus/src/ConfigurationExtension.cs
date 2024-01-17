@@ -103,12 +103,19 @@ public static class ConfigurationExtension
         });
     }
 
-    private static string GetQueueName(this MemberInfo type)
+    private static string GetQueueName(this Type type)
     {
-        var name = type.Name;
+        var name = type.FullName ?? throw new Exception("Missing type name.");
+        name = name.StartsWith("App.Lib.ServiceBus.Messages.") ? name[28..] : name;
         name = name.EndsWith("Job") ? name[..^3] : name;
         name = name.ToLowerInvariant();
+        name = name.Replace('.', '-');
         return name;
+    }
+
+    private static string GetQueueName<TMessage>()
+    {
+        return typeof(TMessage).GetQueueName().ToLowerInvariant();
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -133,11 +140,6 @@ public static class ConfigurationExtension
     {
         return configuration.GetConnectionString(ServiceBusOptions.ConnectionStringName)
             ?? throw new Exception("Missing 'ConnectionStrings::ServiceBus' setting.");
-    }
-
-    private static string GetQueueName<TMessage>()
-    {
-        return typeof(TMessage).GetQueueName().ToLowerInvariant();
     }
 
     private static Action<StandardConfigurer<IRouter>> RebusRouteConfig(IEnumerable<Assembly?>? messageAssemblies = null)

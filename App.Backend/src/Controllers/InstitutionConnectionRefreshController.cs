@@ -1,6 +1,6 @@
 using App.Backend.Dto;
-using App.Lib.InstitutionConnection.Exception;
-using App.Lib.InstitutionConnection.Service;
+using App.Institution.Exception;
+using App.Institution.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +22,7 @@ public class InstitutionConnectionRefreshController : ControllerBase
     }
 
     [HttpPatch("refresh/external/{externalId}", Name = RouteNameByExternalId)]
-    [ProducesResponseType(typeof(InstitutionConnection), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(InstitutionConnectionDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Refresh(string externalId, CancellationToken cancellationToken = default)
     {
@@ -41,7 +41,7 @@ public class InstitutionConnectionRefreshController : ControllerBase
     }
 
     [HttpPatch("refresh/id/{id:guid}", Name = RouteNameById)]
-    [ProducesResponseType(typeof(InstitutionConnection), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(InstitutionConnectionDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Refresh(Guid id, CancellationToken cancellationToken = default)
     {

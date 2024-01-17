@@ -2,7 +2,7 @@ using App.Lib.Data.Entity;
 
 namespace App.Backend.Dto;
 
-public class InstitutionAccount
+public class InstitutionAccountDto
 {
     public Guid Id { get; set; }
 

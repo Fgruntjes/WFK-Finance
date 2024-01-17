@@ -8,7 +8,7 @@ WORKDIR /src
 COPY *.sln .
 COPY App.Lib.Data/*.csproj ./App.Lib.Data/
 COPY App.Lib.Configuration/*.csproj ./App.Lib.Configuration/
-COPY App.Lib.InstitutionConnection/*.csproj ./App.Lib.InstitutionConnection/
+COPY App.Institution/*.csproj ./App.Institution/
 COPY App.Backend/*.csproj ./App.Backend/
 
 RUN dotnet restore "App.Backend/App.Backend.csproj"
