@@ -77,15 +77,20 @@ function mssql_user_reimport {
     terraform state rm "${RESOURCE}" || true
 
     if nslookup "${SERVER_HOST}" >/dev/null; then
+        # Server exists, so we should be able to import the state
+        export MSSQL_TENANT_ID="${ARM_TENANT_ID}"
+        export MSSQL_CLIENT_ID="${ARM_CLIENT_ID}"
+        export MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}"
+
         echo "### Import state ${RESOURCE} @ ${RESOURCE_ID}"
-        MSSQL_TENANT_ID="${ARM_TENANT_ID}" \
-            MSSQL_CLIENT_ID="${ARM_CLIENT_ID}" \
-            MSSQL_CLIENT_SECRET="${ARM_CLIENT_SECRET}" \
+        for i in {1..3}; do
             terraform import \
-            -var-file="variables.tfvars" \
-            -input=false \
-            "${RESOURCE}" \
-            "${RESOURCE_ID}" || true
+                -var-file="variables.tfvars" \
+                -input=false \
+                "${RESOURCE}" \
+                "${RESOURCE_ID}" && break || echo "Retrying ($i)..."
+            sleep 10
+        done
     else
         echo "### Import state ${RESOURCE} @ ${RESOURCE_ID} SKIPPED - DNS $SERVER_HOST does not exist"
     fi
