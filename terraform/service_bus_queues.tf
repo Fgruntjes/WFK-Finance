@@ -1,6 +1,7 @@
 locals {
   service_bus_queues = {
-    transactionimport : "App.Institution.Job.TransactionImport"
+    # <queue_name>: <worker_project> (@see App.Lib.ServiceBus.GetQueueName)
+    Institution-TransactionImport : "App.Institution.Job.TransactionImport"
   }
 }
 
@@ -12,7 +13,7 @@ resource "azurerm_servicebus_queue" "queue_error" {
 
 resource "azurerm_servicebus_queue" "queues" {
   for_each     = local.service_bus_queues
-  name         = each.value
+  name         = each.key
   namespace_id = azurerm_servicebus_namespace.service_bus.id
 }
 
