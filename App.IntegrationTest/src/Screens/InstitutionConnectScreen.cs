@@ -21,7 +21,7 @@ class InstitutionConnectScreen
 
     public async Task ClickMenuAsync()
     {
-        await _page.ClickMenuAsync("/bank-accounts");
+        await _page.ClickMenuAsync("/bank-accounts", "Bank institutions");
     }
 
     public async Task ClickAddAsync()
