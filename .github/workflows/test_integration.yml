@@ -51,11 +51,12 @@ jobs:
               env:
                   APP_SETTINGS_JSON_ENCRYPTED: ${{ needs.deploy.outputs.app_settings_json }}
                   GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}
-            - run: dotnet test App.IntegrationTest \
-                  --no-build \
-                  --blame \
-                  --blame-hang-timeout 2m \
-                  --logger GitHubActions
+            - run: |
+                  dotnet test App.IntegrationTest \
+                      --no-build \
+                      --blame \
+                      --blame-hang-timeout 2m \
+                      --logger GitHubActions
             - uses: actions/upload-artifact@v2
               if: failure()
               with:
