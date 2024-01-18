@@ -44,16 +44,18 @@ jobs:
               with:
                   dotnet-version: 7.0
             - run: dotnet build App.IntegrationTest
-            - run: |
-                  echo "${APP_SETTINGS_JSON_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}" > App.IntegrationTest/appsettings.local.json
-                  dotnet test App.IntegrationTest \
-                      --no-build \
-                      --blame \
-                      --blame-hang-timeout 2m \
-                      --logger GitHubActions
+            - run: ./wakeup.sh "${APP_API_URL}"
+              env:
+                  APP_API_URL: ${{ needs.deploy.outputs.app_api_url }}
+            - run: echo "${APP_SETTINGS_JSON_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}" > App.IntegrationTest/appsettings.local.json
               env:
                   APP_SETTINGS_JSON_ENCRYPTED: ${{ needs.deploy.outputs.app_settings_json }}
                   GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}
+            - run: dotnet test App.IntegrationTest \
+                  --no-build \
+                  --blame \
+                  --blame-hang-timeout 2m \
+                  --logger GitHubActions
             - uses: actions/upload-artifact@v2
               if: always()
               with:

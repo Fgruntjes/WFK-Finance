@@ -9,6 +9,7 @@ on:
                 required: true
                 type: string
         outputs:
+            app_api_url: ${{ jobs.deploy_backend.outputs.app_api_url }}
             app_settings_json:
                 value: ${{ jobs.deploy_backend.outputs.app_settings_json }}
 
