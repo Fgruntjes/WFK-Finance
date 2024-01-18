@@ -82,7 +82,7 @@ jobs:
                       --no-build \
                       --blame \
                       --blame-hang-timeout 2m \
-                      --logger "console;verbosity=normal"
+                      --logger GitHubActions
 
     #########################################################
     # PR check

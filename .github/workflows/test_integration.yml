@@ -45,20 +45,17 @@ jobs:
                   dotnet-version: 7.0
             - run: dotnet build App.IntegrationTest
             - run: |
-                  APP_SETTINGS_JSON=$(echo "${APP_SETTINGS_JSON_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}")
-                  echo "::add-mask::${APP_SETTINGS_JSON}"
-
-                  echo "${APP_SETTINGS_JSON}" > App.IntegrationTest/bin/Debug/net7.0/appsettings.local.json
-                  echo "${APP_SETTINGS_JSON}" > App.IntegrationTest/appsettings.local.json
+                  echo "${APP_SETTINGS_JSON_ENCRYPTED}" | base64 -d | openssl enc -pbkdf2 -a -d -salt -pass pass:"${GH_ENCRYPT_KEY}" > App.IntegrationTest/appsettings.local.json
                   dotnet test App.IntegrationTest \
                       --no-build \
                       --blame \
-                      --blame-hang-timeout 2m
+                      --blame-hang-timeout 2m \
+                      --logger GitHubActions
               env:
                   APP_SETTINGS_JSON_ENCRYPTED: ${{ needs.deploy.outputs.app_settings_json }}
                   GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}
             - uses: actions/upload-artifact@v2
-              if: failure()
+              #if: failure()
               with:
-                  name: test-videos
-                  path: .test-videos/*.webm
+                  name: test-traces
+                  path: .test-traces/*.webm
