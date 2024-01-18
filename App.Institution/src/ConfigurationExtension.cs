@@ -1,6 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
+using App.Institution.Diagnostics;
 using App.Institution.Interface;
 using App.Institution.Service;
+using App.Lib.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
@@ -35,6 +37,10 @@ public static class ConfigurationExtension
             services.AddScoped<IInstitutionSearchService, InstitutionSearchService>();
             services.AddScoped<ITransactionImportService, TransactionImportService>();
             services.AddScoped<ITransactionImportQueueService, TransactionImportQueueService>();
+
+            services
+                .AddHealthChecks()
+                .AddCheck<NordigenHealthCheck>(nameof(NordigenHealthCheck), tags: new[] { AppHealthCheckExtension.ReadinessTag });
         });
     }
 
