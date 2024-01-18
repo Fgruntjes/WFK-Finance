@@ -49,19 +49,39 @@ resource "azurerm_container_app" "backend_app" {
     min_replicas = 0
     max_replicas = 10
 
-    container {
-      name  = "app"
-      image = "${data.azurerm_container_registry.app.login_server}/app.backend:${var.app_version}"
-      command = [
-        "bash",
-        "-c",
-        "echo \"$${AppSettings}\" > appsettings.local.json && dotnet App.Backend.dll",
-      ]
+    volume {
+      name         = "appsettings"
+      storage_type = "EmptyDir"
+    }
+
+    init_container {
+      name   = "appsettings"
+      image  = "${data.azurerm_container_registry.app.login_server}/app.backend:${var.app_version}"
       cpu    = 0.5
       memory = "1Gi"
       env {
         name        = "AppSettings"
         secret_name = "settings"
+      }
+      command = [
+        "bash",
+        "-c",
+        "echo \"$${AppSettings}\" > /app-settings/appsettings.local.json",
+      ]
+      volume_mounts {
+        name = "appsettings"
+        path = "/app-settings"
+      }
+    }
+
+    container {
+      name   = "app"
+      image  = "${data.azurerm_container_registry.app.login_server}/app.backend:${var.app_version}"
+      cpu    = 0.5
+      memory = "1Gi"
+      volume_mounts {
+        name = "appsettings"
+        path = "/app-settings"
       }
       env {
         name  = "ASPNETCORE_ENVIRONMENT"
