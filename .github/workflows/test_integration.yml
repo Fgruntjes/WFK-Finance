@@ -55,7 +55,7 @@ jobs:
                   APP_SETTINGS_JSON_ENCRYPTED: ${{ needs.deploy.outputs.app_settings_json }}
                   GH_ENCRYPT_KEY: ${{ secrets.GH_ENCRYPT_KEY }}
             - uses: actions/upload-artifact@v2
-              #if: failure()
+              if: always()
               with:
                   name: test-traces
-                  path: .test-traces/*.webm
+                  path: .test-traces/*

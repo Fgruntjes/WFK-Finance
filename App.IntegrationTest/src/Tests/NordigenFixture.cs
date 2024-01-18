@@ -6,17 +6,17 @@ using VMelnalksnis.NordigenDotNet;
 
 namespace App.IntegrationTest.Tests;
 
-public class NordigenFixture : AppFixture, IAsyncLifetime
+public class NordigenFixture<TestType> : AppFixture<TestType>, IAsyncLifetime
 {
     private const string _nordigenTestInstitutionId = "SANDBOXFINANCE_SFIN0000";
     private readonly INordigenClient _nordigenClient;
 
-    public NordigenFixture(ILoggerProvider loggerProvider) : base(loggerProvider)
+    public NordigenFixture(ILoggerProvider loggerProvider, TestContext testContext) : base(loggerProvider, testContext)
     {
         _nordigenClient = Services.GetRequiredService<INordigenClient>();
     }
 
-    public async Task InitializeAsync()
+    public new async Task InitializeAsync()
     {
         // Cleanup old connections
         await foreach (var requisition in _nordigenClient.Requisitions.Get())
@@ -43,10 +43,5 @@ public class NordigenFixture : AppFixture, IAsyncLifetime
                 CountryIso2 = "NL",
             });
         });
-    }
-
-    Task IAsyncLifetime.DisposeAsync()
-    {
-        return Task.CompletedTask;
     }
 }

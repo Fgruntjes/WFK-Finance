@@ -3,11 +3,11 @@ using Microsoft.Playwright;
 
 namespace App.IntegrationTest.Tests;
 
-public class InstitutionConnectTest : IClassFixture<NordigenFixture>
+public class InstitutionConnectTest : IClassFixture<NordigenFixture<InstitutionConnectTest>>
 {
-    private readonly NordigenFixture _fixture;
+    private readonly NordigenFixture<InstitutionConnectTest> _fixture;
 
-    public InstitutionConnectTest(NordigenFixture fixture)
+    public InstitutionConnectTest(NordigenFixture<InstitutionConnectTest> fixture)
     {
         _fixture = fixture;
     }
@@ -16,7 +16,6 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
     public async void ConnectUnauthorized()
     {
         var page = await _fixture.WithPage();
-
         var institutionConnectScreen = new InstitutionConnectScreen(page);
 
         await institutionConnectScreen.ClickMenuAsync();
