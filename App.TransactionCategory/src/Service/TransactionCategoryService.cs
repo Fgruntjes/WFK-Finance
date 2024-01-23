@@ -29,31 +29,9 @@ class TransactionCategoryService : ITransactionCategoryService
             Group = group,
         };
 
-        if (parentId.HasValue)
-        {
-            var parent = await _database.TransactionCategory
-                .Where(x => x.Id == parentId.Value)
-                .Where(x => x.OrganisationId == _organisationIdProvider.GetOrganisationId())
-                .SingleOrDefaultAsync(cancellationToken)
-                    ?? throw new CategoryNotFoundException(parentId.Value);
-
-            entity.Parent = entity;
-        }
-
-        try
-        {
-            await _database.AddAsync(entity, cancellationToken);
-            await _database.SaveChangesAsync(cancellationToken);
-            return entity;
-        }
-        catch (DbUpdateException exception)
-        {
-            if (exception.IsUniqueConstraintViolation())
-            {
-                throw new UniqueConstraintException(innerException: exception);
-            }
-            throw;
-        }
+        await _database.AddAsync(entity, cancellationToken);
+        await SaveAsync(entity, cancellationToken);
+        return entity;
     }
 
     public async Task<TransactionCategoryEntity> UpdateAsync(
@@ -92,7 +70,6 @@ class TransactionCategoryService : ITransactionCategoryService
 
         try
         {
-            await _database.AddAsync(entity, cancellationToken);
             await _database.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException exception)
