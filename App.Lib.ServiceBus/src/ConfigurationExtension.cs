@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using App.Lib.Configuration;
 using App.Lib.ServiceBus.Messages;
 using Azure.Core;
@@ -12,7 +11,6 @@ using Rebus.Routing;
 using Rebus.Routing.TypeBased;
 using Rebus.Transport.InMem;
 
-[assembly: InternalsVisibleTo("App.Lib.ServiceBus.Test")]
 namespace App.Lib.ServiceBus;
 
 public static class ConfigurationExtension

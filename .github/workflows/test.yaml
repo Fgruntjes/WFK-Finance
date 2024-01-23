@@ -70,6 +70,7 @@ jobs:
                 project:
                     - App.Backend.Test
                     - App.Institution.Test
+                    - App.TransactionCategory.Test
                     - App.Lib.ServiceBus.Test
         steps:
             - uses: actions/checkout@v3
