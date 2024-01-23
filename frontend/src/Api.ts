@@ -102,9 +102,26 @@ export interface ProblemDetails {
   [key: string]: any;
 }
 
+/** TransactionCategory */
+export interface TransactionCategory {
+  name: string;
+  /** @format uuid */
+  parentId?: string | null;
+  group: TransactionCategoryGroupEnum;
+}
+
 export enum InstitutionAccountImportStatusEnum {
   Success = "Success",
   Queued = "Queued",
   Working = "Working",
   Failed = "Failed",
+}
+
+export enum TransactionCategoryGroupEnum {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+  Investment = "Investment",
+  Liquididation = "Liquididation",
+  Other = "Other",
 }
