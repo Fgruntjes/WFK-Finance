@@ -24,7 +24,7 @@ public class TransactionCategoryUpdateController : ControllerBase
     [HttpPut("{id:guid}", Name = RouteName)]
     public async Task<IActionResult> Create(
         Guid id,
-        [FromBody] TransactionCategoryDto request,
+        [FromBody] TransactionCategoryInputDto request,
         CancellationToken cancellationToken = default)
     {
         try

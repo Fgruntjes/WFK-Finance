@@ -13,7 +13,7 @@ namespace App.Backend.Controllers;
 [Route(RouteBase)]
 public class TransactionCategoryListController : ControllerBase
 {
-    public const string RouteBase = "/transactioncategory";
+    public const string RouteBase = "/transactioncategories";
 
     public const string RouteName = nameof(TransactionCategoryListController);
 

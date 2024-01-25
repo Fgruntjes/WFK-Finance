@@ -67,8 +67,8 @@ export interface InstitutionConnection {
   accounts: InstitutionAccount[];
 }
 
-/** InstitutionConnectionCreate */
-export interface InstitutionConnectionCreate {
+/** InstitutionConnectionInput */
+export interface InstitutionConnectionInput {
   /** @format uuid */
   institutionId: string;
   /** @format uri */
@@ -104,10 +104,20 @@ export interface ProblemDetails {
 
 /** TransactionCategory */
 export interface TransactionCategory {
+  /** @format uuid */
+  id: string;
   name: string;
   /** @format uuid */
   parentId?: string | null;
   group: TransactionCategoryGroupEnum;
+}
+
+/** TransactionCategoryInput */
+export interface TransactionCategoryInput {
+  name: string;
+  /** @format uuid */
+  parentId?: string | null;
+  group: TransactionCategoryInputGroupEnum;
 }
 
 export enum InstitutionAccountImportStatusEnum {
@@ -118,6 +128,15 @@ export enum InstitutionAccountImportStatusEnum {
 }
 
 export enum TransactionCategoryGroupEnum {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+  Investment = "Investment",
+  Liquididation = "Liquididation",
+  Other = "Other",
+}
+
+export enum TransactionCategoryInputGroupEnum {
   Income = "Income",
   Expense = "Expense",
   Transfer = "Transfer",

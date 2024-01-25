@@ -23,7 +23,7 @@ public class TransactionCategoryCreateController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [HttpPost(Name = RouteName)]
     public async Task<IActionResult> Create(
-        [FromBody] TransactionCategoryDto request,
+        [FromBody] TransactionCategoryInputDto request,
         CancellationToken cancellationToken = default)
     {
         try

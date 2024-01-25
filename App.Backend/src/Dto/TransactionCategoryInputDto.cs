@@ -2,10 +2,8 @@ using App.Lib.Data.Entity;
 
 namespace App.Backend.Dto;
 
-public class TransactionCategoryDto
+public class TransactionCategoryInputDto
 {
-    public required Guid Id { get; set; }
-
     public required string Name { get; set; }
 
     public Guid? ParentId { get; set; }

@@ -44,7 +44,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
             HttpMethod.Put, $"{TransactionCategoryListController.RouteBase}/{_fixture.TransactionCategoryEntity.Id}")
         {
-            Content = JsonContent.Create(new TransactionCategoryDto()
+            Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "NewName",
                 Group = CategoryGroup.Expense,
@@ -57,6 +57,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         response.Should().HaveStatusCode(HttpStatusCode.Created);
         content.Should().BeEquivalentTo(new TransactionCategoryDto()
         {
+            Id = _fixture.TransactionCategoryEntity.Id,
             Name = "NewName",
             Group = CategoryGroup.Expense,
             ParentId = parentId,
@@ -77,7 +78,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
             HttpMethod.Put, $"{TransactionCategoryListController.RouteBase}/{_fixture.TransactionCategoryEntity.Id}")
         {
-            Content = JsonContent.Create(new TransactionCategoryDto()
+            Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
                 Group = CategoryGroup.Expense,
@@ -108,7 +109,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
             HttpMethod.Put, $"{TransactionCategoryListController.RouteBase}/{_fixture.TransactionCategoryEntity.Id}")
         {
-            Content = JsonContent.Create(new TransactionCategoryDto()
+            Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
                 Group = CategoryGroup.Expense,

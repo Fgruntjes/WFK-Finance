@@ -1,6 +1,6 @@
 namespace App.Backend.Dto;
 
-public class InstitutionConnectionCreateDto
+public class InstitutionConnectionInputDto
 {
     public required Guid InstitutionId { get; set; }
 

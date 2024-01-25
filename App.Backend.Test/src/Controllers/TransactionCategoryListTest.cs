@@ -24,6 +24,7 @@ public class TransactionCategoryListTest : IClassFixture<TransactionCategoryFixt
         {
             new ()
             {
+                Id = _fixture.TransactionCategoryEntity.Id,
                 Name = _fixture.TransactionCategoryEntity.Name,
                 Group = _fixture.TransactionCategoryEntity.Group,
                 ParentId = _fixture.TransactionCategoryEntity.ParentId,

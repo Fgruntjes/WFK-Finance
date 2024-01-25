@@ -24,6 +24,7 @@ public class TransactionCategoryGetTest : IClassFixture<TransactionCategoryFixtu
         // Assert
         response.Should().BeEquivalentTo(new TransactionCategoryDto()
         {
+            Id = _fixture.TransactionCategoryEntity.Id,
             Name = _fixture.TransactionCategoryEntity.Name,
             Group = _fixture.TransactionCategoryEntity.Group,
             ParentId = _fixture.TransactionCategoryEntity.ParentId,

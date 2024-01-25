@@ -97,6 +97,18 @@ const en: ResourceLanguage = {
         accounts: "Accounts",
       },
     },
+    transactioncategories: {
+      transactioncategories: "Categories",
+      titles: {
+        list: "Categories",
+        create: "Create category",
+      },
+    },
+    components: {
+      noData: {
+        text: "No Data",
+      },
+    },
     warnWhenUnsavedChanges:
       "You have unsaved changes. Are you sure you want to leave?",
     documentTitle: {
@@ -114,6 +126,9 @@ const en: ResourceLanguage = {
       },
       institutiontransactions: {
         list: "Bank transactions | WFK Finance",
+      },
+      transactioncategories: {
+        list: "Categories | WFK Finance",
       },
     },
   },

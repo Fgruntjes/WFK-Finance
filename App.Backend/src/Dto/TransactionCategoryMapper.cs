@@ -8,6 +8,7 @@ public static class TransactionCategoryMapper
     {
         return new()
         {
+            Id = entity.Id,
             Name = entity.Name,
             ParentId = entity.ParentId,
             Group = entity.Group,

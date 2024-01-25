@@ -37,7 +37,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
         var response = await _fixture.Client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Post, InstitutionConnectionListController.RouteBase)
             {
-                Content = JsonContent.Create(new InstitutionConnectionCreateDto
+                Content = JsonContent.Create(new InstitutionConnectionInputDto
                 {
                     InstitutionId = _fixture.InstitutionEntity.Id,
                     ReturnUrl = returnUri
@@ -74,7 +74,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
         var response = await _fixture.Client.SendWithAuthAsync(
             new HttpRequestMessage(HttpMethod.Post, InstitutionConnectionListController.RouteBase)
             {
-                Content = JsonContent.Create(new InstitutionConnectionCreateDto
+                Content = JsonContent.Create(new InstitutionConnectionInputDto
                 {
                     InstitutionId = institutionId,
                     ReturnUrl = new Uri("http://www.example.com/return")

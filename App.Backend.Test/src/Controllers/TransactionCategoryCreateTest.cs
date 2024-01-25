@@ -42,7 +42,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(HttpMethod.Post, TransactionCategoryListController.RouteBase)
         {
-            Content = JsonContent.Create(new TransactionCategoryDto()
+            Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
                 Group = CategoryGroup.Expense,
@@ -54,6 +54,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         response.Should().HaveStatusCode(HttpStatusCode.Created);
         content.Should().BeEquivalentTo(new TransactionCategoryDto()
         {
+            Id = new Guid("581fa5df-a0f2-499e-add5-c11bb7d66a59"),
             Name = "Test",
             Group = CategoryGroup.Expense,
         });
@@ -72,7 +73,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(HttpMethod.Post, TransactionCategoryListController.RouteBase)
         {
-            Content = JsonContent.Create(new TransactionCategoryDto()
+            Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
                 Group = CategoryGroup.Expense,
@@ -102,7 +103,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Act
         var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(HttpMethod.Post, TransactionCategoryListController.RouteBase)
         {
-            Content = JsonContent.Create(new TransactionCategoryDto()
+            Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
                 Group = CategoryGroup.Expense,
