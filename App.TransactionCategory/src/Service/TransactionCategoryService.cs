@@ -19,7 +19,12 @@ class TransactionCategoryService : ITransactionCategoryService
         _organisationIdProvider = organisationIdProvider;
     }
 
-    public async Task<TransactionCategoryEntity> CreateAsync(string name, CategoryGroup group, Guid? parentId, CancellationToken cancellationToken = default)
+    public async Task<TransactionCategoryEntity> CreateAsync(
+        string name,
+        TransactionCategoryGroup group,
+        Guid? parentId,
+        int sortOrder,
+        CancellationToken cancellationToken = default)
     {
         var entity = new TransactionCategoryEntity()
         {
@@ -27,6 +32,7 @@ class TransactionCategoryService : ITransactionCategoryService
             Name = name,
             ParentId = parentId,
             Group = group,
+            SortOrder = sortOrder,
         };
 
         await _database.AddAsync(entity, cancellationToken);
@@ -37,8 +43,9 @@ class TransactionCategoryService : ITransactionCategoryService
     public async Task<TransactionCategoryEntity> UpdateAsync(
         Guid id,
         string name,
-        CategoryGroup group,
+        TransactionCategoryGroup group,
         Guid? parentId,
+        int sortOrder,
         CancellationToken cancellationToken = default)
     {
         var entity = await _database.FindAsync<TransactionCategoryEntity>(id, cancellationToken)
@@ -48,6 +55,7 @@ class TransactionCategoryService : ITransactionCategoryService
         entity.Name = name;
         entity.Group = group;
         entity.ParentId = parentId;
+        entity.SortOrder = sortOrder;
 
         await SaveAsync(entity, cancellationToken);
         return entity;

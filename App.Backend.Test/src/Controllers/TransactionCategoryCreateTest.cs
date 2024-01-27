@@ -29,13 +29,14 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Arrange
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.CreateAsync("Test", CategoryGroup.Expense, null, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.CreateAsync("Test", TransactionCategoryGroup.Expense, null, 10, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new TransactionCategoryEntity()
                 {
                     Id = new Guid("581fa5df-a0f2-499e-add5-c11bb7d66a59"),
                     Name = "Test",
-                    Group = CategoryGroup.Expense,
+                    Group = TransactionCategoryGroup.Expense,
                     OrganisationId = _fixture.OrganisationId,
+                    SortOrder = 10,
                 });
         });
 
@@ -45,7 +46,8 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
             Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
-                Group = CategoryGroup.Expense,
+                Group = TransactionCategoryGroup.Expense,
+                SortOrder = 10,
             })
         });
         var content = await response.Content.ReadFromJsonAsync<TransactionCategoryDto>();
@@ -56,7 +58,8 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         {
             Id = new Guid("581fa5df-a0f2-499e-add5-c11bb7d66a59"),
             Name = "Test",
-            Group = CategoryGroup.Expense,
+            Group = TransactionCategoryGroup.Expense,
+            SortOrder = 10,
         });
     }
 
@@ -66,7 +69,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Arrange
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<CategoryGroup>(), null, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new UniqueConstraintException());
         });
 
@@ -76,7 +79,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
             Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
-                Group = CategoryGroup.Expense,
+                Group = TransactionCategoryGroup.Expense,
             })
         });
 
@@ -96,7 +99,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         var parentId = new Guid("ae3c5f2a-064f-4343-be74-08980ee6d952");
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<CategoryGroup>(), parentId, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), parentId, It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new CategoryNotFoundException(parentId));
         });
 
@@ -106,7 +109,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
             Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
-                Group = CategoryGroup.Expense,
+                Group = TransactionCategoryGroup.Expense,
                 ParentId = parentId,
             })
         });

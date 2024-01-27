@@ -16,7 +16,7 @@ public class TransactionCategoryFixture : AppFixture
             CreatedAt = Instant.FromUtc(2021, 1, 1, 0, 0),
             Name = "Groceries",
             OrganisationId = OrganisationId,
-            Group = CategoryGroup.Expense,
+            Group = TransactionCategoryGroup.Expense,
         };
 
         Database.SeedData(context =>

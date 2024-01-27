@@ -10,5 +10,7 @@ public class TransactionCategoryDto
 
     public Guid? ParentId { get; set; }
 
-    public CategoryGroup Group { get; set; }
+    public int SortOrder { get; set; }
+
+    public TransactionCategoryGroup Group { get; set; }
 }

@@ -11,6 +11,7 @@ public static class TransactionCategoryMapper
             Id = entity.Id,
             Name = entity.Name,
             ParentId = entity.ParentId,
+            SortOrder = entity.SortOrder,
             Group = entity.Group,
         };
     }

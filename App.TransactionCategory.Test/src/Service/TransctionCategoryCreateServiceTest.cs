@@ -41,14 +41,15 @@ public class TransctionCategoryCreateServiceTest
 
         // Act
         var result = await fixture.Services.GetRequiredService<ITransactionCategoryService>()
-            .CreateAsync("Test", CategoryGroup.Expense, null, default);
+            .CreateAsync("Test", TransactionCategoryGroup.Expense, null, 10);
 
         // Assert
         result.Should().BeEquivalentTo(new TransactionCategoryEntity()
         {
             Name = "Test",
-            Group = CategoryGroup.Expense,
+            Group = TransactionCategoryGroup.Expense,
             OrganisationId = fixture.OrganisationId,
+            SortOrder = 10,
         }, o => o.Excluding(e => e.Id).Excluding(e => e.CreatedAt));
     }
 
@@ -61,8 +62,9 @@ public class TransctionCategoryCreateServiceTest
         {
             Id = new Guid("32e89720-31ad-49f5-8a87-f210403f456e"),
             Name = "Parent",
-            Group = CategoryGroup.Expense,
+            Group = TransactionCategoryGroup.Expense,
             OrganisationId = fixture.OrganisationId,
+            SortOrder = 10,
         };
         fixture.Database.SeedData(database =>
         {
@@ -71,15 +73,16 @@ public class TransctionCategoryCreateServiceTest
 
         // Act
         var result = await fixture.Services.GetRequiredService<ITransactionCategoryService>()
-            .UpdateAsync(fixture.TransactionCategoryEntity.Id, "Test", CategoryGroup.Investment, parent.Id, default);
+            .UpdateAsync(fixture.TransactionCategoryEntity.Id, "Test", TransactionCategoryGroup.Investment, parent.Id, 20);
 
         // Assert
         result.Should().BeEquivalentTo(new TransactionCategoryEntity()
         {
             Name = "Test",
-            Group = CategoryGroup.Investment,
+            Group = TransactionCategoryGroup.Investment,
             OrganisationId = fixture.OrganisationId,
             ParentId = parent.Id,
+            SortOrder = 20,
         }, o => o.Excluding(e => e.Id).Excluding(e => e.CreatedAt));
     }
 
@@ -94,7 +97,7 @@ public class TransctionCategoryCreateServiceTest
         // Act
         var act = () => service.CreateAsync(
             "Test",
-            CategoryGroup.Expense,
+            TransactionCategoryGroup.Expense,
             parentId,
             default);
 
@@ -115,7 +118,7 @@ public class TransctionCategoryCreateServiceTest
         var act = () => service.UpdateAsync(
             fixture.TransactionCategoryEntity.Id,
             "Test",
-            CategoryGroup.Expense,
+            TransactionCategoryGroup.Expense,
             parentId,
             default);
 
@@ -132,7 +135,7 @@ public class TransctionCategoryCreateServiceTest
         var parentEntity = new TransactionCategoryEntity()
         {
             Name = "Test parent",
-            Group = CategoryGroup.Other,
+            Group = TransactionCategoryGroup.Other,
             ParentId = null,
             OrganisationId = fixture.AltOrganisationId,
         };
@@ -145,7 +148,7 @@ public class TransctionCategoryCreateServiceTest
         // Act
         var act = () => service.CreateAsync(
             "Test",
-            CategoryGroup.Expense,
+            TransactionCategoryGroup.Expense,
             parentEntity.Id,
             default);
 
@@ -162,7 +165,7 @@ public class TransctionCategoryCreateServiceTest
         var parentEntity = new TransactionCategoryEntity()
         {
             Name = "Test parent",
-            Group = CategoryGroup.Other,
+            Group = TransactionCategoryGroup.Other,
             ParentId = null,
             OrganisationId = fixture.AltOrganisationId,
         };
@@ -176,7 +179,7 @@ public class TransctionCategoryCreateServiceTest
         var act = () => service.UpdateAsync(
             fixture.TransactionCategoryEntity.Id,
             "Test",
-            CategoryGroup.Expense,
+            TransactionCategoryGroup.Expense,
             parentEntity.Id,
             default);
 

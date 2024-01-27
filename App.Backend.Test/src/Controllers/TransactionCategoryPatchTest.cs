@@ -30,13 +30,14 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         {
             Id = _fixture.TransactionCategoryEntity.Id,
             Name = "NewName",
-            Group = CategoryGroup.Expense,
+            Group = TransactionCategoryGroup.Expense,
             ParentId = parentId,
             OrganisationId = _fixture.OrganisationId,
+            SortOrder = 20,
         };
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.UpdateAsync(_fixture.TransactionCategoryEntity.Id, "NewName", CategoryGroup.Expense, parentId, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.UpdateAsync(_fixture.TransactionCategoryEntity.Id, "NewName", TransactionCategoryGroup.Expense, parentId, 20, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnEntity);
         });
 
@@ -47,8 +48,9 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
             Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "NewName",
-                Group = CategoryGroup.Expense,
+                Group = TransactionCategoryGroup.Expense,
                 ParentId = parentId,
+                SortOrder = 20,
             })
         });
         var content = await response.Content.ReadFromJsonAsync<TransactionCategoryDto>();
@@ -59,8 +61,9 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         {
             Id = _fixture.TransactionCategoryEntity.Id,
             Name = "NewName",
-            Group = CategoryGroup.Expense,
+            Group = TransactionCategoryGroup.Expense,
             ParentId = parentId,
+            SortOrder = 20,
         });
     }
 
@@ -70,7 +73,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         // Arrange
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<CategoryGroup>(), null, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new UniqueConstraintException());
         });
 
@@ -81,7 +84,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
             Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
-                Group = CategoryGroup.Expense,
+                Group = TransactionCategoryGroup.Expense,
             })
         });
 
@@ -101,7 +104,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         var parentId = new Guid("784ed104-cf82-4a13-b2b7-05b7cffb3d15");
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<CategoryGroup>(), null, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new CategoryNotFoundException(parentId));
         });
 
@@ -112,7 +115,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
             Content = JsonContent.Create(new TransactionCategoryInputDto()
             {
                 Name = "Test",
-                Group = CategoryGroup.Expense,
+                Group = TransactionCategoryGroup.Expense,
             })
         });
 

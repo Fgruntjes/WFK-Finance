@@ -1,6 +1,6 @@
 namespace App.Lib.Data.Entity;
 
-public enum CategoryGroup
+public enum TransactionCategoryGroup
 {
     Income,
     Expense,

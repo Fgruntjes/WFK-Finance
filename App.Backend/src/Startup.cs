@@ -35,7 +35,6 @@ public partial class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
-            config.UseInlineDefinitionsForEnums();
             config.ParameterFilter<LowerCaseParameterFilter>();
             config.ParameterFilter<GridifyFilterParameterFilter>();
             config.OperationFilter<RangeOperationFilter>();

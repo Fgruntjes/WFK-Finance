@@ -6,14 +6,16 @@ public interface ITransactionCategoryService
 {
     public Task<TransactionCategoryEntity> CreateAsync(
         string name,
-        CategoryGroup group,
-        Guid? parentId = null,
+        TransactionCategoryGroup group,
+        Guid? parentId,
+        int sortOrder,
         CancellationToken cancellationToken = default);
 
     public Task<TransactionCategoryEntity> UpdateAsync(
         Guid id,
         string name,
-        CategoryGroup group,
+        TransactionCategoryGroup group,
         Guid? parentId,
+        int sortOrder,
         CancellationToken cancellationToken = default);
 }

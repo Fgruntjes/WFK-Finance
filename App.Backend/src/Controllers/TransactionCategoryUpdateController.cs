@@ -34,6 +34,7 @@ public class TransactionCategoryUpdateController : ControllerBase
                 request.Name,
                 request.Group,
                 request.ParentId,
+                request.SortOrder,
                 cancellationToken);
 
             return CreatedAtRoute(

@@ -16,11 +16,13 @@ public class TransactionCategoryEntity
 
     public Guid? ParentId { get; set; }
 
+    public int SortOrder { get; set; }
+
     public TransactionCategoryEntity? Parent { get; set; }
 
     public required Guid OrganisationId { get; set; }
 
-    public required CategoryGroup Group { get; set; }
+    public required TransactionCategoryGroup Group { get; set; }
 
     public TransactionCategoryEntity()
     {
