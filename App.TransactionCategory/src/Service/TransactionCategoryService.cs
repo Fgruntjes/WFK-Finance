@@ -48,8 +48,7 @@ class TransactionCategoryService : ITransactionCategoryService
         int sortOrder,
         CancellationToken cancellationToken = default)
     {
-        var entity = await _database.FindAsync<TransactionCategoryEntity>(id, cancellationToken)
-            ?? throw new CategoryNotFoundException(id);
+        var entity = await FindEntityAsync(id, cancellationToken);
 
         // Maybe use a mapper if we get too much of this stuff
         entity.Name = name;
@@ -59,6 +58,14 @@ class TransactionCategoryService : ITransactionCategoryService
 
         await SaveAsync(entity, cancellationToken);
         return entity;
+    }
+
+    private async Task<TransactionCategoryEntity> FindEntityAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _database.TransactionCategory
+            .Where(e => e.Id == id)
+            .Where(e => e.OrganisationId == _organisationIdProvider.GetOrganisationId())
+            .FirstOrDefaultAsync(cancellationToken) ?? throw new CategoryNotFoundException(id);
     }
 
     private async Task SaveAsync(TransactionCategoryEntity entity, CancellationToken cancellationToken = default)

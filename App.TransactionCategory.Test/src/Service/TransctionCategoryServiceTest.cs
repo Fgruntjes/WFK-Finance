@@ -9,12 +9,12 @@ using Microsoft.Extensions.Logging;
 
 namespace App.TransactionCategory.Test.Service;
 
-public class TransctionCategoryCreateServiceTest
+public class TransctionCategoryServiceTest
 {
     private readonly DatabasePool _databasePool;
     private readonly ILoggerProvider _loggerProvider;
 
-    public TransctionCategoryCreateServiceTest(DatabasePool databasePool, ILoggerProvider loggerProvider)
+    public TransctionCategoryServiceTest(DatabasePool databasePool, ILoggerProvider loggerProvider)
     {
         _databasePool = databasePool;
         _loggerProvider = loggerProvider;
@@ -84,6 +84,33 @@ public class TransctionCategoryCreateServiceTest
             ParentId = parent.Id,
             SortOrder = 20,
         }, o => o.Excluding(e => e.Id).Excluding(e => e.CreatedAt));
+    }
+
+    [Fact]
+    public async Task Update_OutsideOfOrganisation()
+    {
+        // Arrange
+        var fixture = new TransactionCategoryFixture(_databasePool, _loggerProvider);
+        var entity = new TransactionCategoryEntity()
+        {
+            Name = "Test outside",
+            Group = TransactionCategoryGroup.Other,
+            ParentId = null,
+            OrganisationId = fixture.AltOrganisationId,
+        };
+        fixture.Database.SeedData(database =>
+        {
+            database.TransactionCategory.Add(entity);
+        });
+        var service = fixture.Services.GetRequiredService<ITransactionCategoryService>();
+
+        // Act
+        var act = () => fixture.Services.GetRequiredService<ITransactionCategoryService>()
+            .UpdateAsync(entity.Id, "Test", TransactionCategoryGroup.Investment, null, 20);
+
+        // Assert
+        await act.Should().ThrowAsync<CategoryNotFoundException>()
+            .Where(e => e.Data.MustGet("Id").ToString() == entity.Id.ToString());
     }
 
     [Fact]
