@@ -13,8 +13,8 @@ jobs:
             contents: read
             pull-requests: write
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-dotnet@v3
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
               with:
                   dotnet-version: 7.0
             - run: dotnet format --verify-no-changes
@@ -27,7 +27,7 @@ jobs:
             contents: read
             pull-requests: write
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: terraform-linters/setup-tflint@v4
             - uses: hashicorp/setup-terraform@v3
               with:
@@ -45,7 +45,7 @@ jobs:
             contents: read
             pull-requests: write
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
                   node-version-file: frontend/package.json
@@ -73,8 +73,8 @@ jobs:
                     - App.TransactionCategory.Test
                     - App.Lib.ServiceBus.Test
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-dotnet@v3
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
               with:
                   dotnet-version: 7.0
             - run: dotnet build ${{ matrix.project }}

@@ -3,7 +3,7 @@ name: Clean
 on:
     workflow_dispatch:
     schedule:
-        - cron: '0 0 * * *'
+        - cron: "0 0 * * *"
 
 jobs:
     cleanup:
@@ -12,13 +12,13 @@ jobs:
             deployments: write
             contents: read
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: azure/login@v1
               with:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
             - uses: hashicorp/setup-terraform@v3
               with:
-                  terraform_version: '~1.6.3'
+                  terraform_version: "~1.6.3"
                   terraform_wrapper: false
             - run: ./cleanup.sh
               env:
@@ -32,6 +32,6 @@ jobs:
                   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   NORDIGEN_SECRET_ID: ${{ vars.NORDIGEN_SECRET_ID }}
                   NORDIGEN_SECRET_KEY: ${{ secrets.NORDIGEN_SECRET_KEY }}
-                  SENTRY_ORGANISATION: '${{ vars.SENTRY_ORGANISATION }}'
-                  SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
+                  SENTRY_ORGANISATION: "${{ vars.SENTRY_ORGANISATION }}"
+                  SENTRY_TOKEN: "${{ secrets.SENTRY_TOKEN }}"
                   GH_TOKEN: ${{ github.token }}

@@ -2,7 +2,7 @@ name: Close PR
 
 on:
     pull_request:
-        types: ['closed']
+        types: ["closed"]
 
 jobs:
     deploy_slug:
@@ -21,17 +21,17 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 30
         if: ${{ needs.deploy_slug.outputs.environment != 'main' && needs.deploy_slug.outputs.environment != 'test' && needs.deploy_slug.outputs.environment != 'alpha' }}
-        needs: 'deploy_slug'
+        needs: "deploy_slug"
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: azure/login@v1
               with:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
             - uses: hashicorp/setup-terraform@v3
               with:
-                  terraform_version: '~1.6.3'
+                  terraform_version: "~1.6.3"
                   terraform_wrapper: false
             - run: ./deploy.sh destroy -auto-approve
               env:
@@ -47,14 +47,14 @@ jobs:
                   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   NORDIGEN_SECRET_ID: ${{ vars.NORDIGEN_SECRET_ID }}
                   NORDIGEN_SECRET_KEY: ${{ secrets.NORDIGEN_SECRET_KEY }}
-                  SENTRY_ORGANISATION: '${{ vars.SENTRY_ORGANISATION }}'
-                  SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
+                  SENTRY_ORGANISATION: "${{ vars.SENTRY_ORGANISATION }}"
+                  SENTRY_TOKEN: "${{ secrets.SENTRY_TOKEN }}"
 
     destroy_frontend:
         runs-on: ubuntu-latest
         timeout-minutes: 5
         if: ${{ needs.deploy_slug.outputs.environment != 'main' && needs.deploy_slug.outputs.environment != 'test' && needs.deploy_slug.outputs.environment != 'alpha' }}
-        needs: 'deploy_slug'
+        needs: "deploy_slug"
         permissions:
             deployments: write
         environment:

@@ -28,8 +28,8 @@ jobs:
                     - App.DataMigrations
                     - App.Institution.Job.TransactionImport
         steps:
-            - uses: actions/checkout@v3
-            - uses: docker/setup-buildx-action@v2
+            - uses: actions/checkout@v4
+            - uses: docker/setup-buildx-action@v3
             - uses: crazy-max/ghaction-github-runtime@v3
             - uses: azure/login@v1
               with:
@@ -53,7 +53,7 @@ jobs:
             backend_auth0_audience: ${{ steps.deploy.outputs.backend_auth0_audience }}
             frontend_sentry_dsn: ${{ steps.deploy.outputs.frontend_sentry_dsn }}
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: azure/login@v1
               with:
                   creds: '{"clientId":"${{ vars.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ vars.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ vars.ARM_TENANT_ID }}"}'
@@ -93,7 +93,7 @@ jobs:
         permissions:
             contents: read
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v2
               with:
                   version: 8
@@ -115,7 +115,7 @@ jobs:
                   AUTH0_AUDIENCE: ${{ needs.deploy_backend.outputs.backend_auth0_audience }}
                   SENTRY_DSN: ${{ needs.deploy_backend.outputs.frontend_sentry_dsn }}
 
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               with:
                   name: frontend
                   path: frontend/dist
@@ -131,7 +131,7 @@ jobs:
             name: ${{ inputs.environment }}
             url: https://${{ inputs.environment }}.${{ vars.APP_PROJECT_SLUG }}.pages.dev/
         steps:
-            - uses: actions/download-artifact@v3
+            - uses: actions/download-artifact@v4
               with:
                   name: frontend
                   path: frontend/dist
