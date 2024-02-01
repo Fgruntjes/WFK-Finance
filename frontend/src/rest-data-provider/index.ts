@@ -1,3 +1,4 @@
+import { ProblemDetails } from "@api";
 import {
   BaseKey,
   BaseRecord,
@@ -18,13 +19,14 @@ import {
   GetManyResponse,
   GetOneParams,
   GetOneResponse,
+  HttpError,
   MetaQuery,
   UpdateManyParams,
   UpdateManyResponse,
   UpdateParams,
   UpdateResponse,
 } from "@refinedev/core";
-import { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { stringify } from "query-string";
 import { axiosInstance, generateFilter, generateSort } from "./utils";
 
@@ -59,7 +61,21 @@ function dataProvider(
     const { headers, method: methodFromMeta } = meta ?? {};
     const requestMethod = (methodFromMeta as MethodTypes) ?? method;
 
-    return await httpClient[requestMethod](url, { headers });
+    try {
+      return await httpClient[requestMethod](url, { headers });
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.data) {
+        const problemDetails = axiosError.response.data as ProblemDetails;
+
+        throw {
+          message: problemDetails.detail,
+          statusCode: problemDetails.status,
+        } as HttpError;
+      }
+
+      throw error;
+    }
   }
 
   async function requestWithData<
@@ -192,7 +208,7 @@ function dataProvider(
     meta,
   }: UpdateParams<TVariables>): Promise<UpdateResponse<TData>> {
     return await requestWithData<TData>(
-      "post",
+      "put",
       resourceUrl(resource, id, meta),
       variables,
       meta,
@@ -209,7 +225,7 @@ function dataProvider(
     meta,
   }: UpdateManyParams<TVariables>): Promise<UpdateManyResponse<TData>> {
     return await requestWithData<TData[]>(
-      "post",
+      "put",
       resourceListUrl(resource, meta, { id: ids }),
       variables,
       meta,

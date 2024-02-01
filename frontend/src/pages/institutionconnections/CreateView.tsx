@@ -1,4 +1,4 @@
-import { InstitutionConnection, InstitutionConnectionCreate } from "@api";
+import { InstitutionConnection, InstitutionConnectionInput } from "@api";
 import CountrySelect from "@components/form/CountrySelect";
 import { Edit, useForm } from "@refinedev/antd";
 import { HttpError, useTranslate } from "@refinedev/core";
@@ -12,7 +12,7 @@ function CreateView() {
   const { formProps, saveButtonProps } = useForm<
     InstitutionConnection,
     HttpError,
-    InstitutionConnectionCreate
+    InstitutionConnectionInput
   >({
     resource: "institutionconnections",
     onMutationSuccess: (result) => {

@@ -1,102 +1,197 @@
-import { TransactionCategory } from "@api";
-import Loader from "@components/Loader";
+import type { TransactionCategory, TransactionCategoryInput } from "@api";
 import NoData from "@components/NoData";
-import { CreateButton, List, useModalForm } from "@refinedev/antd";
-import { HttpError, useTable, useTranslate } from "@refinedev/core";
-import { Form, Input, Modal, Select, Tree } from "antd";
+import { List as RefineList } from "@refinedev/antd";
+import { HttpError, useTable, useUpdate } from "@refinedev/core";
 import Search from "antd/es/input/Search";
-import { useMemo } from "react";
+// When we import the enum trough @api we get a failed to resolve error
+import { List, Typography } from "antd";
+import { useEffect, useState } from "react";
+import styles from "./ListView.module.less";
+import { ActionButtons } from "./list-view/ActionButtons";
+import { CategoryGroup } from "./list-view/CategoryGroup";
+import { CreateButton } from "./list-view/CreateButton";
+import { GroupTag } from "./list-view/GroupTag";
 
 function ListView() {
-  const translate = useTranslate();
+  const [groups, setGroups] = useState<CategoryGroup[]>([]);
   const {
     tableQueryResult: { isLoading, data },
   } = useTable<TransactionCategory, HttpError>({
     resource: "transactioncategories",
+    syncWithLocation: false,
     pagination: {
       pageSize: 250,
     },
-    //sorters: {
-    //  initial: [{ field: "date", order: "desc" }],
-    //},
   });
 
-  const {
-    modalProps: createModalProps,
-    formProps: createFormProps,
-    show: createModalShow,
-  } = useModalForm<TransactionCategory>({
-    action: "create",
-  });
+  const { mutate } = useUpdate<
+    TransactionCategory,
+    HttpError,
+    TransactionCategoryInput
+  >();
 
-  const treeData = useMemo(
-    () =>
-      data?.data.map((category) => ({
-        key: category.id || "",
-        title: category.name,
-      })) || [],
-    [data],
-  );
+  // Set initial group
+  useEffect(() => {
+    const groups: { [key: string]: CategoryGroup } = {};
+    const items = data?.data || [];
+    items
+      .filter((category) => !category.parentId)
+      .forEach((category) => {
+        groups[category.id] = {
+          ...category,
+          children: [],
+        };
+      });
+
+    items
+      .filter((category) => !!category.parentId)
+      .forEach((category) => {
+        groups[category.parentId ?? ""].children.push(category);
+      });
+
+    const groupsArray = Object.values(groups).sort(
+      (a, b) => a.sortOrder - b.sortOrder,
+    );
+    groupsArray.forEach((group) => {
+      group.children = group.children.sort((a, b) => a.sortOrder - b.sortOrder);
+    });
+    setGroups(groupsArray);
+  }, [data]);
+
+  function moveItem<T extends TransactionCategory>(
+    item: T,
+    siblings: T[],
+    direction: number,
+  ): T[] {
+    // Find the current index of the item
+    const currentIndex = siblings.findIndex(
+      (sibling) => sibling.id === item.id,
+    );
+
+    if (currentIndex === -1) {
+      console.error("Item not found in the array");
+      return siblings;
+    }
+
+    const newIndex = currentIndex + direction;
+    if (newIndex < 0 || newIndex >= siblings.length) {
+      // New index is out of bounds, no movement needed
+      return siblings;
+    }
+
+    // Remove the item from its current position
+    const newSiblings = [...siblings];
+    newSiblings.splice(currentIndex, 1);
+    newSiblings.splice(newIndex, 0, item);
+
+    // Update the sort order of the items
+    newSiblings.forEach((sibling, index) => {
+      if (sibling.sortOrder == index) {
+        return;
+      }
+
+      sibling.sortOrder = index;
+      mutate({
+        resource: "transactioncategories",
+        id: sibling.id,
+        values: sibling,
+        successNotification: false,
+        invalidates: [],
+      });
+    });
+
+    return newSiblings;
+  }
+
+  function moveGroup(group: CategoryGroup, direction: number) {
+    setGroups(moveItem(group, groups, direction));
+  }
+
+  function moveChild(
+    group: CategoryGroup,
+    child: TransactionCategory,
+    direction: number,
+  ) {
+    group.children = moveItem(child, group.children, direction);
+  }
 
   return (
-    <List>
-      <Modal {...createModalProps}>
-        <Form {...createFormProps} layout="vertical">
-          <Form.Item
-            label="Title"
-            name="title"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Select
-              options={[
-                {
-                  label: "Published",
-                  value: "published",
-                },
-                {
-                  label: "Draft",
-                  value: "draft",
-                },
-                {
-                  label: "Rejected",
-                  value: "rejected",
-                },
-              ]}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {isLoading && <Loader />}
-      {treeData.length === 0 ? (
+    <RefineList
+      headerButtons={() => (
+        <>
+          <CreateButton siblingCount={groups.length} />
+        </>
+      )}
+    >
+      {!isLoading && groups.length === 0 ? (
         <NoData>
-          <CreateButton
-            onClick={() => createModalShow()}
-            resource="transactioncategories"
-          />
+          <CreateButton siblingCount={groups.length} />
         </NoData>
       ) : (
         <>
-          <Search style={{ marginBottom: 8 }} placeholder="Search" />
-          <Tree treeData={treeData} />
+          <Search className={styles.search} placeholder="Search" />
+          {groups.map((group) => (
+            <List
+              header={
+                <>
+                  <Typography.Text>
+                    <GroupTag type={group.group} />
+                    {group.name}
+                  </Typography.Text>
+                  <ActionButtons
+                    item={group}
+                    onMoveUp={
+                      group != groups[0]
+                        ? () => moveGroup(group, -1)
+                        : undefined
+                    }
+                    onMoveDown={
+                      group != groups[groups.length - 1]
+                        ? () => moveGroup(group, 1)
+                        : undefined
+                    }
+                  >
+                    <CreateButton
+                      siblingCount={group.children.length}
+                      parentId={group.id}
+                      initialValues={{ group: group.group }}
+                      type="text"
+                      hideText
+                    />
+                  </ActionButtons>
+                </>
+              }
+              loading={isLoading}
+              key={group.id}
+              bordered
+              dataSource={group.children}
+              className={styles.list}
+              renderItem={(item) => (
+                <List.Item key={item.id}>
+                  <Typography.Text>
+                    <GroupTag type={item.group} />
+                    {item.name}
+                  </Typography.Text>
+                  <ActionButtons
+                    item={item}
+                    onMoveUp={
+                      item != group.children[0]
+                        ? () => moveChild(group, item, -1)
+                        : undefined
+                    }
+                    onMoveDown={
+                      item != group.children[group.children.length - 1]
+                        ? () => moveChild(group, item, 1)
+                        : undefined
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          ))}
         </>
       )}
-    </List>
+    </RefineList>
   );
 }
 

@@ -9,6 +9,13 @@
  * ---------------------------------------------------------------
  */
 
+export enum ImportStatus {
+  Success = "Success",
+  Queued = "Queued",
+  Working = "Working",
+  Failed = "Failed",
+}
+
 /** Institution */
 export interface Institution {
   /** @format uuid */
@@ -28,7 +35,7 @@ export interface InstitutionAccount {
   institutionId: string;
   externalId: string;
   iban: string;
-  importStatus: InstitutionAccountImportStatusEnum;
+  importStatus: ImportStatus;
   /** @format date-time */
   lastImport?: string | null;
   /** @format int32 */
@@ -109,7 +116,18 @@ export interface TransactionCategory {
   name: string;
   /** @format uuid */
   parentId?: string | null;
-  group: TransactionCategoryGroupEnum;
+  group: TransactionCategoryGroup;
+  /** @format int32 */
+  sortOrder: number;
+}
+
+export enum TransactionCategoryGroup {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+  Investment = "Investment",
+  Liquididation = "Liquididation",
+  Other = "Other",
 }
 
 /** TransactionCategoryInput */
@@ -117,30 +135,7 @@ export interface TransactionCategoryInput {
   name: string;
   /** @format uuid */
   parentId?: string | null;
-  group: TransactionCategoryInputGroupEnum;
-}
-
-export enum InstitutionAccountImportStatusEnum {
-  Success = "Success",
-  Queued = "Queued",
-  Working = "Working",
-  Failed = "Failed",
-}
-
-export enum TransactionCategoryGroupEnum {
-  Income = "Income",
-  Expense = "Expense",
-  Transfer = "Transfer",
-  Investment = "Investment",
-  Liquididation = "Liquididation",
-  Other = "Other",
-}
-
-export enum TransactionCategoryInputGroupEnum {
-  Income = "Income",
-  Expense = "Expense",
-  Transfer = "Transfer",
-  Investment = "Investment",
-  Liquididation = "Liquididation",
-  Other = "Other",
+  group: TransactionCategoryGroup;
+  /** @format int32 */
+  sortOrder: number;
 }

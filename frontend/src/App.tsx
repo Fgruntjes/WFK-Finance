@@ -33,6 +33,7 @@ function App() {
           theme={{
             ...RefineThemes.Blue,
             algorithm: darkAlgorithm,
+            cssVar: true,
           }}
         >
           <AntdApp>

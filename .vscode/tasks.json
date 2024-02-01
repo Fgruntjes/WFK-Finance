@@ -1,5 +1,12 @@
 {
   "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "migrationName",
+      "type": "promptString",
+      "description": "The name of the migration as used in `dotnet ef migrations add <name>`.",
+    },
+  ],
   "tasks": [
     {
       "label": "dev",
@@ -61,7 +68,7 @@
       "label": "database update",
       "type": "shell",
       "command": "./database.sh update",
-      "isBackground": true,
+      "isBackground": false,
       "options": {
         "cwd": "${workspaceFolder}",
         "env": {
@@ -72,6 +79,19 @@
       "dependsOn": [
         "docker compose up"
       ]
+    },
+    {
+      "label": "database new-migration",
+      "type": "shell",
+      "command": "./database.sh new-migration ${input:migrationName}",
+      "isBackground": false,
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "DOTNET_ENVIRONMENT": "Development"
+        }
+      },
+      "problemMatcher": [],
     },
     {
       "label": "dev frontend",
@@ -125,6 +145,6 @@
           "endsPattern": "Recovery is complete"
         }
       }
-    }
+    },
   ]
 }
