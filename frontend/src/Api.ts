@@ -116,9 +116,10 @@ export interface TransactionCategory {
   name: string;
   /** @format uuid */
   parentId?: string | null;
-  group: TransactionCategoryGroup;
   /** @format int32 */
   sortOrder: number;
+  group: TransactionCategoryGroup;
+  description?: string;
 }
 
 export enum TransactionCategoryGroup {
@@ -135,7 +136,8 @@ export interface TransactionCategoryInput {
   name: string;
   /** @format uuid */
   parentId?: string | null;
-  group: TransactionCategoryGroup;
   /** @format int32 */
   sortOrder: number;
+  group: TransactionCategoryGroup;
+  description?: string;
 }

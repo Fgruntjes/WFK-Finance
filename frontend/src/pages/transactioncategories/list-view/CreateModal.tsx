@@ -1,5 +1,6 @@
 import { useTranslate } from "@refinedev/core";
 import { Form, FormProps, Input, Modal, ModalProps, Select } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import {
   TransactionCategoryGroup,
   TransactionCategoryInput,
@@ -43,6 +44,12 @@ export function CreateModal({ modalProps, formProps }: CreateModalProps) {
               value: key,
             }))}
           />
+        </Form.Item>
+        <Form.Item
+          label={translate("transactioncategories.fields.description")}
+          name="description"
+        >
+          <TextArea />
         </Form.Item>
       </Form>
     </Modal>

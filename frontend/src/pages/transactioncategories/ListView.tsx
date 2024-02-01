@@ -1,16 +1,39 @@
 import type { TransactionCategory, TransactionCategoryInput } from "@api";
 import NoData from "@components/NoData";
 import { List as RefineList } from "@refinedev/antd";
-import { HttpError, useTable, useUpdate } from "@refinedev/core";
+import { HttpError, useTable, useTranslate, useUpdate } from "@refinedev/core";
 import Search from "antd/es/input/Search";
 // When we import the enum trough @api we get a failed to resolve error
 import { List, Typography } from "antd";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ListView.module.less";
 import { ActionButtons } from "./list-view/ActionButtons";
 import { CategoryGroup } from "./list-view/CategoryGroup";
 import { CreateButton } from "./list-view/CreateButton";
 import { GroupTag } from "./list-view/GroupTag";
+
+type CategoryInfoProps = {
+  item: TransactionCategory;
+  children: React.ReactNode;
+};
+
+function CategoryInfo({ item, children }: CategoryInfoProps) {
+  const translate = useTranslate();
+  return (
+    <>
+      <div>
+        <Typography.Text>
+          <GroupTag type={item.group} />
+          {item.name}
+        </Typography.Text>
+        {item.description && (
+          <p className={styles.description}>{item.description}</p>
+        )}
+      </div>
+      <div>{children}</div>
+    </>
+  );
+}
 
 function ListView() {
   const [groups, setGroups] = useState<CategoryGroup[]>([]);
@@ -119,7 +142,7 @@ function ListView() {
     <RefineList
       headerButtons={() => (
         <>
-          <CreateButton siblingCount={groups.length} />
+          {groups.length > 0 && <CreateButton siblingCount={groups.length} />}
         </>
       )}
     >
@@ -134,31 +157,29 @@ function ListView() {
             <List
               header={
                 <>
-                  <Typography.Text>
-                    <GroupTag type={group.group} />
-                    {group.name}
-                  </Typography.Text>
-                  <ActionButtons
-                    item={group}
-                    onMoveUp={
-                      group != groups[0]
-                        ? () => moveGroup(group, -1)
-                        : undefined
-                    }
-                    onMoveDown={
-                      group != groups[groups.length - 1]
-                        ? () => moveGroup(group, 1)
-                        : undefined
-                    }
-                  >
-                    <CreateButton
-                      siblingCount={group.children.length}
-                      parentId={group.id}
-                      initialValues={{ group: group.group }}
-                      type="text"
-                      hideText
-                    />
-                  </ActionButtons>
+                  <CategoryInfo item={group}>
+                    <ActionButtons
+                      item={group}
+                      onMoveUp={
+                        group != groups[0]
+                          ? () => moveGroup(group, -1)
+                          : undefined
+                      }
+                      onMoveDown={
+                        group != groups[groups.length - 1]
+                          ? () => moveGroup(group, 1)
+                          : undefined
+                      }
+                    >
+                      <CreateButton
+                        siblingCount={group.children.length}
+                        parentId={group.id}
+                        initialValues={{ group: group.group }}
+                        type="text"
+                        hideText
+                      />
+                    </ActionButtons>
+                  </CategoryInfo>
                 </>
               }
               loading={isLoading}
@@ -168,23 +189,21 @@ function ListView() {
               className={styles.list}
               renderItem={(item) => (
                 <List.Item key={item.id}>
-                  <Typography.Text>
-                    <GroupTag type={item.group} />
-                    {item.name}
-                  </Typography.Text>
-                  <ActionButtons
-                    item={item}
-                    onMoveUp={
-                      item != group.children[0]
-                        ? () => moveChild(group, item, -1)
-                        : undefined
-                    }
-                    onMoveDown={
-                      item != group.children[group.children.length - 1]
-                        ? () => moveChild(group, item, 1)
-                        : undefined
-                    }
-                  />
+                  <CategoryInfo item={item}>
+                    <ActionButtons
+                      item={item}
+                      onMoveUp={
+                        item != group.children[0]
+                          ? () => moveChild(group, item, -1)
+                          : undefined
+                      }
+                      onMoveDown={
+                        item != group.children[group.children.length - 1]
+                          ? () => moveChild(group, item, 1)
+                          : undefined
+                      }
+                    />
+                  </CategoryInfo>
                 </List.Item>
               )}
             />

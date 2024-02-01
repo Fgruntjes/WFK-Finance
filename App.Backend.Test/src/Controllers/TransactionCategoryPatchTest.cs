@@ -37,7 +37,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         };
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.UpdateAsync(_fixture.TransactionCategoryEntity.Id, "NewName", TransactionCategoryGroup.Expense, parentId, 20, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.UpdateAsync(_fixture.TransactionCategoryEntity.Id, "NewName", TransactionCategoryGroup.Expense, parentId, 20, It.IsAny<string?>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(returnEntity);
         });
 
@@ -73,7 +73,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         // Arrange
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new UniqueConstraintException());
         });
 
@@ -104,7 +104,7 @@ public class TransactionCategoryPatchTest : IClassFixture<TransactionCategoryFix
         var parentId = new Guid("784ed104-cf82-4a13-b2b7-05b7cffb3d15");
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new CategoryNotFoundException(parentId));
         });
 

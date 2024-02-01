@@ -29,7 +29,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Arrange
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.CreateAsync("Test", TransactionCategoryGroup.Expense, null, 10, It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.CreateAsync("Test", TransactionCategoryGroup.Expense, null, 10, null, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new TransactionCategoryEntity()
                 {
                     Id = new Guid("581fa5df-a0f2-499e-add5-c11bb7d66a59"),
@@ -37,6 +37,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
                     Group = TransactionCategoryGroup.Expense,
                     OrganisationId = _fixture.OrganisationId,
                     SortOrder = 10,
+                    Description = null,
                 });
         });
 
@@ -69,7 +70,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         // Arrange
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), null, It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new UniqueConstraintException());
         });
 
@@ -99,7 +100,7 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
         var parentId = new Guid("ae3c5f2a-064f-4343-be74-08980ee6d952");
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
-            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), parentId, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), parentId, It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new CategoryNotFoundException(parentId));
         });
 

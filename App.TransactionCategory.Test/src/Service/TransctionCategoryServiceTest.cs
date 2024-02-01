@@ -41,7 +41,7 @@ public class TransctionCategoryServiceTest
 
         // Act
         var result = await fixture.Services.GetRequiredService<ITransactionCategoryService>()
-            .CreateAsync("Test", TransactionCategoryGroup.Expense, null, 10);
+            .CreateAsync("Test", TransactionCategoryGroup.Expense, null, 10, "Description");
 
         // Assert
         result.Should().BeEquivalentTo(new TransactionCategoryEntity()
@@ -50,6 +50,7 @@ public class TransctionCategoryServiceTest
             Group = TransactionCategoryGroup.Expense,
             OrganisationId = fixture.OrganisationId,
             SortOrder = 10,
+            Description = "Description",
         }, o => o.Excluding(e => e.Id).Excluding(e => e.CreatedAt));
     }
 
@@ -73,7 +74,7 @@ public class TransctionCategoryServiceTest
 
         // Act
         var result = await fixture.Services.GetRequiredService<ITransactionCategoryService>()
-            .UpdateAsync(fixture.TransactionCategoryEntity.Id, "Test", TransactionCategoryGroup.Investment, parent.Id, 20);
+            .UpdateAsync(fixture.TransactionCategoryEntity.Id, "Test", TransactionCategoryGroup.Investment, parent.Id, 20, "Description");
 
         // Assert
         result.Should().BeEquivalentTo(new TransactionCategoryEntity()
@@ -83,6 +84,7 @@ public class TransctionCategoryServiceTest
             OrganisationId = fixture.OrganisationId,
             ParentId = parent.Id,
             SortOrder = 20,
+            Description = "Description",
         }, o => o.Excluding(e => e.Id).Excluding(e => e.CreatedAt));
     }
 
@@ -106,7 +108,7 @@ public class TransctionCategoryServiceTest
 
         // Act
         var act = () => fixture.Services.GetRequiredService<ITransactionCategoryService>()
-            .UpdateAsync(entity.Id, "Test", TransactionCategoryGroup.Investment, null, 20);
+            .UpdateAsync(entity.Id, "Test", TransactionCategoryGroup.Investment, null, 20, "Description");
 
         // Assert
         await act.Should().ThrowAsync<CategoryNotFoundException>()
@@ -126,6 +128,8 @@ public class TransctionCategoryServiceTest
             "Test",
             TransactionCategoryGroup.Expense,
             parentId,
+            10,
+            "Description",
             default);
 
         // Assert
@@ -147,6 +151,8 @@ public class TransctionCategoryServiceTest
             "Test",
             TransactionCategoryGroup.Expense,
             parentId,
+            10,
+            "Description",
             default);
 
         // Assert
@@ -177,6 +183,8 @@ public class TransctionCategoryServiceTest
             "Test",
             TransactionCategoryGroup.Expense,
             parentEntity.Id,
+            10,
+            "Description",
             default);
 
         // Assert
@@ -208,6 +216,8 @@ public class TransctionCategoryServiceTest
             "Test",
             TransactionCategoryGroup.Expense,
             parentEntity.Id,
+            10,
+            "Description",
             default);
 
         // Assert

@@ -115,6 +115,7 @@ const en: ResourceLanguage = {
         name: "Name",
         parentId: "Parent",
         group: "Group",
+        description: "Description",
       },
       groupNames: {
         income: "Income",

@@ -8,7 +8,7 @@ public interface ITransactionCategoryService
         string name,
         TransactionCategoryGroup group,
         Guid? parentId,
-        int sortOrder,
+        int sortOrder, string? description,
         CancellationToken cancellationToken = default);
 
     public Task<TransactionCategoryEntity> UpdateAsync(
@@ -17,5 +17,6 @@ public interface ITransactionCategoryService
         TransactionCategoryGroup group,
         Guid? parentId,
         int sortOrder,
+        string? description,
         CancellationToken cancellationToken = default);
 }

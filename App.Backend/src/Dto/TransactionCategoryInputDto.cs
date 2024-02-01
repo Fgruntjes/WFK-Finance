@@ -11,4 +11,6 @@ public class TransactionCategoryInputDto
     public int SortOrder { get; set; }
 
     public TransactionCategoryGroup Group { get; set; }
+
+    public string? Description { get; set; }
 }

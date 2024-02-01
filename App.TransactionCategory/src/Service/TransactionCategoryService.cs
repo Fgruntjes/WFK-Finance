@@ -24,6 +24,7 @@ class TransactionCategoryService : ITransactionCategoryService
         TransactionCategoryGroup group,
         Guid? parentId,
         int sortOrder,
+        string? description,
         CancellationToken cancellationToken = default)
     {
         var entity = new TransactionCategoryEntity()
@@ -33,6 +34,7 @@ class TransactionCategoryService : ITransactionCategoryService
             ParentId = parentId,
             Group = group,
             SortOrder = sortOrder,
+            Description = description,
         };
 
         await _database.AddAsync(entity, cancellationToken);
@@ -46,6 +48,7 @@ class TransactionCategoryService : ITransactionCategoryService
         TransactionCategoryGroup group,
         Guid? parentId,
         int sortOrder,
+        string? description,
         CancellationToken cancellationToken = default)
     {
         var entity = await FindEntityAsync(id, cancellationToken);
@@ -55,6 +58,7 @@ class TransactionCategoryService : ITransactionCategoryService
         entity.Group = group;
         entity.ParentId = parentId;
         entity.SortOrder = sortOrder;
+        entity.Description = description;
 
         await SaveAsync(entity, cancellationToken);
         return entity;
