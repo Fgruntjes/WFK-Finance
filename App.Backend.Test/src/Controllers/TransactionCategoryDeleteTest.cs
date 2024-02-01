@@ -1,5 +1,7 @@
+using System.Net;
 using App.Backend.Controllers;
 using App.Lib.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace App.Backend.Test.Controllers;
 
@@ -88,6 +90,43 @@ public class TransactionCategoryDeleteTest : IClassFixture<TransactionCategoryFi
             context.TransactionCategory.Find(entity.Id)
                 .Should()
                 .BeEquivalentTo(entity);
+        });
+    }
+
+    [Fact]
+    public async Task Delete_CascadeChildren()
+    {
+        // Arrange
+        var parentEntity = new TransactionCategoryEntity
+        {
+            OrganisationId = _fixture.OrganisationId,
+            Group = TransactionCategoryGroup.Expense,
+            Name = "Parent",
+        };
+        var childEntity = new TransactionCategoryEntity
+        {
+            OrganisationId = _fixture.OrganisationId,
+            Group = TransactionCategoryGroup.Expense,
+            Name = "Child",
+            ParentId = parentEntity.Id
+        };
+        _fixture.Database.SeedData(context =>
+        {
+            context.TransactionCategory.Add(parentEntity);
+            context.TransactionCategory.Add(childEntity);
+        });
+
+        // Act
+        var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
+            HttpMethod.Delete,
+            $"{TransactionCategoryListController.RouteBase}?id={parentEntity.Id}"));
+
+        // Assert
+        await response.AssertProblemDetails(HttpStatusCode.BadRequest, new ProblemDetails()
+        {
+            Title = "An error occurred",
+            Detail = "Cannot delete a category with children.",
+            Status = (int)HttpStatusCode.BadRequest,
         });
     }
 }

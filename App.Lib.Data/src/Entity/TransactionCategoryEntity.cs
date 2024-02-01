@@ -20,6 +20,8 @@ public class TransactionCategoryEntity
 
     public TransactionCategoryEntity? Parent { get; set; }
 
+    public ICollection<TransactionCategoryEntity> Children { get; set; } = new List<TransactionCategoryEntity>();
+
     public required Guid OrganisationId { get; set; }
 
     public required TransactionCategoryGroup Group { get; set; }

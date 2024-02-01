@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
 using App.Lib.Test;

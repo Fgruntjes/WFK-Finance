@@ -25,6 +25,7 @@ public class TransactionCategoryDeleteController : ControllerBase
 
     [HttpDelete(Name = RouteName)]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(
         [FromQuery] ICollection<Guid> id,
         CancellationToken cancellationToken = default)
@@ -32,9 +33,23 @@ public class TransactionCategoryDeleteController : ControllerBase
         var organisationId = _organisationIdProvider.GetOrganisationId();
         var entities = _database.TransactionCategory
             .Where(e => e.OrganisationId == organisationId)
-            .Where(e => id.Contains(e.Id));
-        var deleteCount = await entities.CountAsync(cancellationToken);
+            .Where(e => id.Contains(e.Id))
+            .Include(e => e.Children);
 
+        foreach (var entity in entities)
+        {
+            if (entity.Children.Any())
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "An error occurred",
+                    Detail = "Cannot delete a category with children.",
+                    Status = StatusCodes.Status400BadRequest,
+                });
+            }
+        }
+
+        var deleteCount = await entities.CountAsync(cancellationToken);
         _database.TransactionCategory.RemoveRange(entities);
         await _database.SaveChangesAsync(cancellationToken);
 
