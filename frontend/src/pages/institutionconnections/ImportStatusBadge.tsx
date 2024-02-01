@@ -1,9 +1,9 @@
-import { InstitutionAccountImportStatusEnum } from "@api";
+import { ImportStatus } from "@api";
 import { useTranslate } from "@refinedev/core";
 import { Tag } from "antd";
 
 type ImportStatusBadgeProps = {
-  status?: InstitutionAccountImportStatusEnum;
+  status?: ImportStatus;
 };
 
 export function ImportStatusBadge({ status }: ImportStatusBadgeProps) {
