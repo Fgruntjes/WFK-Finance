@@ -8,10 +8,12 @@ import styles from "./TransactionCategorySelect.module.less";
 
 type TransactionCategorySelectProps = {
   transaction: InstitutionTransaction;
+  fieldId?: string;
 };
 
 export function TransactionCategorySelect({
   transaction,
+  fieldId,
 }: TransactionCategorySelectProps) {
   const translate = useTranslate();
   const { groups, isLoading, isError, error } = useTransactionCategoryGroups();
@@ -57,6 +59,7 @@ export function TransactionCategorySelect({
       options={options}
       value={transaction.categoryId}
       onChange={setTransactionCategory}
+      id={fieldId}
       filterOption={(input, option) =>
         (option?.searchValue ?? "").toLowerCase().includes(input.toLowerCase())
       }

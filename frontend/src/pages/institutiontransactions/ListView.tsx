@@ -1,6 +1,7 @@
 import { InstitutionTransaction } from "@api";
 import CurrencyField from "@components/field/CurrencyField";
 import useInstiutionNameMap from "@hooks/useInstiutionNameMap";
+import useTransactionCategoryMap from "@hooks/useTransactionCategoryMap";
 import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
 import {
   DateField,
@@ -24,7 +25,9 @@ function ListView() {
       initial: [{ field: "date", order: "desc" }],
     },
   });
-
+  const { categoryMap, categoryMapIsLoading } = useTransactionCategoryMap(
+    tableProps?.dataSource?.map((item) => item?.categoryId),
+  );
   const { institutionMap, institutionIsLoading } = useInstiutionNameMap(
     tableProps?.dataSource?.map((item) => item?.institutionId),
   );
@@ -32,7 +35,7 @@ function ListView() {
   return (
     <List>
       <Table
-        loading={loading || institutionIsLoading}
+        loading={loading || institutionIsLoading || categoryMapIsLoading}
         {...tableProps}
         rowKey="id"
         className={styles.table}
@@ -68,8 +71,14 @@ function ListView() {
           )}
         />
         <Table.Column
-          dataIndex={"amount"}
+          dataIndex={"categoryId"}
           sorter={{ multiple: 4 }}
+          title={translate("institutiontransactions.fields.categoryId")}
+          render={(value) => categoryMap[value]?.name}
+        />
+        <Table.Column
+          dataIndex={"amount"}
+          sorter={{ multiple: 5 }}
           title={translate("institutiontransactions.fields.amount")}
           render={(value: number, record: InstitutionTransaction) => (
             <CurrencyField

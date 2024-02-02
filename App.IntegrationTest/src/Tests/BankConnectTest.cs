@@ -3,11 +3,11 @@ using Microsoft.Playwright;
 
 namespace App.IntegrationTest.Tests;
 
-public class InstitutionConnectTest : IClassFixture<NordigenFixture<InstitutionConnectTest>>
+public class InstitutionConnectTest : IClassFixture<BankConnectFixture<InstitutionConnectTest>>
 {
-    private readonly NordigenFixture<InstitutionConnectTest> _fixture;
+    private readonly BankConnectFixture<InstitutionConnectTest> _fixture;
 
-    public InstitutionConnectTest(NordigenFixture<InstitutionConnectTest> fixture)
+    public InstitutionConnectTest(BankConnectFixture<InstitutionConnectTest> fixture)
     {
         _fixture = fixture;
     }

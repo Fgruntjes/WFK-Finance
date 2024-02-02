@@ -94,8 +94,11 @@ function UncategorizedTransactionView() {
           dataIndex="categoryId"
           title={translate("institutiontransactions.fields.categoryId")}
           className={styles.description}
-          render={(_, record: InstitutionTransaction) => (
-            <TransactionCategorySelect transaction={record} />
+          render={(_, record: InstitutionTransaction, index) => (
+            <TransactionCategorySelect
+              fieldId={`transaction-category-${index}`}
+              transaction={record}
+            />
           )}
         />
         <Table.Column

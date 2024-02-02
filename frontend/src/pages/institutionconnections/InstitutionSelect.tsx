@@ -14,6 +14,9 @@ function InstitutionSelect({
 }: InstitutionSelectProps) {
   const { data, isLoading, isError, error } = useList<Institution, HttpError>({
     resource: "institutions",
+    pagination: {
+      pageSize: 250,
+    },
     filters: [
       {
         field: "countryIso2",

@@ -10,14 +10,15 @@ using App.Lib.Data;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.IntegrationTest;
 
 public class AppFixture<TestType> : IAsyncLifetime
 {
+    public static Guid OrganisationId = new("a0de6029-c687-40cc-be52-ed4222f9e05e");
     public Database<DatabaseContext> Database { get; }
     public IServiceProvider Services { get; }
-
     private static bool IsCiCd => Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
     private IPlaywright? _playwright;
     private IBrowser? _browser;
@@ -30,6 +31,7 @@ public class AppFixture<TestType> : IAsyncLifetime
             .UseConfiguration()
             .UseDatabase()
             .UseInstitution()
+            .UseAuth()
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
@@ -47,6 +49,39 @@ public class AppFixture<TestType> : IAsyncLifetime
 
     public Task InitializeAsync()
     {
+        // Ensure we set our organisation ID to fixed id
+        var options = Services.GetRequiredService<IOptions<AuthOptions>>().Value;
+        if (options.TestIdentity == null)
+        {
+            throw new Exception("TestIdentity not set in configuration, did you run deploy.sh?");
+        }
+
+        Database.SeedData(context =>
+        {
+            var organisation = context.Organisations
+                .Where(e => e.Slug == options.TestIdentity)
+                .FirstOrDefault();
+            if (organisation != null)
+            {
+                if (organisation.Id != OrganisationId)
+                {
+                    context.Organisations.Remove(organisation);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    // No need to update / add
+                    return;
+                }
+            }
+
+            context.Organisations.Add(new()
+            {
+                Id = OrganisationId,
+                Slug = options.TestIdentity,
+            });
+        });
+
         return Task.CompletedTask;
     }
 
