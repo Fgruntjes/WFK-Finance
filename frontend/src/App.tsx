@@ -1,4 +1,5 @@
-import { RefineThemes, useNotificationProvider } from "@refinedev/antd";
+import notificationProvider from "@components/notificationProvider";
+import { RefineThemes } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
@@ -38,7 +39,7 @@ function App() {
         >
           <AntdApp>
             <Refine
-              notificationProvider={useNotificationProvider}
+              notificationProvider={notificationProvider}
               routerProvider={routerBindings}
               dataProvider={dataProvider(import.meta.env.APP_API_URI)}
               authProvider={authProvider}

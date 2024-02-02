@@ -10,6 +10,8 @@ import { Authenticated, ErrorComponent } from "@refinedev/core";
 import { Outlet, Route, Routes } from "react-router-dom";
 import AppFooter from "./layout/AppFooter";
 
+import "react-toastify/dist/ReactToastify.css";
+
 function AppRoutes() {
   return (
     <Routes>

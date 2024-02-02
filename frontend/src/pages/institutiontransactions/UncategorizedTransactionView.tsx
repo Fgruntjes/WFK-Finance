@@ -1,4 +1,4 @@
-import { InstitutionTransaction } from "@api";
+import { InstitutionTransaction, InstitutionTransactionPatch } from "@api";
 import CurrencyField from "@components/field/CurrencyField";
 import useInstiutionNameMap from "@hooks/useInstiutionNameMap";
 import InstitutionsRecordRepresentation from "@pages/institutions/RecordRepresentation";
@@ -6,21 +6,28 @@ import {
   DateField,
   List,
   MarkdownField,
+  RefreshButton,
   TextField,
   useTable,
 } from "@refinedev/antd";
-import { HttpError, useTranslate } from "@refinedev/core";
+import { HttpError, useTranslate, useUpdateMany } from "@refinedev/core";
 import { Table } from "antd";
+import { useEffect } from "react";
 import styles from "./ListView.module.less";
 import { TransactionCategorySelect } from "./uncategorized-transaction/TransactionCategorySelect";
 
 function UncategorizedTransactionView() {
   const translate = useTranslate();
+
   const {
+    tableQueryResult: { refetch, isRefetching },
     tableProps: { loading, ...tableProps },
   } = useTable<InstitutionTransaction, HttpError>({
     syncWithLocation: true,
     resource: "institutiontransactions",
+    queryOptions: {
+      enabled: false,
+    },
     sorters: {
       initial: [{ field: "date", order: "desc" }],
     },
@@ -39,10 +46,27 @@ function UncategorizedTransactionView() {
     tableProps?.dataSource?.map((item) => item?.institutionId),
   );
 
+  const { mutate } = useUpdateMany<
+    InstitutionTransaction,
+    HttpError,
+    InstitutionTransactionPatch
+  >();
+
+  // Only manually refetch
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   return (
-    <List>
+    <List
+      headerButtons={() => (
+        <>
+          <RefreshButton onClick={() => refetch()} />
+        </>
+      )}
+    >
       <Table
-        loading={loading || institutionIsLoading}
+        loading={isRefetching || loading || institutionIsLoading}
         {...tableProps}
         rowKey="id"
         className={styles.table}

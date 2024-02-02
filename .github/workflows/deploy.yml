@@ -79,7 +79,7 @@ jobs:
                   NORDIGEN_SECRET_KEY: "${{ secrets.NORDIGEN_SECRET_KEY }}"
                   SENTRY_ORGANISATION: "${{ vars.SENTRY_ORGANISATION }}"
                   SENTRY_TOKEN: "${{ secrets.SENTRY_TOKEN }}"
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               if: failure()
               with:
                   name: deploy_logs

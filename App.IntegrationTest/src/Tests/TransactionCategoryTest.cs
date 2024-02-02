@@ -1,4 +1,5 @@
 using App.IntegrationTest.Screens;
+using Microsoft.Playwright;
 
 namespace App.IntegrationTest.Tests;
 
@@ -27,8 +28,9 @@ public class TransactionCategoryTest : IClassFixture<TransactionCategoryFixture<
         // Categorize transactions
         await uncategorizedTransactionsScreen.ClickMenuAsync();
         await page.SearchSelectOptionAsync("transaction-category-0", "Transportation");
-        await page.SearchSelectOptionAsync("transaction-category-0", "Groceries");
-        await page.SearchSelectOptionAsync("transaction-category-0", "Salary");
+        await page.SearchSelectOptionAsync("transaction-category-1", "Groceries");
+        await page.SearchSelectOptionAsync("transaction-category-2", "Salary");
+        await Assertions.Expect(page.Locator(".ant-select-loading")).ToHaveCountAsync(0);
 
         // Go back to transaction view and check if transactions are categorized
         await transactionScreen.ClickMenuAsync();

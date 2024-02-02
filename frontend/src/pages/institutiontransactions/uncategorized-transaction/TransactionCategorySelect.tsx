@@ -3,7 +3,7 @@ import LocalError from "@components/LocalError";
 import useTransactionCategoryGroups from "@hooks/useTransactionCategoryGroups";
 import { HttpError, useTranslate, useUpdateMany } from "@refinedev/core";
 import { Select } from "antd";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import styles from "./TransactionCategorySelect.module.less";
 
 type TransactionCategorySelectProps = {
@@ -16,8 +16,16 @@ export function TransactionCategorySelect({
   fieldId,
 }: TransactionCategorySelectProps) {
   const translate = useTranslate();
-  const { groups, isLoading, isError, error } = useTransactionCategoryGroups();
-  const { mutate } = useUpdateMany<
+  const {
+    groups,
+    isLoading: groupsIsLoading,
+    isError,
+    error,
+  } = useTransactionCategoryGroups();
+  const [categoryId, setCategoryId] = useState<string | undefined>(
+    transaction.categoryId || undefined,
+  );
+  const { mutate, isLoading } = useUpdateMany<
     InstitutionTransaction,
     HttpError,
     InstitutionTransactionPatch
@@ -35,14 +43,16 @@ export function TransactionCategorySelect({
     }));
   }, [groups]);
 
-  function setTransactionCategory(categoryId: string) {
-    transaction.categoryId = categoryId;
+  function handleSelectChange(value: string) {
+    setCategoryId(value);
     mutate({
       resource: "institutiontransactions",
       ids: [transaction.id],
       values: {
-        categoryId,
+        categoryId: value,
       },
+      successNotification: false,
+      invalidates: [],
     });
   }
 
@@ -54,11 +64,11 @@ export function TransactionCategorySelect({
     <Select
       className={styles.select}
       showSearch
-      loading={isLoading}
+      loading={isLoading || groupsIsLoading}
       placeholder={translate("uncategorizedtransactions.inputs.selectCategory")}
       options={options}
-      value={transaction.categoryId}
-      onChange={setTransactionCategory}
+      value={categoryId}
+      onChange={handleSelectChange}
       id={fieldId}
       filterOption={(input, option) =>
         (option?.searchValue ?? "").toLowerCase().includes(input.toLowerCase())
