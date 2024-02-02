@@ -57,7 +57,7 @@ jobs:
                       --blame \
                       --blame-hang-timeout 2m \
                       --logger GitHubActions
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v4
               if: failure()
               with:
                   name: test-traces
