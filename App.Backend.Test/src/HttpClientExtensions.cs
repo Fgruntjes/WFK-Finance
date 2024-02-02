@@ -27,6 +27,7 @@ public static class HttpClientExtensions
     {
         return await client.GetWithAuthAsync(new Uri(requestUri), userId, cancellationToken);
     }
+
     public static async Task<HttpResponseMessage> GetWithAuthAsync(
         this HttpClient client,
         Uri requestUri,
@@ -128,5 +129,15 @@ public static class HttpClientExtensions
         message.Content ??= JsonContent.Create<object?>(null);
         message.Content.Headers.Add(TestAuthHandler.TestUserHeader, userId);
         return client.SendAsync(message, cancellationToken);
+    }
+
+    public static async Task<T> ReadFromJsonAsync<T>(
+        this HttpContent content,
+        JsonSerializerOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        options ??= _jsonOptions;
+        return await HttpContentJsonExtensions.ReadFromJsonAsync<T>(content, options, cancellationToken)
+            ?? throw FailException.ForFailure("Could not deserialize response value");
     }
 }

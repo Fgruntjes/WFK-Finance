@@ -31,5 +31,8 @@ resource "azurerm_logic_app_action_http" "cron" {
   name         = "urlcall"
   logic_app_id = azurerm_logic_app_workflow.cron[each.key].id
   method       = "POST"
-  uri          = "${local.app_api_url}${each.value.endpoint}?cronToken=${local.backend_settings.App.CronToken}"
+  uri          = "${local.app_api_url}${each.value.endpoint}"
+  queries = {
+    "cronToken" = local.backend_settings.App.CronToken
+  }
 }

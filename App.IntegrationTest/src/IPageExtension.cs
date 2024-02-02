@@ -23,7 +23,11 @@ internal static class IPageExtension
     public static async Task SearchSelectOptionAsync(this IPage page, string fieldId, string value)
     {
         await page.ClickAsync($"#{fieldId}");
-        await page.Locator($"#{fieldId}_list + .rc-virtual-list >> [title*='{value}']").ClickAsync();
+
+        var locator = page.Locator($"#{fieldId}_list + .rc-virtual-list >> [title*='{value}']");
+
+        await page.DoAndWait(locator, page => page.Keyboard.PressAsync("ArrowDown"), interval: TimeSpan.FromSeconds(0.1));
+        await locator.ClickAsync();
     }
 
     public static async Task DoAndWait(

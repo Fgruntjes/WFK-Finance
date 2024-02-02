@@ -10,6 +10,7 @@ public class DatabaseContext : DbContext
     public DbSet<InstitutionConnectionEntity> InstitutionConnections { get; set; } = null!;
     public DbSet<InstitutionAccountEntity> InstitutionAccounts { get; set; } = null!;
     public DbSet<InstitutionAccountTransactionEntity> InstitutionAccountTransactions { get; set; } = null!;
+    public DbSet<TransactionCategoryEntity> TransactionCategory { get; set; } = null!;
     public DbSet<OrganisationEntity> Organisations { get; set; } = null!;
     public DbSet<UserEntity> Users { get; set; } = null!;
 

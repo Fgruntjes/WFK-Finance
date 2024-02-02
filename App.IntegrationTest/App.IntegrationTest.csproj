@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.3.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.14" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
@@ -31,12 +35,6 @@
   <ItemGroup>
     <ProjectReference Include="..\App.Backend\App.Backend.csproj" />
     <ProjectReference Include="..\App.Lib.Test\App.Lib.Test.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Mvc.Testing">
-      <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.mvc.testing\7.0.14\lib\net7.0\Microsoft.AspNetCore.Mvc.Testing.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

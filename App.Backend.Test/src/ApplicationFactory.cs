@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using App.TransactionCategory.Interface;
 
 namespace App.Backend.Test;
 
@@ -47,6 +48,7 @@ internal class ApplicationFactory : WebApplicationFactory<Program>
             services.MockScoped<IInstitutionConnectionRefreshService>();
             services.MockScoped<IInstitutionSearchService>();
             services.MockScoped<ITransactionImportQueueService>();
+            services.MockScoped<ITransactionCategoryService>();
         });
 
         return base.CreateHost(builder);

@@ -3,11 +3,11 @@ using Microsoft.Playwright;
 
 namespace App.IntegrationTest.Tests;
 
-public class InstitutionConnectTest : IClassFixture<NordigenFixture>
+public class InstitutionConnectTest : IClassFixture<BankConnectFixture<InstitutionConnectTest>>
 {
-    private readonly NordigenFixture _fixture;
+    private readonly BankConnectFixture<InstitutionConnectTest> _fixture;
 
-    public InstitutionConnectTest(NordigenFixture fixture)
+    public InstitutionConnectTest(BankConnectFixture<InstitutionConnectTest> fixture)
     {
         _fixture = fixture;
     }
@@ -16,7 +16,6 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
     public async void ConnectUnauthorized()
     {
         var page = await _fixture.WithPage();
-
         var institutionConnectScreen = new InstitutionConnectScreen(page);
 
         await institutionConnectScreen.ClickMenuAsync();
@@ -60,10 +59,11 @@ public class InstitutionConnectTest : IClassFixture<NordigenFixture>
         // Go to accounts show page and check if we see transactions
         await page.GetRowButton("GL7839380000039382", "Show", "institutionaccounts-table").ClickAsync();
 
-        // Keep refreshing until import status is Success
+        // Keep refreshing until import status is Success, timeout at 5 mintutes due to start time worker container
         await page.DoAndWait(
             page.GetByTestId("import-status-badge").GetByText("Success"),
-            (page) => page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Refresh" }).ClickAsync());
+            (page) => page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Refresh" }).ClickAsync(),
+            timeout: TimeSpan.FromMinutes(5));
 
         await page.GetByRole(AriaRole.Tab, new PageGetByRoleOptions { Name = "Transactions" }).ClickAsync();
 

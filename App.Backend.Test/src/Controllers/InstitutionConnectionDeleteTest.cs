@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Lib.Data.Entity;
 
@@ -14,7 +13,7 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
     }
 
     [Fact]
-    public async Task Success()
+    public async Task Delete()
     {
         // Arrange
         var institutionConnectionEntity = new InstitutionConnectionEntity
@@ -46,20 +45,50 @@ public class InstitutionConnectionDeleteTest : IClassFixture<InstitutionConnecti
     }
 
     [Fact]
-    public async Task MissingConnection()
+    public async Task Delete_NotFound()
     {
         // Arrange
         var connectionId = new Guid("5dcb861b-b879-427e-ad47-4c4eade20813");
 
         // Act
-        var response = await _fixture.Client.SendWithAuthAsync(
-            new HttpRequestMessage(HttpMethod.Delete, InstitutionConnectionListController.RouteBase)
-            {
-                Content = JsonContent.Create(new List<Guid> { connectionId })
-            });
+        var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
+            HttpMethod.Delete,
+            $"{InstitutionConnectionListController.RouteBase}?id={connectionId}"));
         var body = await response.Content.ReadFromJsonAsync<int>();
 
         // Assert
         body.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Delete_OutsideOrganisation()
+    {
+        // Arrange
+        var institutionConnectionEntity = new InstitutionConnectionEntity
+        {
+            OrganisationId = _fixture.AltOrganisationId,
+            ConnectUrl = new Uri("https://www.example.com/connect-url/refresh"),
+            InstitutionId = _fixture.InstitutionEntity.Id,
+            ExternalId = "c513ba85-53e9-418f-97e2-0a812514aa45"
+        };
+        _fixture.Database.SeedData(context =>
+        {
+            context.InstitutionConnections.Add(institutionConnectionEntity);
+        });
+
+        // Act
+        var response = await _fixture.Client.SendWithAuthAsync(new HttpRequestMessage(
+            HttpMethod.Delete,
+            $"{InstitutionConnectionListController.RouteBase}?id={institutionConnectionEntity.Id}"));
+        var body = await response.Content.ReadFromJsonAsync<int>();
+
+        // Assert
+        body.Should().Be(0);
+        _fixture.Database.WithData(context =>
+        {
+            context.InstitutionConnections.Find(institutionConnectionEntity.Id)
+                .Should()
+                .BeEquivalentTo(institutionConnectionEntity);
+        });
     }
 }

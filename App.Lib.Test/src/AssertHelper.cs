@@ -3,7 +3,7 @@ using Xunit.Sdk;
 
 namespace App.Lib.Test;
 
-public class AssertHelper
+public static class AssertHelper
 {
     public static async Task AssertRetry(Action assertAction)
     {

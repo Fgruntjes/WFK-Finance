@@ -61,8 +61,9 @@ locals {
       KeyBlobName       = azurerm_storage_blob.backend_data_protection.name,
     }
     Auth = {
-      Domain   = var.auth0_domain,
-      Audience = auth0_resource_server.backend.identifier,
+      Domain       = var.auth0_domain,
+      Audience     = auth0_resource_server.backend.identifier,
+      TestIdentity = one(auth0_user.test_user[*].user_id)
     }
     Nordigen = {
       SecretId  = var.nordigen_secret_id,

@@ -20,6 +20,10 @@ const en: ResourceLanguage = {
     },
     notifications: {
       deleteSuccess: "Successfully deleted",
+      createSuccess: "Successfully created",
+      editSuccess: "Successfully edited",
+      deleteError: "Error deleting",
+      success: "Successfull",
     },
     error: {
       undefined: {
@@ -29,6 +33,10 @@ const en: ResourceLanguage = {
       404: {
         title: "Page not found",
         description: "The page you are looking for does not exist.",
+      },
+      ["Cannot delete a category with children."]: {
+        title: "Error",
+        description: "Cannot delete a category with children.",
       },
     },
     table: {
@@ -82,6 +90,7 @@ const en: ResourceLanguage = {
         amount: "Amount",
         transactionCode: "Transaction code",
         unstructuredInformation: "Description",
+        categoryId: "Category",
       },
     },
     institutionconnections: {
@@ -95,6 +104,45 @@ const en: ResourceLanguage = {
         countryIso2: "Country",
         institutionId: "Bank",
         accounts: "Accounts",
+      },
+    },
+    transactioncategories: {
+      transactioncategories: "Categories",
+      titles: {
+        list: "Categories",
+        create: "Create category",
+      },
+      fields: {
+        name: "Name",
+        parentId: "Parent",
+        group: "Group",
+        description: "Description",
+      },
+      buttons: {
+        createDefaults: "Create defaults",
+      },
+      groupNames: {
+        income: "Income",
+        expense: "Expense",
+        transfer: "Transfer",
+        investment: "Investment",
+        liquididation: "Liquididation",
+        other: "Other",
+        savings: "Savings",
+      },
+    },
+    uncategorizedtransactions: {
+      uncategorizedtransactions: "Uncategorized transactions",
+      inputs: {
+        selectCategory: "Select category",
+      },
+      titles: {
+        list: "Uncategorized transactions",
+      },
+    },
+    components: {
+      noData: {
+        text: "No Data",
       },
     },
     warnWhenUnsavedChanges:
@@ -114,6 +162,12 @@ const en: ResourceLanguage = {
       },
       institutiontransactions: {
         list: "Bank transactions | WFK Finance",
+      },
+      transactioncategories: {
+        list: "Categories | WFK Finance",
+      },
+      uncategorizedtransactions: {
+        list: "Uncategorized transactions | WFK Finance",
       },
     },
   },

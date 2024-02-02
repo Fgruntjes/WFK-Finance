@@ -36,6 +36,10 @@ public class InstitutionAccountTransactionEntity
 
     public Instant Date { get; set; }
 
+    public Guid? CategoryId { get; set; }
+
+    public TransactionCategoryEntity? Category { get; set; }
+
     public InstitutionAccountTransactionEntity()
     {
         Id = Guid.NewGuid();

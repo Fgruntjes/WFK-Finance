@@ -9,4 +9,5 @@ public class AuthOptions
     public string Domain { get; set; } = null!;
     [Required]
     public string Audience { get; set; } = null!;
+    public string? TestIdentity { get; set; } = null!;
 }

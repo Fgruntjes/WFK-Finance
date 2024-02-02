@@ -1,4 +1,4 @@
-import { InstitutionAccount, InstitutionAccountImportStatusEnum } from "@api";
+import { ImportStatus, InstitutionAccount } from "@api";
 import DateField from "@components/field/DateField";
 import { NumberField, ShowButton } from "@refinedev/antd";
 import { useTranslate } from "@refinedev/core";
@@ -27,9 +27,7 @@ function Table({
       title: translate("institutionaccounts.fields.importStatus"),
       dataIndex: "importStatus",
       key: "importStatus",
-      render: (value: InstitutionAccountImportStatusEnum) => (
-        <ImportStatusBadge status={value} />
-      ),
+      render: (value: ImportStatus) => <ImportStatusBadge status={value} />,
     },
     {
       title: translate("institutionaccounts.fields.lastImport"),

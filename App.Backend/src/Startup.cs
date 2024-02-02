@@ -26,6 +26,7 @@ public partial class Startup
             options.Filters.Add(new ProducesAttribute("application/json"));
             options.Filters.Add(new ConsumesAttribute("application/json"));
             options.Filters.Add(new GridifyMapperExceptionFilter());
+            options.Filters.Add(new UniqueConstraintExceptionFilter());
         }).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -34,7 +35,6 @@ public partial class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
-            config.UseInlineDefinitionsForEnums();
             config.ParameterFilter<LowerCaseParameterFilter>();
             config.ParameterFilter<GridifyFilterParameterFilter>();
             config.OperationFilter<RangeOperationFilter>();

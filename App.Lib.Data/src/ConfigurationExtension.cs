@@ -16,7 +16,7 @@ public static class ConfigurationExtension
         return builder.ConfigureServices((hostContext, services) =>
         {
             var connectionString = hostContext.Configuration.GetConnectionString("Database")
-                ?? throw new Exception("Missing 'ConnectionStrings::Database' setting.");
+                ?? throw new System.Exception("Missing 'ConnectionStrings::Database' setting.");
 
             services.AddSingleton<IDistributedLockProvider>(new SqlDistributedSynchronizationProvider(connectionString));
             services.AddSqlServer<DatabaseContext>(connectionString, optionsBuilder =>

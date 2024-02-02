@@ -74,6 +74,9 @@ namespace App.DataMigrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,4)");
 
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CounterPartyAccount")
                         .HasColumnType("nvarchar(max)");
 
@@ -104,6 +107,8 @@ namespace App.DataMigrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ExternalId", "AccountId")
                         .IsUnique();
@@ -212,6 +217,40 @@ namespace App.DataMigrations
                     b.ToTable("OrganisationUser");
                 });
 
+            modelBuilder.Entity("App.Lib.Data.Entity.TransactionCategoryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Group")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OrganisationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("TransactionCategory");
+                });
+
             modelBuilder.Entity("App.Lib.Data.Entity.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -240,12 +279,18 @@ namespace App.DataMigrations
             modelBuilder.Entity("App.Lib.Data.Entity.InstitutionAccountTransactionEntity", b =>
                 {
                     b.HasOne("App.Lib.Data.Entity.InstitutionAccountEntity", "Account")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("App.Lib.Data.Entity.TransactionCategoryEntity", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
                     b.Navigation("Account");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("App.Lib.Data.Entity.InstitutionConnectionEntity", b =>
@@ -286,6 +331,20 @@ namespace App.DataMigrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("App.Lib.Data.Entity.TransactionCategoryEntity", b =>
+                {
+                    b.HasOne("App.Lib.Data.Entity.TransactionCategoryEntity", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("App.Lib.Data.Entity.InstitutionAccountEntity", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
             modelBuilder.Entity("App.Lib.Data.Entity.InstitutionConnectionEntity", b =>
                 {
                     b.Navigation("Accounts");
@@ -296,6 +355,11 @@ namespace App.DataMigrations
                     b.Navigation("InstitutionConnections");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("App.Lib.Data.Entity.TransactionCategoryEntity", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("App.Lib.Data.Entity.UserEntity", b =>

@@ -56,6 +56,7 @@ public class InstitutionTransactionListController : ControllerBase
                 Currency = e.Currency,
                 Date = e.Date.ToDateTimeUtc(),
                 UnstructuredInformation = e.UnstructuredInformation,
+                CategoryId = e.CategoryId,
             })
             .ToListAsync(cancellationToken);
 

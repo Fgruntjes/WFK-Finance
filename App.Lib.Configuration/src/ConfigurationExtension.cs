@@ -21,7 +21,16 @@ public static class ConfigurationExtension
             {
                 var isProduction = context.HostingEnvironment.IsProduction();
                 config.AddJsonFileTraverse("appsettings.json", !isProduction, !isProduction);
-                config.AddJsonFileTraverse("appsettings.local.json", !isProduction, !isProduction);
+                try
+                {
+                    config.AddJsonFileTraverse("appsettings.local.json", !isProduction, !isProduction);
+                }
+                catch (FileNotFoundException)
+                {
+                    // We are in production lets check the /app-settings folder
+                    config.AddJsonFileTraverse("app-settings/appsettings.local.json", !isProduction, !isProduction);
+                }
+
                 if (!isProduction)
                 {
                     config.AddJsonFileTraverse($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", true, true);

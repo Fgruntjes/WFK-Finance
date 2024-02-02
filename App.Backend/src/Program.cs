@@ -8,6 +8,7 @@ var builder = Host.CreateDefaultBuilder(args);
 builder.UseConfiguration();
 builder.UseDataProtection();
 builder.UseInstitution();
+builder.UseTransactionCategory();
 builder.UseAuth();
 builder.UseDatabase();
 builder.UseServiceBusPublisher();

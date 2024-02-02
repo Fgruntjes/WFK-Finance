@@ -22,4 +22,19 @@ export const institutiontransactions: ResourceProps = {
   },
 };
 
-export const resourceList = [institutionaccounts, institutiontransactions];
+export const uncategorizedtransactions: ResourceProps = {
+  name: "uncategorizedtransactions",
+  list: "/bank-accounts/transactions/uncategorized",
+};
+
+export const transactioncategories: ResourceProps = {
+  name: "transactioncategories",
+  list: "/transaction-categories",
+};
+
+export const resourceList = [
+  institutionaccounts,
+  institutiontransactions,
+  uncategorizedtransactions,
+  transactioncategories,
+];

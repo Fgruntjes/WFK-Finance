@@ -24,7 +24,7 @@ public class InstitutionConnectionCreateController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [HttpPost(Name = RouteName)]
     public async Task<IActionResult> Create(
-        [FromBody] InstitutionConnectionCreateDto request,
+        [FromBody] InstitutionConnectionInputDto request,
         CancellationToken cancellationToken = default)
     {
         try

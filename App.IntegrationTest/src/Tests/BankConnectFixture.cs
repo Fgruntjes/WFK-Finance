@@ -6,22 +6,24 @@ using VMelnalksnis.NordigenDotNet;
 
 namespace App.IntegrationTest.Tests;
 
-public class NordigenFixture : AppFixture, IAsyncLifetime
+public class BankConnectFixture<TestType> : AppFixture<TestType>, IAsyncLifetime
 {
     private const string _nordigenTestInstitutionId = "SANDBOXFINANCE_SFIN0000";
     private readonly INordigenClient _nordigenClient;
 
-    public NordigenFixture(ILoggerProvider loggerProvider) : base(loggerProvider)
+    public BankConnectFixture(ILoggerProvider loggerProvider, TestContext testContext) : base(loggerProvider, testContext)
     {
         _nordigenClient = Services.GetRequiredService<INordigenClient>();
     }
 
-    public async Task InitializeAsync()
+    public new async Task InitializeAsync()
     {
+        await base.InitializeAsync();
+
         // Cleanup old connections
         await foreach (var requisition in _nordigenClient.Requisitions.Get())
         {
-            if (requisition.InstitutionId == "SANDBOXFINANCE_SFIN0000")
+            if (requisition.InstitutionId == _nordigenTestInstitutionId)
             {
                 await _nordigenClient.Requisitions.Delete(requisition.Id);
             }
@@ -31,9 +33,15 @@ public class NordigenFixture : AppFixture, IAsyncLifetime
         Database.SeedData(context =>
         {
             // Ensure we start with a clean slate
-            context.InstitutionAccounts.ExecuteDelete();
-            context.InstitutionConnections.ExecuteDelete();
-            context.Institutions.ExecuteDelete();
+            context.InstitutionAccounts
+                .Where(e => e.InstitutionConnection.Institution.ExternalId == _nordigenTestInstitutionId)
+                .ExecuteDelete();
+            context.InstitutionConnections
+                .Where(e => e.Institution.ExternalId == _nordigenTestInstitutionId)
+                .ExecuteDelete();
+            context.Institutions
+                .Where(e => e.ExternalId == _nordigenTestInstitutionId)
+                .ExecuteDelete();
 
             context.Institutions.Add(new InstitutionEntity
             {
@@ -43,10 +51,5 @@ public class NordigenFixture : AppFixture, IAsyncLifetime
                 CountryIso2 = "NL",
             });
         });
-    }
-
-    Task IAsyncLifetime.DisposeAsync()
-    {
-        return Task.CompletedTask;
     }
 }

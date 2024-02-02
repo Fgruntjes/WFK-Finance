@@ -9,6 +9,13 @@
  * ---------------------------------------------------------------
  */
 
+export enum ImportStatus {
+  Success = "Success",
+  Queued = "Queued",
+  Working = "Working",
+  Failed = "Failed",
+}
+
 /** Institution */
 export interface Institution {
   /** @format uuid */
@@ -28,7 +35,7 @@ export interface InstitutionAccount {
   institutionId: string;
   externalId: string;
   iban: string;
-  importStatus: InstitutionAccountImportStatusEnum;
+  importStatus: ImportStatus;
   /** @format date-time */
   lastImport?: string | null;
   /** @format int32 */
@@ -67,8 +74,8 @@ export interface InstitutionConnection {
   accounts: InstitutionAccount[];
 }
 
-/** InstitutionConnectionCreate */
-export interface InstitutionConnectionCreate {
+/** InstitutionConnectionInput */
+export interface InstitutionConnectionInput {
   /** @format uuid */
   institutionId: string;
   /** @format uri */
@@ -90,6 +97,14 @@ export interface InstitutionTransaction {
   currency: string;
   /** @format date-time */
   date: string;
+  /** @format uuid */
+  categoryId?: string | null;
+}
+
+/** InstitutionTransactionPatch */
+export interface InstitutionTransactionPatch {
+  /** @format uuid */
+  categoryId?: string | null;
 }
 
 export interface ProblemDetails {
@@ -102,9 +117,36 @@ export interface ProblemDetails {
   [key: string]: any;
 }
 
-export enum InstitutionAccountImportStatusEnum {
-  Success = "Success",
-  Queued = "Queued",
-  Working = "Working",
-  Failed = "Failed",
+/** TransactionCategory */
+export interface TransactionCategory {
+  /** @format uuid */
+  id: string;
+  name: string;
+  /** @format uuid */
+  parentId?: string | null;
+  /** @format int32 */
+  sortOrder: number;
+  group: TransactionCategoryGroup;
+  description?: string;
+}
+
+export enum TransactionCategoryGroup {
+  Income = "Income",
+  Expense = "Expense",
+  Transfer = "Transfer",
+  Investment = "Investment",
+  Savings = "Savings",
+  Liquididation = "Liquididation",
+  Other = "Other",
+}
+
+/** TransactionCategoryInput */
+export interface TransactionCategoryInput {
+  name: string;
+  /** @format uuid */
+  parentId?: string | null;
+  /** @format int32 */
+  sortOrder: number;
+  group: TransactionCategoryGroup;
+  description?: string;
 }

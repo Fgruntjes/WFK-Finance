@@ -10,24 +10,28 @@ using App.Lib.Data;
 using App.Lib.Test.Database;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.IntegrationTest;
 
-public class AppFixture : IAsyncDisposable
+public class AppFixture<TestType> : IAsyncLifetime
 {
+    public static Guid OrganisationId = new("a0de6029-c687-40cc-be52-ed4222f9e05e");
     public Database<DatabaseContext> Database { get; }
     public IServiceProvider Services { get; }
-
+    private static bool IsCiCd => Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
     private IPlaywright? _playwright;
     private IBrowser? _browser;
     private IBrowserContext? _browserContext;
+    private readonly TestContext _testContext;
 
-    public AppFixture(ILoggerProvider loggerProvider)
+    public AppFixture(ILoggerProvider loggerProvider, TestContext testContext)
     {
         var hostBuilder = Host.CreateDefaultBuilder()
             .UseConfiguration()
             .UseDatabase()
             .UseInstitution()
+            .UseAuth()
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
@@ -40,12 +44,65 @@ public class AppFixture : IAsyncDisposable
                                ?? throw new Exception("Database connection string not found");
 
         Database = new Database(connectionString);
+        _testContext = testContext;
     }
 
-    public async ValueTask DisposeAsync()
+    public Task InitializeAsync()
+    {
+        // Ensure we set our organisation ID to fixed id
+        var options = Services.GetRequiredService<IOptions<AuthOptions>>().Value;
+        if (options.TestIdentity == null)
+        {
+            throw new Exception("TestIdentity not set in configuration, did you run deploy.sh?");
+        }
+
+        Database.SeedData(context =>
+        {
+            var organisation = context.Organisations
+                .Where(e => e.Slug == options.TestIdentity)
+                .FirstOrDefault();
+            if (organisation != null)
+            {
+                if (organisation.Id != OrganisationId)
+                {
+                    context.Organisations.Remove(organisation);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    // No need to update / add
+                    return;
+                }
+            }
+
+            context.Organisations.Add(new()
+            {
+                Id = OrganisationId,
+                Slug = options.TestIdentity,
+            });
+        });
+
+        return Task.CompletedTask;
+    }
+
+    async Task IAsyncLifetime.DisposeAsync()
     {
         if (_browserContext != null)
+        {
+            if (IsCiCd)
+            {
+                Console.WriteLine("Saving test trace");
+                await _browserContext.Tracing.StopAsync(new()
+                {
+                    Path = Path.Combine(
+                        GetTestTraceFolder(),
+                        $"{_testContext.GetTestName<TestType>()}.zip"
+                    )
+                });
+            }
             await _browserContext.DisposeAsync();
+        }
+
 
         if (_browser != null)
             await _browser.DisposeAsync();
@@ -55,21 +112,26 @@ public class AppFixture : IAsyncDisposable
 
     public async Task<IPage> WithPage()
     {
-        var isCiCd = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
         _playwright ??= await Playwright.CreateAsync();
         _browser ??= await _playwright.Chromium.LaunchAsync(new()
         {
-            Headless = isCiCd,
+            Headless = IsCiCd,
         });
 
         _browserContext ??= await _browser.NewContextAsync(new()
         {
-            RecordVideoDir = isCiCd ? GetVideoFolder() : null,
+            RecordVideoDir = IsCiCd ? GetTestTraceFolder() : null,
             ScreenSize = new()
             {
                 Height = 1080,
                 Width = 1920,
             },
+        });
+        await _browserContext.Tracing.StartAsync(new()
+        {
+            Screenshots = false,
+            Snapshots = true,
+            Sources = true,
         });
 
         var page = await _browserContext.NewPageAsync();
@@ -93,20 +155,8 @@ public class AppFixture : IAsyncDisposable
             .GoToLastAsync();
     }
 
-    private static string GetVideoFolder()
+    private string GetTestTraceFolder()
     {
-        var directory = Directory.GetCurrentDirectory();
-
-        while (directory != null)
-        {
-            var appSettingsPath = Path.Combine(directory, "appsettings.json");
-            if (File.Exists(appSettingsPath))
-            {
-                return Path.Combine(directory, ".test-videos");
-            }
-            directory = Directory.GetParent(directory)?.FullName;
-        }
-
-        return Path.Combine(Directory.GetCurrentDirectory(), ".test-videos");
+        return Path.Combine(_testContext.ProjectRoot, ".test-traces");
     }
 }
