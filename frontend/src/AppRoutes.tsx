@@ -3,6 +3,7 @@ import InstitutionAccountsCreateView from "@pages/institutionconnections/CreateV
 import InstitutionAccountsListView from "@pages/institutionconnections/ListView";
 import InstitutionAccountsShowView from "@pages/institutionconnections/ShowView";
 import InstitutionTransactionsListView from "@pages/institutiontransactions/ListView";
+import UncategorizedTransactionListView from "@pages/institutiontransactions/UncategorizedTransactionView";
 import TransactionCategoriesListView from "@pages/transactioncategories/ListView";
 import { ThemedLayoutV2 } from "@refinedev/antd";
 import { Authenticated, ErrorComponent } from "@refinedev/core";
@@ -31,10 +32,13 @@ function AppRoutes() {
             path="create-return"
             element={<InstitutionAccountsCreateReturnView />}
           />
-          <Route
-            path="transactions"
-            element={<InstitutionTransactionsListView />}
-          />
+          <Route path="transactions">
+            <Route index element={<InstitutionTransactionsListView />} />
+            <Route
+              path="uncategorized"
+              element={<UncategorizedTransactionListView />}
+            />
+          </Route>
         </Route>
         <Route path="/transaction-categories">
           <Route index element={<TransactionCategoriesListView />} />

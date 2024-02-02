@@ -100,7 +100,7 @@ function addNullCondition(
   query.addCondition(
     logicalFilter.field,
     ConditionalOperator.Equal,
-    "null",
+    "",
     undefined,
     false,
   );

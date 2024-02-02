@@ -90,6 +90,7 @@ const en: ResourceLanguage = {
         amount: "Amount",
         transactionCode: "Transaction code",
         unstructuredInformation: "Description",
+        categoryId: "Category",
       },
     },
     institutionconnections: {
@@ -117,6 +118,9 @@ const en: ResourceLanguage = {
         group: "Group",
         description: "Description",
       },
+      buttons: {
+        createDefaults: "Create defaults",
+      },
       groupNames: {
         income: "Income",
         expense: "Expense",
@@ -124,6 +128,16 @@ const en: ResourceLanguage = {
         investment: "Investment",
         liquididation: "Liquididation",
         other: "Other",
+        savings: "Savings",
+      },
+    },
+    uncategorizedtransactions: {
+      uncategorizedtransactions: "Uncategorized transactions",
+      inputs: {
+        selectCategory: "Select category",
+      },
+      titles: {
+        list: "Uncategorized transactions",
       },
     },
     components: {
@@ -151,6 +165,9 @@ const en: ResourceLanguage = {
       },
       transactioncategories: {
         list: "Categories | WFK Finance",
+      },
+      uncategorizedtransactions: {
+        list: "Uncategorized transactions | WFK Finance",
       },
     },
   },

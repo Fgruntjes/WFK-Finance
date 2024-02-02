@@ -15,6 +15,7 @@ const ColorTypeMap: Record<
   [TransactionCategoryGroup.Investment]: "lime",
   [TransactionCategoryGroup.Transfer]: "blue",
   [TransactionCategoryGroup.Liquididation]: "red",
+  [TransactionCategoryGroup.Savings]: "green",
   [TransactionCategoryGroup.Other]: undefined,
 };
 

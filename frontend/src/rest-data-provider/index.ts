@@ -225,7 +225,7 @@ function dataProvider(
     meta,
   }: UpdateManyParams<TVariables>): Promise<UpdateManyResponse<TData>> {
     return await requestWithData<TData[]>(
-      "put",
+      "patch",
       resourceListUrl(resource, meta, { id: ids }),
       variables,
       meta,

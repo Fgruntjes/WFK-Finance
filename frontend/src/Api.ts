@@ -97,6 +97,14 @@ export interface InstitutionTransaction {
   currency: string;
   /** @format date-time */
   date: string;
+  /** @format uuid */
+  categoryId?: string | null;
+}
+
+/** InstitutionTransactionPatch */
+export interface InstitutionTransactionPatch {
+  /** @format uuid */
+  categoryId?: string | null;
 }
 
 export interface ProblemDetails {
@@ -127,6 +135,7 @@ export enum TransactionCategoryGroup {
   Expense = "Expense",
   Transfer = "Transfer",
   Investment = "Investment",
+  Savings = "Savings",
   Liquididation = "Liquididation",
   Other = "Other",
 }

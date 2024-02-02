@@ -1,47 +1,25 @@
 import type { TransactionCategory, TransactionCategoryInput } from "@api";
 import NoData from "@components/NoData";
 import { List as RefineList } from "@refinedev/antd";
-import { HttpError, useTable, useTranslate, useUpdate } from "@refinedev/core";
+import { HttpError, useList, useUpdate } from "@refinedev/core";
 import Search from "antd/es/input/Search";
 // When we import the enum trough @api we get a failed to resolve error
-import { List, Typography } from "antd";
-import React, { useEffect, useState } from "react";
+import {
+  CategoryGroup,
+  groupCategoryData,
+} from "@hooks/useTransactionCategoryGroups";
+import { List, Space } from "antd";
+import { useEffect, useState } from "react";
 import styles from "./ListView.module.less";
 import { ActionButtons } from "./list-view/ActionButtons";
-import { CategoryGroup } from "./list-view/CategoryGroup";
+import CategoryInfo from "./list-view/CategoryInfo";
 import { CreateButton } from "./list-view/CreateButton";
-import { GroupTag } from "./list-view/GroupTag";
-
-type CategoryInfoProps = {
-  item: TransactionCategory;
-  children: React.ReactNode;
-};
-
-function CategoryInfo({ item, children }: CategoryInfoProps) {
-  const translate = useTranslate();
-  return (
-    <>
-      <div>
-        <Typography.Text>
-          <GroupTag type={item.group} />
-          {item.name}
-        </Typography.Text>
-        {item.description && (
-          <p className={styles.description}>{item.description}</p>
-        )}
-      </div>
-      <div>{children}</div>
-    </>
-  );
-}
+import CreateDefaultsButton from "./list-view/CreateDefaultsButton";
 
 function ListView() {
   const [groups, setGroups] = useState<CategoryGroup[]>([]);
-  const {
-    tableQueryResult: { isLoading, data },
-  } = useTable<TransactionCategory, HttpError>({
+  const { isLoading, data } = useList<TransactionCategory, HttpError>({
     resource: "transactioncategories",
-    syncWithLocation: false,
     pagination: {
       pageSize: 250,
     },
@@ -55,30 +33,7 @@ function ListView() {
 
   // Set initial group
   useEffect(() => {
-    const groups: { [key: string]: CategoryGroup } = {};
-    const items = data?.data || [];
-    items
-      .filter((category) => !category.parentId)
-      .forEach((category) => {
-        groups[category.id] = {
-          ...category,
-          children: [],
-        };
-      });
-
-    items
-      .filter((category) => !!category.parentId)
-      .forEach((category) => {
-        groups[category.parentId ?? ""].children.push(category);
-      });
-
-    const groupsArray = Object.values(groups).sort(
-      (a, b) => a.sortOrder - b.sortOrder,
-    );
-    groupsArray.forEach((group) => {
-      group.children = group.children.sort((a, b) => a.sortOrder - b.sortOrder);
-    });
-    setGroups(groupsArray);
+    setGroups(groupCategoryData(data?.data));
   }, [data]);
 
   function moveItem<T extends TransactionCategory>(
@@ -148,7 +103,10 @@ function ListView() {
     >
       {!isLoading && groups.length === 0 ? (
         <NoData>
-          <CreateButton siblingCount={groups.length} />
+          <Space direction="horizontal" size="small">
+            <CreateDefaultsButton />
+            <CreateButton type="dashed" siblingCount={groups.length} />
+          </Space>
         </NoData>
       ) : (
         <>
