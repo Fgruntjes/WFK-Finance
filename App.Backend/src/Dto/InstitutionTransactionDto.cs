@@ -19,4 +19,6 @@ public class InstitutionTransactionDto
     public string Currency { get; set; } = null!;
 
     public DateTime Date { get; set; }
+
+    public Guid? CategoryId { get; set; }
 }

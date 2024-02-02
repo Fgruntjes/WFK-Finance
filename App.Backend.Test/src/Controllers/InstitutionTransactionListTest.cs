@@ -5,11 +5,11 @@ using Gridify;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionTransactionListTest : IClassFixture<InstitutionTransactionListFixture>
+public class InstitutionTransactionListTest : IClassFixture<InstitutionTransactionFixture>
 {
-    private readonly InstitutionTransactionListFixture _fixture;
+    private readonly InstitutionTransactionFixture _fixture;
 
-    public InstitutionTransactionListTest(InstitutionTransactionListFixture fixture)
+    public InstitutionTransactionListTest(InstitutionTransactionFixture fixture)
     {
         _fixture = fixture;
     }

@@ -6,6 +6,7 @@ public enum TransactionCategoryGroup
     Expense,
     Transfer,
     Investment,
+    Savings,
     Liquididation,
     Other,
 }

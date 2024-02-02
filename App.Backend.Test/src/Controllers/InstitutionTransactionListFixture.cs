@@ -5,14 +5,16 @@ using NodaTime;
 
 namespace App.Backend.Test.Controllers;
 
-public class InstitutionTransactionListFixture : AppFixture
+public class InstitutionTransactionFixture : AppFixture
 {
     public InstitutionAccountEntity InstitutionAccountEntityA { get; }
     public InstitutionAccountEntity InstitutionAccountEntityB { get; }
+    public InstitutionAccountTransactionEntity TransactionA { get; }
+    public InstitutionAccountTransactionEntity TransactionB { get; }
     public InstitutionEntity InstitutionEntityA { get; }
     public InstitutionEntity InstitutionEntityB { get; }
 
-    public InstitutionTransactionListFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
+    public InstitutionTransactionFixture(DatabasePool databasePool, ILoggerProvider loggerProvider)
         : base(databasePool, loggerProvider)
     {
         InstitutionEntityA = new InstitutionEntity()
@@ -46,18 +48,18 @@ public class InstitutionTransactionListFixture : AppFixture
         var now = new LocalDateTime(2023, 12, 1, 10, 0).InUtc().ToInstant();
         InstitutionAccountEntityA = new InstitutionAccountEntity()
         {
-            ExternalId = "SomeExternalId-organisation-match-A",
+            ExternalId = "SomeExternalId-organisation-match-account-A",
             Iban = "NL00BANK0123456789",
             InstitutionConnectionId = institutionConnectionEntityA.Id,
         };
         InstitutionAccountEntityB = new InstitutionAccountEntity()
         {
-            ExternalId = "SomeExternalId-organisation-match-B",
+            ExternalId = "SomeExternalId-organisation-match-account-B",
             Iban = "NL00BANK0123450000",
             InstitutionConnectionId = institutionConnectionEntityB.Id,
         };
 
-        var transactionA = new InstitutionAccountTransactionEntity()
+        TransactionA = new InstitutionAccountTransactionEntity()
         {
             ExternalId = $"account-a",
             Amount = 100,
@@ -66,7 +68,7 @@ public class InstitutionTransactionListFixture : AppFixture
             UnstructuredInformation = "Some unstructured information",
             Date = now,
         };
-        var transactionB = new InstitutionAccountTransactionEntity()
+        TransactionB = new InstitutionAccountTransactionEntity()
         {
             ExternalId = $"account-b",
             Amount = 100,
@@ -84,8 +86,8 @@ public class InstitutionTransactionListFixture : AppFixture
             context.InstitutionConnections.Add(institutionConnectionEntityB);
             context.InstitutionAccounts.Add(InstitutionAccountEntityA);
             context.InstitutionAccounts.Add(InstitutionAccountEntityB);
-            context.InstitutionAccountTransactions.Add(transactionA);
-            context.InstitutionAccountTransactions.Add(transactionB);
+            context.InstitutionAccountTransactions.Add(TransactionA);
+            context.InstitutionAccountTransactions.Add(TransactionB);
         });
     }
 }
