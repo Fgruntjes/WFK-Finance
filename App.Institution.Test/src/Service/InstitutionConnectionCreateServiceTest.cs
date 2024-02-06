@@ -1,5 +1,4 @@
 ﻿using App.Lib.Data;
-using App.Institution.Exception;
 using App.Institution.Interface;
 using App.Institution.Service;
 using App.Lib.Test;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using VMelnalksnis.NordigenDotNet.Requisitions;
+using App.Lib.Data.Exception;
 
 namespace App.Institution.Test.Service;
 
@@ -83,8 +83,8 @@ public class InstitutionConnectionCreateServiceTest
             new Uri("http://www.example.com/return"));
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InstitutionNotFoundException>(act);
-        exception.Data["InstitutionId"].Should().Be(institutionId);
+        var exception = await Assert.ThrowsAsync<EntityNotFoundException>(act);
+        exception.Data["Id"].Should().Be(institutionId.ToString());
     }
 
     [Fact]

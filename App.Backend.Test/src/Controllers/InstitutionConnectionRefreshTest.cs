@@ -1,8 +1,8 @@
 using System.Net;
 using App.Backend.Controllers;
 using App.Backend.Dto;
-using App.Institution.Exception;
 using App.Institution.Interface;
+using App.Lib.Data.Exception;
 using App.Lib.Test;
 using Moq;
 
@@ -56,7 +56,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
                     "SomeExternalIdMissing",
                     It.IsAny<CancellationToken>()))
                 .Callback((string externalConnectionId, CancellationToken _)
-                    => throw new InstitutionConnectionNotFoundException(externalConnectionId));
+                    => throw new EntityNotFoundException(externalConnectionId));
         });
 
         // Act
@@ -113,7 +113,7 @@ public class InstitutionConnectionRefreshTest : IClassFixture<InstitutionConnect
                     id,
                     It.IsAny<CancellationToken>()))
                 .Callback((Guid institutionConnectionId, CancellationToken _)
-                    => throw new InstitutionConnectionNotFoundException(institutionConnectionId));
+                    => throw new EntityNotFoundException(institutionConnectionId));
         });
 
         // Act

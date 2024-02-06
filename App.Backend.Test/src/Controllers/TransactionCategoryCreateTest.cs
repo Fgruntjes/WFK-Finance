@@ -6,7 +6,6 @@ using App.Backend.Dto;
 using App.Lib.Test;
 using App.Lib.Data.Entity;
 using App.Lib.Data.Exception;
-using App.TransactionCategory.Exception;
 using App.TransactionCategory.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -94,14 +93,14 @@ public class TransactionCategoryCreateTest : IClassFixture<TransactionCategoryFi
     }
 
     [Fact]
-    public async Task Post_ParentCategoryNotFoundException()
+    public async Task Post_ParentEntityNotFoundException()
     {
         // Arrange
         var parentId = new Guid("ae3c5f2a-064f-4343-be74-08980ee6d952");
         _fixture.Services.WithMock<ITransactionCategoryService>((mock) =>
         {
             mock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<TransactionCategoryGroup>(), parentId, It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new CategoryNotFoundException(parentId));
+                .ThrowsAsync(new EntityNotFoundException(parentId));
         });
 
         // Act

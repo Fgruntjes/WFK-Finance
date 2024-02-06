@@ -1,7 +1,7 @@
 using App.Lib.Data;
 using App.Lib.Data.Entity;
+using App.Lib.Data.Exception;
 using App.Lib.Test.Database;
-using App.TransactionCategory.Exception;
 using App.TransactionCategory.Interface;
 using App.TransactionCategory.Service;
 using Microsoft.Extensions.DependencyInjection;
@@ -111,7 +111,7 @@ public class TransctionCategoryServiceTest
             .UpdateAsync(entity.Id, "Test", TransactionCategoryGroup.Investment, null, 20, "Description");
 
         // Assert
-        await act.Should().ThrowAsync<CategoryNotFoundException>()
+        await act.Should().ThrowAsync<EntityNotFoundException>()
             .Where(e => e.Data.MustGet("Id").ToString() == entity.Id.ToString());
     }
 
@@ -133,7 +133,7 @@ public class TransctionCategoryServiceTest
             default);
 
         // Assert
-        await act.Should().ThrowAsync<CategoryNotFoundException>()
+        await act.Should().ThrowAsync<EntityNotFoundException>()
             .Where(e => e.Data.MustGet("Id").ToString() == parentId.ToString());
     }
 
@@ -156,7 +156,7 @@ public class TransctionCategoryServiceTest
             default);
 
         // Assert
-        await act.Should().ThrowAsync<CategoryNotFoundException>()
+        await act.Should().ThrowAsync<EntityNotFoundException>()
             .Where(e => e.Data.MustGet("Id").ToString() == parentId.ToString());
     }
 
@@ -188,7 +188,7 @@ public class TransctionCategoryServiceTest
             default);
 
         // Assert
-        await act.Should().ThrowAsync<CategoryNotFoundException>()
+        await act.Should().ThrowAsync<EntityNotFoundException>()
             .Where(e => e.Data.MustGet("Id").ToString() == parentEntity.Id.ToString());
     }
 
@@ -221,7 +221,7 @@ public class TransctionCategoryServiceTest
             default);
 
         // Assert
-        await act.Should().ThrowAsync<CategoryNotFoundException>()
+        await act.Should().ThrowAsync<EntityNotFoundException>()
             .Where(e => e.Data.MustGet("Id").ToString() == parentEntity.Id.ToString());
     }
 }

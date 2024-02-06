@@ -1,6 +1,6 @@
 using App.Backend.Dto;
-using App.Institution.Exception;
 using App.Institution.Interface;
+using App.Lib.Data.Exception;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +34,7 @@ public class InstitutionConnectionRefreshController : ControllerBase
                 new { id = entity.Id },
                 entity.ToDto());
         }
-        catch (InstitutionConnectionNotFoundException)
+        catch (EntityNotFoundException)
         {
             return NotFound();
         }
@@ -53,7 +53,7 @@ public class InstitutionConnectionRefreshController : ControllerBase
                 new { id = entity.Id },
                 entity.ToDto());
         }
-        catch (InstitutionConnectionNotFoundException)
+        catch (EntityNotFoundException)
         {
             return NotFound();
         }

@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
-using App.Institution.Exception;
 using App.Institution.Interface;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
+using App.Lib.Data.Exception;
 using Medallion.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -45,7 +45,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         }
         catch (InvalidOperationException exception)
         {
-            throw new InstitutionConnectionNotFoundException(externalId, exception);
+            throw new EntityNotFoundException(externalId, exception);
         }
     }
 
@@ -59,7 +59,7 @@ internal class InstitutionConnectionRefreshService : IInstitutionConnectionRefre
         }
         catch (InvalidOperationException exception)
         {
-            throw new InstitutionConnectionNotFoundException(connectionId, exception);
+            throw new EntityNotFoundException(connectionId, exception);
         }
     }
 

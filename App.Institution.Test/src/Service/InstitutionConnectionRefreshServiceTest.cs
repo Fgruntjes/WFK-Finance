@@ -1,5 +1,4 @@
 using App.Lib.Data.Entity;
-using App.Institution.Exception;
 using App.Institution.Interface;
 using App.Institution.Service;
 using App.Lib.Test;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using VMelnalksnis.NordigenDotNet.Accounts;
 using VMelnalksnis.NordigenDotNet.Requisitions;
+using App.Lib.Data.Exception;
 
 namespace App.Institution.Test.Service;
 
@@ -47,8 +47,8 @@ public class InstitutionConnectionRefreshServiceTest
         var act = async () => await service.Refresh("SomeExternalIdMissing");
 
         // Assert
-        var result = await Assert.ThrowsAsync<InstitutionConnectionNotFoundException>(act);
-        result.Data["ExternalConnectionId"].Should().Be("SomeExternalIdMissing");
+        var result = await Assert.ThrowsAsync<EntityNotFoundException>(act);
+        result.Data["Id"].Should().Be("SomeExternalIdMissing");
 
         fixture.Services.WithMock<IAccountClient>(mock =>
         {
@@ -92,8 +92,8 @@ public class InstitutionConnectionRefreshServiceTest
         var act = async () => await service.Refresh(id);
 
         // Assert
-        var result = await Assert.ThrowsAsync<InstitutionConnectionNotFoundException>(act);
-        result.Data["InstitutionConnectionId"].Should().Be(id);
+        var result = await Assert.ThrowsAsync<EntityNotFoundException>(act);
+        result.Data["Id"].Should().Be(id.ToString());
 
         fixture.Services.WithMock<IAccountClient>(mock =>
         {
@@ -149,7 +149,7 @@ public class InstitutionConnectionRefreshServiceTest
             .Refresh(fixture.OrganisationMissmatchInstitutionConnectionEntity.Id);
 
         // Assert
-        await Assert.ThrowsAsync<InstitutionConnectionNotFoundException>(act);
+        await Assert.ThrowsAsync<EntityNotFoundException>(act);
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class InstitutionConnectionRefreshServiceTest
             .Refresh(fixture.OrganisationMissmatchInstitutionConnectionEntity.ExternalId);
 
         // Assert
-        await Assert.ThrowsAsync<InstitutionConnectionNotFoundException>(act);
+        await Assert.ThrowsAsync<EntityNotFoundException>(act);
     }
 
     [Fact]

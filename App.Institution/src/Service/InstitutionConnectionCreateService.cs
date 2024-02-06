@@ -1,7 +1,7 @@
-using App.Institution.Exception;
 using App.Institution.Interface;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
+using App.Lib.Data.Exception;
 using Microsoft.EntityFrameworkCore;
 using VMelnalksnis.NordigenDotNet;
 using VMelnalksnis.NordigenDotNet.Requisitions;
@@ -29,7 +29,7 @@ internal class InstitutionConnectionCreateService : IInstitutionConnectionCreate
         var organisationId = _organisationIdProvider.GetOrganisationId();
         var institution = await _database.Institutions
             .FindAsync(new object[] { institutionId }, cancellationToken: cancellationToken)
-            ?? throw new InstitutionNotFoundException(institutionId);
+            ?? throw new EntityNotFoundException(institutionId);
 
         var connectEntity = await GetConnectUrl(institution, organisationId, cancellationToken);
         if (connectEntity != null)

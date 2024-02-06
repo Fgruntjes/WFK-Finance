@@ -1,7 +1,7 @@
-using App.Institution.Exception;
 using App.Institution.Interface;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
+using App.Lib.Data.Exception;
 using App.Lib.ServiceBus;
 using App.Lib.ServiceBus.Messages.Institution;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +60,7 @@ internal class TransactionImportQueueService : ITransactionImportQueueService
     public async Task<bool> QueueAccountAsync(Guid accountId, CancellationToken cancellationToken = default)
     {
         var account = await _database.InstitutionAccounts.SingleOrDefaultAsync(x => x.Id == accountId, cancellationToken)
-            ?? throw new InstitutionAccountNotFoundException(accountId);
+            ?? throw new EntityNotFoundException(accountId);
 
         var result = await QueueAccountAsync(account, cancellationToken);
         if (result)

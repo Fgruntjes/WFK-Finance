@@ -1,7 +1,7 @@
-using App.Institution.Exception;
 using App.Institution.Interface;
 using App.Lib.Data;
 using App.Lib.Data.Entity;
+using App.Lib.Data.Exception;
 using App.Lib.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -197,6 +197,6 @@ internal class TransactionImportService : ITransactionImportService
         var entity = await _database.InstitutionAccounts.FindAsync(
             new object?[] { institutionAccountId },
             cancellationToken: cancellationToken);
-        return entity ?? throw new InstitutionAccountNotFoundException(institutionAccountId);
+        return entity ?? throw new EntityNotFoundException(institutionAccountId);
     }
 }

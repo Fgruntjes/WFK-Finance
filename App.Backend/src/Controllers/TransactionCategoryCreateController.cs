@@ -1,5 +1,5 @@
 using App.Backend.Dto;
-using App.TransactionCategory.Exception;
+using App.Lib.Data.Exception;
 using App.TransactionCategory.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ public class TransactionCategoryCreateController : ControllerBase
                 new { id = entity.Id },
                 entity.ToDto());
         }
-        catch (CategoryNotFoundException exception)
+        catch (EntityNotFoundException exception)
         {
             return BadRequest(exception.ToProblemDetails());
         }

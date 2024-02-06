@@ -2,8 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using App.Backend.Controllers;
 using App.Backend.Dto;
-using App.Institution.Exception;
 using App.Institution.Interface;
+using App.Lib.Data.Exception;
 using App.Lib.Test;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -57,7 +57,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
     }
 
     [Fact]
-    public async Task BadRequest_InstitutionNotFoundException()
+    public async Task BadRequest_EntityNotFoundException()
     {
         // Arrange
         var institutionId = new Guid("8665f9d8-fa7b-497d-b6c5-40fd7e68aefc");
@@ -67,7 +67,7 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
                    It.IsAny<Guid>(),
                     It.IsAny<Uri>(),
                     It.IsAny<CancellationToken>()))
-                .Callback((Guid id, Uri _, CancellationToken _) => throw new InstitutionNotFoundException(id));
+                .Callback((Guid id, Uri _, CancellationToken _) => throw new EntityNotFoundException(id));
         });
 
         // Act
@@ -85,11 +85,11 @@ public class InstitutionConnectionCreateTest : IClassFixture<InstitutionConnecti
         await response.AssertProblemDetails(HttpStatusCode.BadRequest, new ProblemDetails
         {
             Title = "An error occurred",
-            Detail = "Institution {InstitutionId} not found",
+            Detail = "Id {Id} not found",
             Status = (int)HttpStatusCode.BadRequest,
             Extensions =
             {
-                { "InstitutionId", institutionId }
+                { "Id", institutionId }
             }
         });
     }

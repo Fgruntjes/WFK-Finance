@@ -2,7 +2,6 @@ using App.Lib.Data;
 using App.Lib.Data.Entity;
 using App.Lib.Data.Exception;
 using App.Lib.Data.EntityFramework;
-using App.TransactionCategory.Exception;
 using App.TransactionCategory.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -69,7 +68,7 @@ class TransactionCategoryService : ITransactionCategoryService
         return await _database.TransactionCategory
             .Where(e => e.Id == id)
             .Where(e => e.OrganisationId == _organisationIdProvider.GetOrganisationId())
-            .FirstOrDefaultAsync(cancellationToken) ?? throw new CategoryNotFoundException(id);
+            .FirstOrDefaultAsync(cancellationToken) ?? throw new EntityNotFoundException(id);
     }
 
     private async Task SaveAsync(TransactionCategoryEntity entity, CancellationToken cancellationToken = default)
@@ -83,7 +82,7 @@ class TransactionCategoryService : ITransactionCategoryService
 
             if (!parentExists)
             {
-                throw new CategoryNotFoundException(entity.ParentId.Value);
+                throw new EntityNotFoundException(entity.ParentId.Value);
             }
         }
 
