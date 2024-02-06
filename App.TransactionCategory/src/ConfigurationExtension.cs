@@ -12,6 +12,7 @@ public static class ConfigurationExtension
         return builder.ConfigureServices((hostContext, services) =>
         {
             services.AddScoped<ITransactionCategoryService, TransactionCategoryService>();
+            services.AddScoped<ISimilarTransactionService, SimilarTransactionService>();
         });
     }
 }

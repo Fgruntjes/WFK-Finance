@@ -3,7 +3,7 @@ using App.Lib.Data.Entity;
 
 namespace App.Lib.Test;
 
-public class FunctionalTestFixture : IAsyncDisposable
+public class FunctionalTestFixture : IAsyncDisposable, IDatabaseFixture
 {
     public PooledDatabase Database { get; }
 
