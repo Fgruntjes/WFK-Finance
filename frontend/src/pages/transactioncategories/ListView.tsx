@@ -4,6 +4,7 @@ import { List as RefineList } from "@refinedev/antd";
 import { HttpError, useList, useUpdate } from "@refinedev/core";
 import Search from "antd/es/input/Search";
 // When we import the enum trough @api we get a failed to resolve error
+import Loader from "@components/Loader";
 import {
   CategoryGroup,
   groupCategoryData,
@@ -101,6 +102,7 @@ function ListView() {
         </>
       )}
     >
+      {isLoading && <Loader />}
       {!isLoading && groups.length === 0 ? (
         <NoData>
           <Space direction="horizontal" size="small">

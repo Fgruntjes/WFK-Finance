@@ -188,6 +188,8 @@ internal class TransactionImportService : ITransactionImportService
                 ExternalId = t.TransactionId,
                 TransactionCode = t.BankTransactionCode,
                 UnstructuredInformation = t.UnstructuredInformation,
+                CounterPartyAccount = t.CreditorAccount?.Iban ?? t.DebtorAccount?.Iban,
+                CounterPartyName = t.CreditorName ?? t.DebtorName
             }).ToDictionary(e => e.ExternalId);
 
     }
