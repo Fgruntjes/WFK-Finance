@@ -43,16 +43,15 @@ public class InstitutionTransactionSimilarControllerTest : IClassFixture<AppFixt
         });
 
         // Act
-        var result = await _fixture.Client.GetWithAuthAsync<ICollection<InstitutionAccountTransactionDto>>(
+        var result = await _fixture.Client.GetWithAuthAsync<ICollection<InstitutionTransactionDto>>(
             $"{InstitutionTransactionListController.RouteBase}/{id}/similar");
 
         // Assert
-        result.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>
+        result.Should().BeEquivalentTo(new List<InstitutionTransactionDto>
         {
             new()
             {
                 Id = new Guid("eeef2571-9d3c-47cc-a6b0-b15ed18f2229"),
-                CreatedAt = Instant.FromUnixTimeTicks(637717792000000000).ToDateTimeUtc(),
                 Date = Instant.FromUnixTimeTicks(637717792000000000).ToDateTimeUtc(),
                 Amount = 100,
                 UnstructuredInformation = "Test",

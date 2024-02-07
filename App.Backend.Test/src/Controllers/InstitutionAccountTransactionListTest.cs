@@ -23,38 +23,37 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
         // Act
         var response = await _fixture.Client.GetListWithAuthAsync(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()));
-        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
+        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionTransactionDto>>();
 
         // Assert
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
+        body.Should().BeEquivalentTo(new List<InstitutionTransactionDto>()
         {
-            new() { ExternalId = $"SomeExternalId-organisation-match-0", Date = _fixture.Now.ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-1", Date = _fixture.Now.Plus(Duration.FromHours(1)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-2", Date = _fixture.Now.Plus(Duration.FromHours(2)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-3", Date = _fixture.Now.Plus(Duration.FromHours(3)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-4", Date = _fixture.Now.Plus(Duration.FromHours(4)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-5", Date = _fixture.Now.Plus(Duration.FromHours(5)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-6", Date = _fixture.Now.Plus(Duration.FromHours(6)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-7", Date = _fixture.Now.Plus(Duration.FromHours(7)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-8", Date = _fixture.Now.Plus(Duration.FromHours(8)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-9", Date = _fixture.Now.Plus(Duration.FromHours(9)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-10", Date = _fixture.Now.Plus(Duration.FromHours(10)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-11", Date = _fixture.Now.Plus(Duration.FromHours(11)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-12", Date = _fixture.Now.Plus(Duration.FromHours(12)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-13", Date = _fixture.Now.Plus(Duration.FromHours(13)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-14", Date = _fixture.Now.Plus(Duration.FromHours(14)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-15", Date = _fixture.Now.Plus(Duration.FromHours(15)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-16", Date = _fixture.Now.Plus(Duration.FromHours(16)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-17", Date = _fixture.Now.Plus(Duration.FromHours(17)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-18", Date = _fixture.Now.Plus(Duration.FromHours(18)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-19", Date = _fixture.Now.Plus(Duration.FromHours(19)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-20", Date = _fixture.Now.Plus(Duration.FromHours(20)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-21", Date = _fixture.Now.Plus(Duration.FromHours(21)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-22", Date = _fixture.Now.Plus(Duration.FromHours(22)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-23", Date = _fixture.Now.Plus(Duration.FromHours(23)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-24", Date = _fixture.Now.Plus(Duration.FromHours(24)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(1)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(2)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(3)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(4)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(5)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(6)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(7)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(8)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(9)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(10)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(11)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(12)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(13)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(14)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(15)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(16)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(17)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(18)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(19)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(20)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(21)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(22)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(23)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(24)).ToDateTimeUtc() },
         }, options => options
-            .Including(e => e.ExternalId)
             .Including(e => e.Date));
 
         response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionaccounttransactions 0-25/30");
@@ -64,7 +63,7 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
     public async Task WithSort()
     {
         // Act
-        var body = await _fixture.Client.GetListWithAuthAsync<InstitutionAccountTransactionDto>(
+        var body = await _fixture.Client.GetListWithAuthAsync<InstitutionTransactionDto>(
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
@@ -72,35 +71,34 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
             });
 
         // Assert
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
+        body.Should().BeEquivalentTo(new List<InstitutionTransactionDto>()
         {
-            new() { ExternalId = $"SomeExternalId-organisation-match-29", Date = _fixture.Now.Plus(Duration.FromHours(29)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-28", Date = _fixture.Now.Plus(Duration.FromHours(28)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-27", Date = _fixture.Now.Plus(Duration.FromHours(27)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-26", Date = _fixture.Now.Plus(Duration.FromHours(26)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-25", Date = _fixture.Now.Plus(Duration.FromHours(25)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-24", Date = _fixture.Now.Plus(Duration.FromHours(24)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-23", Date = _fixture.Now.Plus(Duration.FromHours(23)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-22", Date = _fixture.Now.Plus(Duration.FromHours(22)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-21", Date = _fixture.Now.Plus(Duration.FromHours(21)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-20", Date = _fixture.Now.Plus(Duration.FromHours(20)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-19", Date = _fixture.Now.Plus(Duration.FromHours(19)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-18", Date = _fixture.Now.Plus(Duration.FromHours(18)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-17", Date = _fixture.Now.Plus(Duration.FromHours(17)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-16", Date = _fixture.Now.Plus(Duration.FromHours(16)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-15", Date = _fixture.Now.Plus(Duration.FromHours(15)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-14", Date = _fixture.Now.Plus(Duration.FromHours(14)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-13", Date = _fixture.Now.Plus(Duration.FromHours(13)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-12", Date = _fixture.Now.Plus(Duration.FromHours(12)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-11", Date = _fixture.Now.Plus(Duration.FromHours(11)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-10", Date = _fixture.Now.Plus(Duration.FromHours(10)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-9", Date = _fixture.Now.Plus(Duration.FromHours(9)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-8", Date = _fixture.Now.Plus(Duration.FromHours(8)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-7", Date = _fixture.Now.Plus(Duration.FromHours(7)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-6", Date = _fixture.Now.Plus(Duration.FromHours(6)).ToDateTimeUtc() },
-            new() { ExternalId = $"SomeExternalId-organisation-match-5", Date = _fixture.Now.Plus(Duration.FromHours(5)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(29)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(28)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(27)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(26)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(25)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(24)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(23)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(22)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(21)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(20)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(19)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(18)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(17)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(16)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(15)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(14)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(13)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(12)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(11)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(10)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(9)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(8)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(7)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(6)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(5)).ToDateTimeUtc() },
         }, options => options
-            .Including(e => e.ExternalId)
             .Including(e => e.Date));
     }
 
@@ -138,13 +136,12 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
                 Page = 2,
                 PageSize = 1
             });
-        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
+        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionTransactionDto>>();
 
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
+        body.Should().BeEquivalentTo(new List<InstitutionTransactionDto>()
         {
-            new() { ExternalId = $"SomeExternalId-organisation-match-1", Date = _fixture.Now.Plus(Duration.FromHours(1)).ToDateTimeUtc() },
+            new() { Date = _fixture.Now.Plus(Duration.FromHours(1)).ToDateTimeUtc() },
         }, options => options
-            .Including(e => e.ExternalId)
             .Including(e => e.Date));
 
         response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionaccounttransactions 1-2/30");
@@ -158,15 +155,15 @@ public class InstitutionAccountTransactionListTest : IClassFixture<InstitutionAc
             InstitutionAccountTransactionListController.RouteBase.Replace("{id:guid}", _fixture.InstitutionAccountEntity.Id.ToString()),
             query: new GridifyQuery()
             {
-                Filter = "ExternalId = SomeExternalId-organisation-match-0"
+                Filter = "Date = 2023-12-01T10:00:00Z"
             });
-        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionAccountTransactionDto>>();
+        var body = await response.Content.ReadFromJsonAsync<ICollection<InstitutionTransactionDto>>();
 
         // Assert
-        body.Should().BeEquivalentTo(new List<InstitutionAccountTransactionDto>()
+        body.Should().BeEquivalentTo(new List<InstitutionTransactionDto>()
         {
-            new() { ExternalId = $"SomeExternalId-organisation-match-0" },
-        }, options => options.Including(e => e.ExternalId));
+            new() { Date = new DateTime(2023, 12, 1, 10, 0, 0) },
+        }, options => options.Including(e => e.Date));
 
         response.Content.Headers.GetValues("Content-Range").First().Should().Be("institutionaccounttransactions 0-1/1");
     }
