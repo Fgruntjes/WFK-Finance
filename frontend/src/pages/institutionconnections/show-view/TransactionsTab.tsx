@@ -4,6 +4,7 @@ import DateField from "@components/field/DateField";
 import { TextField, useTable } from "@refinedev/antd";
 import { HttpError, useTranslate } from "@refinedev/core";
 import { Table } from "antd";
+import styles from "./TransactionsTab.module.less";
 
 type TransactionTabTabProps = {
   record: InstitutionAccount;
@@ -35,6 +36,22 @@ export function TransactionsTab({ record }: TransactionTabTabProps) {
         title={translate("institutionaccounttransactions.fields.amount")}
         render={(value: number, record: InstitutionAccountTransaction) => (
           <CurrencyField colorized currency={record.currency} value={value} />
+        )}
+      />
+      <Table.Column
+        dataIndex={["counterPartyName"]}
+        sorter={{ multiple: 2 }}
+        title={translate("institutiontransactions.fields.counterPartyName")}
+        render={(value) => (
+          <TextField className={styles.noWrap} value={value} />
+        )}
+      />
+      <Table.Column
+        dataIndex={["counterPartyAccount"]}
+        sorter={{ multiple: 2 }}
+        title={translate("institutiontransactions.fields.counterPartyAccount")}
+        render={(value) => (
+          <TextField className={styles.noWrap} value={value} />
         )}
       />
       <Table.Column

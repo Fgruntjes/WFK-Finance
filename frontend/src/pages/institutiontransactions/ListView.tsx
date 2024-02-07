@@ -51,9 +51,19 @@ function ListView() {
           )}
         />
         <Table.Column
-          dataIndex={["accountIban"]}
+          dataIndex={["counterPartyName"]}
           sorter={{ multiple: 2 }}
-          title={translate("institutiontransactions.fields.accountIban")}
+          title={translate("institutiontransactions.fields.counterPartyName")}
+          render={(value) => (
+            <TextField className={styles.noWrap} value={value} />
+          )}
+        />
+        <Table.Column
+          dataIndex={["counterPartyAccount"]}
+          sorter={{ multiple: 2 }}
+          title={translate(
+            "institutiontransactions.fields.counterPartyAccount",
+          )}
           render={(value) => (
             <TextField className={styles.noWrap} value={value} />
           )}

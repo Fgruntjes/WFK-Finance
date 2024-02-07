@@ -91,6 +91,8 @@ const en: ResourceLanguage = {
         transactionCode: "Transaction code",
         unstructuredInformation: "Description",
         categoryId: "Category",
+        counterPartyAccount: "Offset account",
+        counterPartyName: "Offset account holder",
       },
     },
     institutionconnections: {
