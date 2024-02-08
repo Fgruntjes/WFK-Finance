@@ -1,9 +1,18 @@
 import { Institution } from "@api";
-import { useMany } from "@refinedev/core";
+import { GetManyResponse, HttpError, useMany } from "@refinedev/core";
+import { UseQueryOptions } from "@tanstack/react-query";
 
 type InstitutionList = Record<string, Institution>;
+type QueryOptions = UseQueryOptions<
+  GetManyResponse<Institution>,
+  HttpError,
+  GetManyResponse<Institution>
+>;
 
-function useInstiutionNameMap(ids?: string[]) {
+function useInstiutionNameMap(
+  ids?: string[],
+  { enabled, ...queryOptions }: QueryOptions = {},
+) {
   ids = ids ?? [];
   // Filter unique ids
   ids = [...new Set(ids)];
@@ -12,7 +21,8 @@ function useInstiutionNameMap(ids?: string[]) {
     resource: "institutions",
     ids: ids,
     queryOptions: {
-      enabled: ids.length > 0,
+      enabled: enabled && ids.length > 0,
+      ...queryOptions,
     },
   });
 

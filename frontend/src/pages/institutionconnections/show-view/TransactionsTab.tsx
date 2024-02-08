@@ -1,19 +1,13 @@
-import { InstitutionAccount, InstitutionAccountTransaction } from "@api";
-import CurrencyField from "@components/field/CurrencyField";
-import DateField from "@components/field/DateField";
-import { TextField, useTable } from "@refinedev/antd";
-import { HttpError, useTranslate } from "@refinedev/core";
-import { Table } from "antd";
-import styles from "./TransactionsTab.module.less";
+import { InstitutionAccount, InstitutionTransaction } from "@api";
+import InstitutionTransactionTable from "@components/institutiontransactions/Table";
+import { useTable } from "@refinedev/antd";
+import { HttpError } from "@refinedev/core";
 
 type TransactionTabTabProps = {
   record: InstitutionAccount;
 };
 export function TransactionsTab({ record }: TransactionTabTabProps) {
-  const translate = useTranslate();
-  const {
-    tableProps: { loading, ...tableProps },
-  } = useTable<InstitutionAccountTransaction, HttpError>({
+  const { tableProps } = useTable<InstitutionTransaction, HttpError>({
     resource: "institutionaccounttransactions",
     sorters: {
       initial: [{ field: "date", order: "desc" }],
@@ -25,49 +19,10 @@ export function TransactionsTab({ record }: TransactionTabTabProps) {
   });
 
   return (
-    <Table loading={loading} {...tableProps} rowKey="id">
-      <Table.Column
-        dataIndex={"date"}
-        title={translate("institutionaccounttransactions.fields.date")}
-        render={(value) => <DateField format="ddd DD MMM YYYY" value={value} />}
-      />
-      <Table.Column
-        dataIndex={"amount"}
-        title={translate("institutionaccounttransactions.fields.amount")}
-        render={(value: number, record: InstitutionAccountTransaction) => (
-          <CurrencyField colorized currency={record.currency} value={value} />
-        )}
-      />
-      <Table.Column
-        dataIndex={["counterPartyName"]}
-        sorter={{ multiple: 2 }}
-        title={translate("institutiontransactions.fields.counterPartyName")}
-        render={(value) => (
-          <TextField className={styles.noWrap} value={value} />
-        )}
-      />
-      <Table.Column
-        dataIndex={["counterPartyAccount"]}
-        sorter={{ multiple: 2 }}
-        title={translate("institutiontransactions.fields.counterPartyAccount")}
-        render={(value) => (
-          <TextField className={styles.noWrap} value={value} />
-        )}
-      />
-      <Table.Column
-        dataIndex={"transactionCode"}
-        title={translate(
-          "institutionaccounttransactions.fields.transactionCode",
-        )}
-        render={(value) => <TextField value={value} />}
-      />
-      <Table.Column
-        dataIndex={"unstructuredInformation"}
-        title={translate(
-          "institutionaccounttransactions.fields.unstructuredInformation",
-        )}
-        render={(value) => <TextField value={value} />}
-      />
-    </Table>
+    <InstitutionTransactionTable
+      {...tableProps}
+      showInstitutionColumn={false}
+      categoryColumn={false}
+    />
   );
 }

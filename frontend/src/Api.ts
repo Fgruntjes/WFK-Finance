@@ -99,6 +99,8 @@ export interface InstitutionTransaction {
   date: string;
   /** @format uuid */
   categoryId?: string | null;
+  /** @format uuid */
+  accountId: string;
 }
 
 /** InstitutionTransactionPatch */
