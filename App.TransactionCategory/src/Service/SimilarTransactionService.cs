@@ -29,6 +29,8 @@ class SimilarTransactionService : ISimilarTransactionService
 
         var transactionQuery = _database.InstitutionAccountTransactions
             .AsNoTracking()
+            .Include(e => e.Account)
+            .Include(e => e.Account.InstitutionConnection)
             .Where(e => e.Account.InstitutionConnection.OrganisationId == OrganisationId)
             .Where(e => e.CategoryId == null)
             .Where(e => e.Id != id)

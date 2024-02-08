@@ -50,7 +50,7 @@ public partial class InstitutionListController : ControllerBase
             }
         }
 
-        return ListResult<Dto.InstitutionDto>.Create(RouteBase, query, result, entity => entity.ToDto());
+        return ListResult<Dto.InstitutionDto>.Create(RouteBase, query, result.Data.Select(e => e.ToDto()), result.Count);
     }
 
     private static string? FindCountryFilter(string? filter)

@@ -36,6 +36,10 @@ public class TransactionCategoryListController : ControllerBase
             .Where(e => e.OrganisationId == _organisationIdProvider.GetOrganisationId())
             .GridifyAsync(query, cancellationToken);
 
-        return ListResult<TransactionCategoryDto>.Create(RouteBase, query, result, entity => entity.ToDto());
+        return ListResult<TransactionCategoryDto>.Create(
+            RouteBase,
+            query,
+            result.Data.Select(e => e.ToDto()),
+            result.Count);
     }
 }

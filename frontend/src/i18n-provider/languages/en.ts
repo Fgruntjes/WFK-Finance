@@ -82,6 +82,7 @@ const en: ResourceLanguage = {
       institutiontransactions: "Transactions",
       titles: {
         list: "Bank transactions",
+        similar: "Similar transactions",
       },
       fields: {
         institutionId: "Bank",
@@ -137,6 +138,7 @@ const en: ResourceLanguage = {
       uncategorizedtransactions: "Uncategorized transactions",
       inputs: {
         selectCategory: "Select category",
+        foundSimilar: "Found similar transactions",
       },
       titles: {
         list: "Uncategorized transactions",

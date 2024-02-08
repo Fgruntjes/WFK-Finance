@@ -42,26 +42,6 @@ export interface InstitutionAccount {
   transactionCount: number;
 }
 
-/** InstitutionAccountTransaction */
-export interface InstitutionAccountTransaction {
-  /** @format uuid */
-  id: string;
-  /** @format date-time */
-  createdAt: string;
-  /** @format uuid */
-  accountId: string;
-  externalId: string;
-  unstructuredInformation: string;
-  transactionCode?: string;
-  counterPartyName?: string;
-  counterPartyAccount?: string;
-  /** @format double */
-  amount: number;
-  currency: string;
-  /** @format date-time */
-  date: string;
-}
-
 /** InstitutionConnection */
 export interface InstitutionConnection {
   /** @format uuid */
@@ -86,21 +66,22 @@ export interface InstitutionConnectionInput {
 export interface InstitutionTransaction {
   /** @format uuid */
   id: string;
-  accountIban: string;
   /** @format uuid */
   institutionId: string;
-  unstructuredInformation: string;
-  counterPartyName?: string;
-  counterPartyAccount?: string;
+  /** @format uuid */
+  accountId: string;
+  accountIban: string;
+  /** @format uuid */
+  categoryId?: string | null;
+  /** @format date-time */
+  date: string;
   /** @format double */
   amount: number;
   currency: string;
-  /** @format date-time */
-  date: string;
-  /** @format uuid */
-  categoryId?: string | null;
-  /** @format uuid */
-  accountId: string;
+  counterPartyName?: string;
+  counterPartyAccount?: string;
+  unstructuredInformation: string;
+  transactionCode?: string;
 }
 
 /** InstitutionTransactionPatch */

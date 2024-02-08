@@ -49,10 +49,14 @@ function Table({
           dataIndex={["institutionId"]}
           sorter={{ multiple: 1 }}
           title={translate("institutiontransactions.fields.institutionId")}
-          render={(value) => (
-            <InstitutionsRecordRepresentation
-              recordItem={institutionMap[value]}
-            />
+          render={(value, record: InstitutionTransaction) => (
+            <>
+              <InstitutionsRecordRepresentation
+                recordItem={institutionMap[value]}
+                iconOnly
+              />
+              <TextField className={styles.noWrap} value={record.accountIban} />
+            </>
           )}
         />
       )}

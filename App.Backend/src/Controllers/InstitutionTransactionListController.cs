@@ -43,24 +43,9 @@ public class InstitutionTransactionListController : ControllerBase
             .GridifyQueryableAsync(query, new InstitutionTransactionQueryMapper(), cancellationToken);
 
         var items = await result.Query
-            .Include(e => e.Account)
-            .Include(e => e.Account.InstitutionConnection)
-            .Select(e => new InstitutionTransactionDto
-            {
-                Id = e.Id,
-                InstitutionId = e.Account.InstitutionConnection.InstitutionId,
-                AccountIban = e.Account.Iban,
-                Amount = e.Amount,
-                CounterPartyAccount = e.CounterPartyAccount,
-                CounterPartyName = e.CounterPartyName,
-                Currency = e.Currency,
-                Date = e.Date.ToDateTimeUtc(),
-                UnstructuredInformation = e.UnstructuredInformation,
-                CategoryId = e.CategoryId,
-            })
-            .ToListAsync(cancellationToken);
+            .ToDto(cancellationToken);
 
         var start = query.Page * query.PageSize;
-        return ListResult<InstitutionTransactionDto>.Create(items, RouteBase, query, result.Count);
+        return ListResult<InstitutionTransactionDto>.Create(RouteBase, query, items, result.Count);
     }
 }

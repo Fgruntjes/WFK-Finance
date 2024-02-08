@@ -45,12 +45,14 @@ public class InstitutionAccountTransactionListController : ControllerBase
 
         var result = await _database.InstitutionAccountTransactions
             .Where(e => e.AccountId == id)
+            .Include(e => e.Account)
+            .Include(e => e.Account.InstitutionConnection)
             .GridifyAsync(query, cancellationToken);
 
         return ListResult<InstitutionTransactionDto>.Create(
             "institutionaccounttransactions",
             query,
-            result,
-            entity => entity.ToDto());
+            result.Data.Select(e => e.ToDto()),
+            result.Count);
     }
 }

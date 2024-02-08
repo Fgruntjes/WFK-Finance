@@ -57,6 +57,6 @@ public class InstitutionConnectionListController : ControllerBase
             })
             .ToListAsync(cancellationToken);
 
-        return ListResult<InstitutionConnectionDto>.Create(items, RouteBase, query, result.Count);
+        return ListResult<InstitutionConnectionDto>.Create(RouteBase, query, items, result.Count);
     }
 }

@@ -1,9 +1,11 @@
+import { LoadingOutlined } from "@ant-design/icons";
 import { InstitutionTransaction, InstitutionTransactionPatch } from "@api";
 import LocalError from "@components/LocalError";
 import useTransactionCategoryGroups from "@hooks/useTransactionCategoryGroups";
 import { HttpError, useTranslate, useUpdateMany } from "@refinedev/core";
 import { Select } from "antd";
 import { useMemo, useState } from "react";
+import FindSimilarButton from "./FindSimilarButton";
 import styles from "./TransactionCategorySelect.module.less";
 
 type TransactionCategorySelectProps = {
@@ -43,6 +45,7 @@ export function TransactionCategorySelect({
     }));
   }, [groups]);
 
+  const [showSimilarButton, setShowSimilarButton] = useState(false);
   function handleSelectChange(value: string) {
     setCategoryId(value);
     mutate({
@@ -51,7 +54,10 @@ export function TransactionCategorySelect({
       values: {
         categoryId: value,
       },
-      successNotification: false,
+      successNotification: () => {
+        setShowSimilarButton(true);
+        return false;
+      },
       invalidates: [],
     });
   }
@@ -61,18 +67,26 @@ export function TransactionCategorySelect({
   }
 
   return (
-    <Select
-      className={styles.select}
-      showSearch
-      loading={isLoading || groupsIsLoading}
-      placeholder={translate("uncategorizedtransactions.inputs.selectCategory")}
-      options={options}
-      value={categoryId}
-      onChange={handleSelectChange}
-      id={fieldId}
-      filterOption={(input, option) =>
-        (option?.searchValue ?? "").toLowerCase().includes(input.toLowerCase())
-      }
-    />
+    <div className={styles.container}>
+      <Select
+        className={styles.select}
+        showSearch
+        loading={isLoading || groupsIsLoading}
+        placeholder={translate(
+          "uncategorizedtransactions.inputs.selectCategory",
+        )}
+        options={options}
+        value={categoryId}
+        onChange={handleSelectChange}
+        id={fieldId}
+        suffixIcon={isLoading && <LoadingOutlined />}
+        filterOption={(input, option) =>
+          (option?.searchValue ?? "")
+            .toLowerCase()
+            .includes(input.toLowerCase())
+        }
+      />
+      <FindSimilarButton transaction={transaction} show={showSimilarButton} />
+    </div>
   );
 }

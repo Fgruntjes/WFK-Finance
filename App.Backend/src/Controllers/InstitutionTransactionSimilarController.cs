@@ -1,4 +1,5 @@
 using App.Backend.Dto;
+using App.Lib.Data;
 using App.Lib.Data.Exception;
 using App.TransactionCategory.Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -14,10 +15,12 @@ public class InstitutionTransactionSimilarController : ControllerBase
     public const string RouteName = nameof(InstitutionTransactionSimilarController);
 
     private readonly ISimilarTransactionService _transactionService;
+    private readonly DatabaseContext _database;
 
-    public InstitutionTransactionSimilarController(ISimilarTransactionService transactionService)
+    public InstitutionTransactionSimilarController(ISimilarTransactionService transactionService, DatabaseContext database)
     {
         _transactionService = transactionService;
+        _database = database;
     }
 
     [HttpGet("{id:guid}/similar", Name = RouteName)]
@@ -29,7 +32,7 @@ public class InstitutionTransactionSimilarController : ControllerBase
         try
         {
             var transactions = await _transactionService.Find(id, cancellationToken);
-            return Ok(transactions.Select(e => e.ToDto()));
+            return Ok(transactions.ToDto());
         }
         catch (EntityNotFoundException exception)
         {
